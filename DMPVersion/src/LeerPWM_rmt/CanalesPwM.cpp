@@ -125,3 +125,38 @@ uint64_t CanalesPwM::valor(uint8_t canal) {
 	return returnvalue;
 }
 
+void CanalesPwM::debugOutSerial(Stream* debugPort) {
+	rmt_item32_t* item;
+	
+	debugPort->print("Canales: 1 (");
+	item = (rmt_item32_t*) (RMT_CHANNEL_MEM(RMT_CHANNEL_0));
+	rmt_rx_start(RMT_CHANNEL_0, 1);
+	debugPort->print((int)item->duration0);
+	
+	debugPort->print(") 2(");
+	item = (rmt_item32_t*) (RMT_CHANNEL_MEM(RMT_CHANNEL_1));
+	rmt_rx_start(RMT_CHANNEL_1, 1);
+	debugPort->print((int)item->duration0);
+	
+	debugPort->print(") 3(");
+	item = (rmt_item32_t*) (RMT_CHANNEL_MEM(RMT_CHANNEL_2));
+	rmt_rx_start(RMT_CHANNEL_2, 1);
+	debugPort->print((int)item->duration0);
+	
+	debugPort->print(") 4(");
+	item = (rmt_item32_t*) (RMT_CHANNEL_MEM(RMT_CHANNEL_3));
+	rmt_rx_start(RMT_CHANNEL_3, 1);
+	debugPort->print((int)item->duration0);
+	
+	debugPort->print(") 5(");
+	item = (rmt_item32_t*) (RMT_CHANNEL_MEM(RMT_CHANNEL_4));
+	rmt_rx_start(RMT_CHANNEL_4, 1);
+	debugPort->print((int)item->duration0);
+	
+	debugPort->print(") 6(");
+	item = (rmt_item32_t*) (RMT_CHANNEL_MEM(RMT_CHANNEL_5));
+	rmt_rx_start(RMT_CHANNEL_5, 1);
+	debugPort->print((int)item->duration0);
+	debugPort->println(") .");
+	
+}

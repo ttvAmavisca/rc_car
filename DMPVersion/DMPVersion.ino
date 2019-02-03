@@ -10,7 +10,7 @@
    1 conexion serie con PC o bluethoot para telemetria
 
 */
-//Libreria MPU9250
+//Libreria MPU9250, utilizando el DMP(mas lento pero valores filtrados)
 #include "src/MPU9250_DMP/MPU9250-DMP.h"
 
 //Libreria VESC
@@ -19,8 +19,11 @@
 //Libreria Bluetooth ESP32
 #include "BluetoothSerial.h"
 
-//periferico rmt para procesado ppm
-#include <driver/rmt.h>
+//Lectura de Pwm usando RMT
+#include "src/LeerPWM_rmt/CanalesPwM.h"
+
+//Salidas PWM a 50hz usando ledc(hardware)
+#include "src/Servolib/ServoESP32.h"
  
 
 
@@ -33,7 +36,12 @@ BluetoothSerial SerialBT;
 
 #define SerialDebug false  // Set to true to get Serial output for debugging
 #define SerialDebugVESC false  // Set to true to get Serial output for debugging
-#define OUTPUT_TEAPOT false  // paquete teapot para ejemplo de fabricante
+#define SerialDebugPWMIN false  // Set to true to get Serial output for debugging
+#define OUTPUT_TEAPOT false  // paquete teapot para ejemplo de fabricante IMU (intelsense)
+
+uint64_t debug100ms=0;
+uint64_t debugtiming=0;
+uint64_t debugtiming_count=0;
 
 // Pin definitions
 
@@ -47,6 +55,18 @@ MPU9250_DMP imu;
 
 VescUart UART;
 
+
+//Servos
+Servo servos[4];
+enum e_servo {
+    enum_rueda_derecha=0,
+    enum_rueda_izquierda=1,   
+    enum_marcha=2,
+    enum_motor=3      
+};
+
+//Lectura de canales de entrada. Pines 30+ algunos definidos como solo entrada
+CanalesPwM leerCanales(35,34,33,32,36,39);
 
 void setupBluetooth()
 {
@@ -97,16 +117,16 @@ void setupMPU9250()
   if (imu.begin() != INV_SUCCESS)
   {
     rc_mpu_init = false;
-    SerialPort.println("Unable to communicate with MPU-9250");
-    SerialPort.println("Check connections, and try again.");
-    SerialPort.println();
+    Serial.println("Unable to communicate with MPU-9250");
+    Serial.println("Check connections, and try again.");
+    Serial.println();
     delay(5000);
 
   }
 
   imu.dmpBegin(DMP_FEATURE_6X_LP_QUAT | // Enable 6-axis quat
                DMP_FEATURE_GYRO_CAL, // Use gyro calibration
-               100); // Set DMP FIFO rate to 10 Hz
+               1000); // Set DMP FIFO rate to 1000 Hz
   // DMP_FEATURE_LP_QUAT can also be used. It uses the
   // accelerometer in low-power mode to estimate quat's.
   // DMP_FEATURE_LP_QUAT and 6X_LP_QUAT are mutually exclusive
@@ -121,6 +141,9 @@ void imuGetValues()
     // Use dmpUpdateFifo to update the ax, gx, mx, etc. values
     if ( imu.dmpUpdateFifo() == INV_SUCCESS)
     {
+      debugtiming_count  = esp_timer_get_time() -debugtiming;
+      debugtiming= esp_timer_get_time();
+      
       // computeEulerAngles can be used -- after updating the
       // quaternion values -- to estimate roll, pitch, and yaw
       imu.computeEulerAngles();
@@ -132,13 +155,13 @@ void imuGetValues()
         float q2 = imu.calcQuat(imu.qy);
         float q3 = imu.calcQuat(imu.qz);
 
-        SerialPort.println("Q: " + String(q0, 4) + ", " +
+        Serial.println("Q: " + String(q0, 4) + ", " +
                            String(q1, 4) + ", " + String(q2, 4) +
                            ", " + String(q3, 4));
-        SerialPort.println("R/P/Y: " + String(imu.roll) + ", "
+        Serial.println("R/P/Y: " + String(imu.roll) + ", "
                            + String(imu.pitch) + ", " + String(imu.yaw));
-        SerialPort.println("Time: " + String(imu.time) + " ms");
-        SerialPort.println();
+        Serial.println("Time: " + String(imu.time) + " ms");
+        Serial.println();
       }
 
 
@@ -166,104 +189,32 @@ void imuGetValues()
 }
 
 
-
-// use 13 bit precission for LEDC timer
-#define LEDC_TIMER_13_BIT  13
-
-// use 5000 Hz as a LEDC base frequency
-#define LEDC_BASE_FREQ     1000
-
-
-int brightness = 0;    // how bright the LED is
-int fadeAmount = 5;    // how many points to fade the LED by
-int omega=0;
-int omegalul=0;
-
-
-static uint32_t *s_channels;
-static uint32_t channels[16];
-rmt_obj_t* rmt_recv = NULL;
-unsigned long debug_print_lul =0;
-
-extern "C" void receive_data(uint32_t *data, size_t len)
+void setup_pwmIN()
 {
-    parseRmt((rmt_data_t*) data, len, channels);
+  //Inicia los 6 canales de lectura PWM
+  leerCanales.initCanales();
 }
 
-
-void parseRmt(rmt_data_t* items, size_t len, uint32_t* channels){
-    size_t chan = 0;
-    bool valid = true;
-    rmt_data_t* it = NULL;
-
-    if (!channels)  {
-        return;
-    }
-    s_channels = channels;
-
-    it = &items[0];
-    omegalul=len;
-    for(size_t i = 0; i<len; i++){
-
-        if(!valid){
-            break;
-        }
-        it = &items[i];
-        
-        omega=it->duration1;
-        /*
-        if(XJT_VALID(it)){
-            if(it->duration1 >= 5 && it->duration1 <= 8){
-                valid = xjtReceiveBit(i, false);
-            } else if(it->duration1 >= 13 && it->duration1 <= 16){
-                valid = xjtReceiveBit(i, true);
-            } else {
-                valid = false;
-            }
-        } else if(!it->duration1 && !it->level1 && it->duration0 >= 5 && it->duration0 <= 8) {
-                    valid = xjtReceiveBit(i, false);
-
-        }
-        */
-    }
+void setup_pwmOut()
+{
+  //asignar pines de salida y inicializar canales
+  servos[enum_rueda_derecha].attach(25);
+  servos[enum_rueda_izquierda].attach(26);
+  servos[enum_marcha].attach(27);
+  servos[enum_motor].attach(14);
+         
 }
 
-void setup_rmt() {
-  if ((rmt_recv = rmtInit(32, false, RMT_MEM_64)) == NULL)
-    {
-         if (SerialDebug) Serial.println("init receiver failed\n");
-    }
-
-    // Setup 1us tick
-    float realTick = rmtSetTick(rmt_recv, 1000);
-     if (SerialDebug) Serial.printf("real tick set to: %fns\n", realTick);
-
-    // Ask to start reading
-    rmtRead(rmt_recv, receive_data);
-
-
- //salida pwm prueba
-  ledcSetup(0, LEDC_BASE_FREQ, LEDC_TIMER_13_BIT);
-  ledcAttachPin(35, 0);
-}
-
-void rmt_update_values(){
-  //
-   ledcWrite(0, brightness);
-  brightness = brightness + fadeAmount;
-
-  // reverse the direction of the fading at the ends of the fade:
-  if (brightness <= 0 || brightness >= 255) {
-    fadeAmount = -fadeAmount;
-  }
-
-  if(millis() > debug_print_lul) {
-          debug_print_lul = millis() +200;
-          Serial.print("lul "); Serial.print(omega);Serial.print(" || "); Serial.println(omegalul);
-        }
-//  Serial.print("lul wat "); Serial.print(it->duration1); Serial.println("trisca");
-}
+void calcular_pwmOut()
+{
+   //servos[enum_rueda_derecha].write((100 + (35 * 1)) % 180);
+ servos[enum_rueda_derecha].writeMicroseconds(leerCanales.valor(1) / 10);
  
+ servos[enum_rueda_izquierda].writeMicroseconds(leerCanales.valor(1) / 10);
+ servos[enum_marcha].writeMicroseconds(leerCanales.valor(3) / 10);
+ servos[enum_motor].writeMicroseconds(leerCanales.valor(2) / 10);
+ 
+}
 
 
 void setup()
@@ -280,10 +231,12 @@ void setup()
 
   setupVesc();
 
-  setup_rmt();
-  
+  setup_pwmIN();
+
+  setup_pwmOut();
   
 }
+
 
 
 
@@ -295,8 +248,14 @@ void loop()
 
   vescControl();
 
+  if (SerialDebugPWMIN)leerCanales.debugOutSerial(&Serial);
+  
   if (rc_mpu_init) imuGetValues();
 
-  rmt_update_values();
+  calcular_pwmOut();
+  if (millis() > debug100ms) {
+  debug100ms=millis()+1000;
+   Serial.print("lul " ); Serial.print((int)leerCanales.valor(1)/10 ); Serial.print( ", " ); Serial.print((int)debugtiming_count );  Serial.println( "  " );
+ }
 
 }

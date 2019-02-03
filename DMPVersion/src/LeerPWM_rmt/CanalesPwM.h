@@ -18,6 +18,7 @@ public:
 
     void initCanales();
 	uint64_t valor(uint8_t canal);
+	void debugOutSerial(Stream* port);
 
 private:
 	const uint8_t PIN1 , PIN2, PIN3 ,PIN4 ,PIN5 ,PIN6;
