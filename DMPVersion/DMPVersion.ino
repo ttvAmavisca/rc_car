@@ -165,6 +165,21 @@ void imuGetValues()
   }
 }
 
+
+
+// use 13 bit precission for LEDC timer
+#define LEDC_TIMER_13_BIT  13
+
+// use 5000 Hz as a LEDC base frequency
+#define LEDC_BASE_FREQ     1000
+
+
+int brightness = 0;    // how bright the LED is
+int fadeAmount = 5;    // how many points to fade the LED by
+int omega=0;
+int omegalul=0;
+
+
 static uint32_t *s_channels;
 static uint32_t channels[16];
 rmt_obj_t* rmt_recv = NULL;
@@ -187,17 +202,15 @@ void parseRmt(rmt_data_t* items, size_t len, uint32_t* channels){
     s_channels = channels;
 
     it = &items[0];
+    omegalul=len;
     for(size_t i = 0; i<len; i++){
 
         if(!valid){
             break;
         }
         it = &items[i];
-        if(millis() > debug_print_lul) {
-          debug_print_lul = millis() +200;
-          Serial.print("lul "); Serial.print(it->duration1);Serial.print("lul2 "); Serial.println(it->duration0);
-        }
         
+        omega=it->duration1;
         /*
         if(XJT_VALID(it)){
             if(it->duration1 >= 5 && it->duration1 <= 8){
@@ -216,7 +229,7 @@ void parseRmt(rmt_data_t* items, size_t len, uint32_t* channels){
 }
 
 void setup_rmt() {
-  if ((rmt_recv = rmtInit(32, false, RMT_MEM_192)) == NULL)
+  if ((rmt_recv = rmtInit(32, false, RMT_MEM_64)) == NULL)
     {
          if (SerialDebug) Serial.println("init receiver failed\n");
     }
@@ -227,31 +240,30 @@ void setup_rmt() {
 
     // Ask to start reading
     rmtRead(rmt_recv, receive_data);
- 
+
+
+ //salida pwm prueba
+  ledcSetup(0, LEDC_BASE_FREQ, LEDC_TIMER_13_BIT);
+  ledcAttachPin(35, 0);
 }
 
 void rmt_update_values(){
   //
-  
+   ledcWrite(0, brightness);
+  brightness = brightness + fadeAmount;
+
+  // reverse the direction of the fading at the ends of the fade:
+  if (brightness <= 0 || brightness >= 255) {
+    fadeAmount = -fadeAmount;
+  }
+
+  if(millis() > debug_print_lul) {
+          debug_print_lul = millis() +200;
+          Serial.print("lul "); Serial.print(omega);Serial.print(" || "); Serial.println(omegalul);
+        }
 //  Serial.print("lul wat "); Serial.print(it->duration1); Serial.println("trisca");
 }
  
-
-#define LEDC_CHANNEL_0     0
-
-// use 13 bit precission for LEDC timer
-#define LEDC_TIMER_13_BIT  13
-
-// use 5000 Hz as a LEDC base frequency
-#define LEDC_BASE_FREQ     5000
-
-// fade LED PIN (replace with LED_BUILTIN constant for built-in LED)
-#define LED_PIN            35
-
-
-int brightness = 0;    // how bright the LED is
-int fadeAmount = 5;    // how many points to fade the LED by
-
 
 
 void setup()
@@ -269,9 +281,8 @@ void setup()
   setupVesc();
 
   setup_rmt();
-
-  ledcSetup(LEDC_CHANNEL_0, LEDC_BASE_FREQ, LEDC_TIMER_13_BIT);
-  ledcAttachPin(LED_PIN, LEDC_CHANNEL_0);
+  
+  
 }
 
 
@@ -280,13 +291,7 @@ void setup()
 
 void loop()
 {
-  ledcWrite(LEDC_CHANNEL_0, brightness);
-  brightness = brightness + fadeAmount;
-
-  // reverse the direction of the fading at the ends of the fade:
-  if (brightness <= 0 || brightness >= 255) {
-    fadeAmount = -fadeAmount;
-  }
+ 
 
   vescControl();
 
