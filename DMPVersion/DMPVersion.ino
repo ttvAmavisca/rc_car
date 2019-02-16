@@ -24,7 +24,12 @@
 
 //Salidas PWM a 50hz usando ledc(hardware)
 #include "src/Servolib/ServoESP32.h"
- 
+
+//Protocolo oneshot
+//#include "src/OneShot125/OneShot125.h"
+
+//LeerTelemetria
+#include "src/LeerTelemetria/LeerTelemetria.h"
 
 
 #if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
@@ -56,6 +61,7 @@ MPU9250_DMP imu;
 VescUart UART;
 
 
+
 //Servos
 Servo servos[4];
 enum e_servo {
@@ -65,8 +71,23 @@ enum e_servo {
     enum_motor=3      
 };
 
+
+enum e_modo {
+    enum_manual=0,
+    enum_sistema_salida=1,   
+    enum_semi_auto=2,
+    enum_full_auto=3      
+};
+
 //Lectura de canales de entrada. Pines 30+ algunos definidos como solo entrada
 CanalesPwM leerCanales(35,34,33,32,36,39);
+
+
+uint32_t consigna[4];
+int modo_motor_actual;
+
+
+
 
 void setupBluetooth()
 {
@@ -109,6 +130,20 @@ void vescControl()
       Serial.print("input V = ");  Serial.println(UART.data.inpVoltage);
     }
   }
+}
+
+//telemetria BlHeli
+LeerTelemetria telemetria;
+
+void setupTelemetria()
+{
+  pSerial2.begin(115200, SERIAL_8N1, 16, 17);
+
+  while (!pSerial2) {
+    ;
+  }
+  telemetria.setSerialPort(&pSerial2);
+
 }
 
 void setupMPU9250()
@@ -205,15 +240,48 @@ void setup_pwmOut()
          
 }
 
-void calcular_pwmOut()
+void actualizar_pwmOut()
 {
    //servos[enum_rueda_derecha].write((100 + (35 * 1)) % 180);
- servos[enum_rueda_derecha].writeMicroseconds(leerCanales.valor(1) / 10);
+ servos[enum_rueda_derecha].writeMicroseconds(leerCanales.valor(1) / 8);
  
- servos[enum_rueda_izquierda].writeMicroseconds(leerCanales.valor(1) / 10);
- servos[enum_marcha].writeMicroseconds(leerCanales.valor(3) / 10);
- servos[enum_motor].writeMicroseconds(leerCanales.valor(2) / 10);
+ servos[enum_rueda_izquierda].writeMicroseconds(leerCanales.valor(1) / 8);
+ servos[enum_marcha].writeMicroseconds(leerCanales.valor(3) / 8);
+ servos[enum_motor].writeMicroseconds(leerCanales.valor(4) / 8);
  
+}
+
+void calcular_consignas(){
+
+//motor
+  switch (modo_motor_actual)
+  {
+    case enum_manual:
+       consigna[enum_rueda_derecha]=leerCanales.valor(1) / 8;
+       consigna[enum_rueda_izquierda]=leerCanales.valor(1) / 8;
+       consigna[enum_marcha]=leerCanales.valor(3) / 8;
+       consigna[enum_motor]=leerCanales.valor(4) / 8;
+       break;
+     case enum_sistema_salida:
+       consigna[enum_rueda_derecha]=leerCanales.valor(1) / 8;
+       consigna[enum_rueda_izquierda]=leerCanales.valor(1) / 8;
+       consigna[enum_marcha]=leerCanales.valor(3) / 8;
+       consigna[enum_motor]=1500;
+       break; 
+     case enum_semi_auto:
+       consigna[enum_rueda_derecha]=leerCanales.valor(1) / 8;
+       consigna[enum_rueda_izquierda]=leerCanales.valor(1) / 8;
+       consigna[enum_marcha]=leerCanales.valor(3) / 8;
+       consigna[enum_motor]=leerCanales.valor(4) / 8;
+       break; 
+     case enum_full_auto:
+       consigna[enum_rueda_derecha]=leerCanales.valor(1) / 8;
+       consigna[enum_rueda_izquierda]=leerCanales.valor(1) / 8;
+       consigna[enum_marcha]=leerCanales.valor(3) / 8;
+       consigna[enum_motor]=leerCanales.valor(4) / 8;
+       break;   
+    
+  }
 }
 
 
@@ -225,15 +293,17 @@ void setup()
 
   while (!Serial) {};
 
-  setupMPU9250();
+  //setupMPU9250();
 
-  //setupBluetooth();
+ // setupBluetooth();
 
-  setupVesc();
+  //setupVesc();
+ // setupTelemetria();
 
   setup_pwmIN();
 
   setup_pwmOut();
+
   
 }
 
@@ -252,7 +322,8 @@ void loop()
   
   if (rc_mpu_init) imuGetValues();
 
-  calcular_pwmOut();
+  //calcular_consignas();
+  actualizar_pwmOut();
   if (millis() > debug100ms) {
   debug100ms=millis()+1000;
    Serial.print("lul " ); Serial.print((int)leerCanales.valor(1)/10 ); Serial.print( ", " ); Serial.print((int)debugtiming_count );  Serial.println( "  " );
