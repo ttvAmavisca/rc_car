@@ -10,14 +10,20 @@
    1 conexion serie con PC o bluethoot para telemetria
 
 */
+
+
+#define SerialDebug false  // Set to true to get Serial output for debugging
+#define SerialDebugVESC false  // Set to true to get Serial output for debugging
+#define SerialDebugPWMIN false  // Set to true to get Serial output for debugging
+#define SerialDebugTelemetria true  // Set to true to get Serial output for debugging
+#define OUTPUT_TEAPOT false  // paquete teapot para ejemplo de fabricante IMU (intelsense)
+#define CON_BLUETOOTH false  // habilitar envio por bluetooth, nota las librerias ocupan mas de la mitad de memoria de programa normal
+
 //Libreria MPU9250, utilizando el DMP(mas lento pero valores filtrados)
 #include "src/MPU9250_DMP/MPU9250-DMP.h"
 
 //Libreria VESC
 #include "src/VescUart/VescUart.h"
-
-//Libreria Bluetooth ESP32
-#include "BluetoothSerial.h"
 
 //Lectura de Pwm usando RMT
 #include "src/LeerPWM_rmt/CanalesPwM.h"
@@ -25,24 +31,29 @@
 //Salidas PWM a 50hz usando ledc(hardware)
 #include "src/Servolib/ServoESP32.h"
 
-//Protocolo oneshot
-//#include "src/OneShot125/OneShot125.h"
-
-//LeerTelemetria
-#include "src/LeerTelemetria/LeerTelemetria.h"
-
-
-#if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
-#error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
+#if CON_BLUETOOTH
+  //Libreria Bluetooth ESP32
+  #include "BluetoothSerial.h"
+  #if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
+  #error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
+  #endif
+  
+  BluetoothSerial SerialBT;
 #endif
 
-BluetoothSerial SerialBT;
+//Comunicacion para configuracion y telemetria
+#include "src/Telemetria/Telemetria.h"
+Telemetria rc_Telemetria;
 
+//Datos de configuracion, guardado y cargado de memoria
+#include "src/Configuracion/Configuracion.h"
 
-#define SerialDebug false  // Set to true to get Serial output for debugging
-#define SerialDebugVESC false  // Set to true to get Serial output for debugging
-#define SerialDebugPWMIN false  // Set to true to get Serial output for debugging
-#define OUTPUT_TEAPOT false  // paquete teapot para ejemplo de fabricante IMU (intelsense)
+Configuracion rc_Configuracion;
+
+//RC car
+#include "src/rc_car_obj/Rc_car.h"
+Rc_car rc_car;
+
 
 uint64_t debug100ms=0;
 uint64_t debugtiming=0;
@@ -61,7 +72,6 @@ MPU9250_DMP imu;
 VescUart UART;
 
 
-
 //Servos
 Servo servos[4];
 enum e_servo {
@@ -70,7 +80,6 @@ enum e_servo {
     enum_marcha=2,
     enum_motor=3      
 };
-
 
 enum e_modo {
     enum_manual=0,
@@ -86,15 +95,13 @@ CanalesPwM leerCanales(35,34,33,32,36,39);
 uint32_t consigna[4];
 int modo_motor_actual;
 
-
-
-
+#if CON_BLUETOOTH
 void setupBluetooth()
 {
-  SerialBT.begin("RC_Car_telemetr,y"); //Bluetooth device name
+  SerialBT.begin("RC_Car_telemetry"); //Bluetooth device name
   Serial.println("bluetooth iniciado");
 }
-
+#endif
 
 String command;
 int throttle = 127;
@@ -132,19 +139,6 @@ void vescControl()
   }
 }
 
-//telemetria BlHeli
-LeerTelemetria telemetria;
-
-void setupTelemetria()
-{
-  pSerial2.begin(115200, SERIAL_8N1, 16, 17);
-
-  while (!pSerial2) {
-    ;
-  }
-  telemetria.setSerialPort(&pSerial2);
-
-}
 
 void setupMPU9250()
 {
@@ -176,49 +170,13 @@ void imuGetValues()
     // Use dmpUpdateFifo to update the ax, gx, mx, etc. values
     if ( imu.dmpUpdateFifo() == INV_SUCCESS)
     {
-      debugtiming_count  = esp_timer_get_time() -debugtiming;
+      debugtiming_count  = esp_timer_get_time() -debugtiming; // tiempo entre updates de IMU para calculos performance
       debugtiming= esp_timer_get_time();
       
       // computeEulerAngles can be used -- after updating the
       // quaternion values -- to estimate roll, pitch, and yaw
       imu.computeEulerAngles();
-
-      if (SerialDebug)
-      {
-        float q0 = imu.calcQuat(imu.qw);
-        float q1 = imu.calcQuat(imu.qx);
-        float q2 = imu.calcQuat(imu.qy);
-        float q3 = imu.calcQuat(imu.qz);
-
-        Serial.println("Q: " + String(q0, 4) + ", " +
-                           String(q1, 4) + ", " + String(q2, 4) +
-                           ", " + String(q3, 4));
-        Serial.println("R/P/Y: " + String(imu.roll) + ", "
-                           + String(imu.pitch) + ", " + String(imu.yaw));
-        Serial.println("Time: " + String(imu.time) + " ms");
-        Serial.println();
-      }
-
-
-#ifdef OUTPUT_TEAPOT
-      float q0 = imu.calcQuat(imu.qw)* 16384.0f;
-      float q1 = imu.calcQuat(imu.qx)* 16384.0f;
-      float q2 = imu.calcQuat(imu.qy)* 16384.0f;
-      float q3 = imu.calcQuat(imu.qz)* 16384.0f;
-
-      uint8_t teapotPacket[14] = { '$', 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0x00, 0x00, '\r', '\n' };
-      // display quaternion values in InvenSense Teapot demo format:
-      teapotPacket[2] =(uint8_t) (((uint32_t)(q0 ) & 0xFF00) >> 8); 
-      teapotPacket[3] =(uint8_t) ((uint32_t)(q0 ) & 0xFF); 
-      teapotPacket[4] =(uint8_t) (((uint32_t)(q1 ) & 0xFF00) >> 8);
-      teapotPacket[5] =(uint8_t) ((uint32_t)(q1 ) & 0xFF);
-      teapotPacket[6] =(uint8_t) (((uint32_t)(q2) & 0xFF00) >> 8);
-      teapotPacket[7] =(uint8_t) ((uint32_t)(q2) & 0xFF);
-      teapotPacket[8] =(uint8_t) (((uint32_t)(q3) & 0xFF00) >> 8);
-      teapotPacket[9] =(uint8_t) ((uint32_t)(q3 ) & 0xFF);
-      if(OUTPUT_TEAPOT) Serial.write(teapotPacket, 14);
-      teapotPacket[11]++; // packetCount, loops at 0xFF on purpose
-#endif
+      rc_Telemetria.NuevosValoresImu(); //Actualizar valores de telemetria
     }
   }
 }
@@ -240,18 +198,18 @@ void setup_pwmOut()
          
 }
 
-void actualizar_pwmOut()
+void calcular_pwmOut()
 {
    //servos[enum_rueda_derecha].write((100 + (35 * 1)) % 180);
- servos[enum_rueda_derecha].writeMicroseconds(leerCanales.valor(1) / 8);
- 
- servos[enum_rueda_izquierda].writeMicroseconds(leerCanales.valor(1) / 8);
- servos[enum_marcha].writeMicroseconds(leerCanales.valor(3) / 8);
- servos[enum_motor].writeMicroseconds(leerCanales.valor(4) / 8);
+ servos[enum_rueda_derecha].writeMicroseconds(consigna[enum_rueda_derecha]);
+ servos[enum_rueda_izquierda].writeMicroseconds(consigna[enum_rueda_izquierda]);
+ servos[enum_marcha].writeMicroseconds(consigna[enum_marcha]);
+ servos[enum_motor].writeMicroseconds(consigna[enum_motor]);
  
 }
 
-void calcular_consignas(){
+void calcular_consignas()
+{
 
 //motor
   switch (modo_motor_actual)
@@ -266,7 +224,7 @@ void calcular_consignas(){
        consigna[enum_rueda_derecha]=leerCanales.valor(1) / 8;
        consigna[enum_rueda_izquierda]=leerCanales.valor(1) / 8;
        consigna[enum_marcha]=leerCanales.valor(3) / 8;
-       consigna[enum_motor]=1500;
+       consigna[enum_motor]=1700;
        break; 
      case enum_semi_auto:
        consigna[enum_rueda_derecha]=leerCanales.valor(1) / 8;
@@ -278,7 +236,7 @@ void calcular_consignas(){
        consigna[enum_rueda_derecha]=leerCanales.valor(1) / 8;
        consigna[enum_rueda_izquierda]=leerCanales.valor(1) / 8;
        consigna[enum_marcha]=leerCanales.valor(3) / 8;
-       consigna[enum_motor]=leerCanales.valor(4) / 8;
+       //consigna[enum_motor]=leerCanales.valor(4) / 8;
        break;   
     
   }
@@ -287,24 +245,41 @@ void calcular_consignas(){
 
 void setup()
 {
+  //Leer configuracion de EEPROM
+  rc_Configuracion.getFromEEPROM();
+  
   Wire.begin();
   // TWBR = 12;  // 400 kbit/sec I2C speed
   Serial.begin(115200);
 
   while (!Serial) {};
 
-  //setupMPU9250();
+  setupMPU9250();
 
- // setupBluetooth();
-
-  //setupVesc();
- // setupTelemetria();
-
-  setup_pwmIN();
-
-  setup_pwmOut();
-
+//si se compila con bluetoht inicializarlo
+  #if CON_BLUETOOTH
+    setupBluetooth();
   
+    rc_Telemetria.setSerialPort(&SerialBT);
+  #else
+    rc_Telemetria.setSerialPort(&Serial);
+  #endif
+
+  //Inicializar objetos de telemetria
+  rc_Telemetria.setImu(& imu); //pasar objeto de imu a telemetria
+  rc_Telemetria.setCar(& rc_car); //pasar objeto de coche
+  rc_Telemetria.setConfig(& rc_Configuracion); //pasar objeto de config
+  rc_Telemetria.setDebug(SerialDebugTelemetria);
+
+  setupVesc(); //configurar conumicacion con VESC
+  
+  setup_pwmIN(); //Configurar lectura de pwm de entrada usando rmt
+
+  setup_pwmOut(); //configurar salidas PWM de control
+
+
+  modo_motor_actual=enum_full_auto; //modo actual para pruebas
+  consigna[enum_motor]=1000; // consigna inicial del motor para pruebas
 }
 
 
@@ -316,17 +291,21 @@ void loop()
 {
  
 
-  vescControl();
+  //vescControl();
 
   if (SerialDebugPWMIN)leerCanales.debugOutSerial(&Serial);
   
   if (rc_mpu_init) imuGetValues();
+  
+  calcular_consignas();
+  calcular_pwmOut();
 
-  //calcular_consignas();
-  actualizar_pwmOut();
+  rc_Telemetria.serialEvent2();//comprueba si hay nuevo mensaje bluetooth y responde
+  
   if (millis() > debug100ms) {
   debug100ms=millis()+1000;
-   Serial.print("lul " ); Serial.print((int)leerCanales.valor(1)/10 ); Serial.print( ", " ); Serial.print((int)debugtiming_count );  Serial.println( "  " );
+   Serial.print("lul " ); Serial.print(consigna[enum_motor] ); Serial.print( ", " ); Serial.print((int)debugtiming_count );  
+   Serial.println( "ºC  " );
  }
 
 }

@@ -1,17 +1,17 @@
-#ifndef _LeerTelemetria_h
-#define _LeerTelemetria_h
+#ifndef _LeerTelemetriaBlHeli_h
+#define _LeerTelemetriaBlHeli_h
 
 #include <Arduino.h>
 
 
-class LeerTelemetria
+class LeerTelemetriaBlHeli
 {
 	
 	public:
 		/**
 		 * @brief      Class constructor
 		 */
-		LeerTelemetria(void);
+		LeerTelemetriaBlHeli(void);
 
 		/**
 		 * @brief      Set the serial port for uart communication
