@@ -38,7 +38,11 @@ namespace rc_car_config
 
         delegate void rellenarCalibracionDelegado(float k1Recibido, float k2Recibido, float k3Recibido, float k4Recibido, byte modoRegulacion, byte vHigh, byte vLow);
 
-        enum ComandosBluetooth : int { Iniciar_Regulacion = 1, Parar_Regulacion, peticion_calibracion, Valores_Calibracion, Mover_Posicion, Cambiar_Tipo_Regula, PedirEstado };
+        enum ComandosBluetooth : int { auto_parametros = 1, auto_imu, peticion_coche,peticion_imu, peticion_calibracion, Valores_Calibracion, cambiar_modo, control_remoto, PedirEstado };
+
+        enum RespuestasBluetooth : int { auto_parametros = 1, auto_imu, datos_coche, datosn_imu, valores_calibracion, cambio_ok, cambiar_modo, control_remoto, estado, msg };
+
+
 
 
         public FormPrincipal()
@@ -46,7 +50,7 @@ namespace rc_car_config
             InitializeComponent();
             punteroEntrada = 0;
             conexionCorrecta = false;
-            bufferEntradaSerie = new byte[50];
+            bufferEntradaSerie = new byte[80];
             ultimposicion = new float[4];
         }
 
@@ -339,29 +343,29 @@ namespace rc_car_config
             if (bytesRecibidos <= 3) return (50 - 1); // aun no se ha recibido el ID de comando(NOTA al recibirlo en el array se suma por tanto el indice ha de ser 4 o mas para q este leido), suponer longitud maxima
 
 
-            byte comando = bufferEntradaSerie[2];
+            RespuestasBluetooth comando = (RespuestasBluetooth) bufferEntradaSerie[2];
 
 
             //todos los comandos basicos tienen un solo byte de datos
-            if (comando == 0 || comando == 3 || comando == 2) // recepcion estado
+            if (comando == RespuestasBluetooth.msg ||  comando == RespuestasBluetooth.auto_imu || comando == RespuestasBluetooth.auto_parametros || comando== RespuestasBluetooth.cambiar_modo || comando == RespuestasBluetooth.cambio_ok || comando == RespuestasBluetooth.control_remoto) // recepcion estado
             {
                 return 6;
             }
-            if (comando == 1) //recepcion datos
+            if (comando == RespuestasBluetooth.datos_coche) //recepcion datos
             {
-                return 28;
+                return 23;
             }
-            /*
-            if (comando == 2) //recepcion msg
+            
+            if (comando == RespuestasBluetooth.datosn_imu) //recepcion msg
             {
-                return 50;
+                return 58;
             }
-            */
-            if (comando == 4) //recepcion calibracion
+           
+            if (comando == RespuestasBluetooth.valores_calibracion) //recepcion calibracion
             {
                 return 24;
             }
-
+          
             return 0;
         }
 
@@ -395,36 +399,83 @@ namespace rc_car_config
         {
             int dato, nuevoEstado;
             float pitch, roll, yaw;
-            float rpmActual, ConsignaRPMActual;
-            float ConsignaDireccionActual, AnguloRuedaDerecha, AnguloRuedaIzquierda;
+            float ConsignaDireccionActual, ConsignaRPMActual,AnguloRuedaDerecha, AnguloRuedaIzquierda, ESC_VoltajeEntrada, ESC_rpmActual, ESC_avgMotorCurrent, ESC_avgInputCurrent, ESC_Dutycycle;
+            float[] velocidad = new float[3];
+            float[] aceleracion = new float[3];
+            float[] angulos = new float[4];
+            int posBuffer = 3;
 
-            byte comandoChar = bufferEntradaSerie[2];
+            RespuestasBluetooth comandoChar = (RespuestasBluetooth) bufferEntradaSerie[2];
             switch (comandoChar)
             {
-                case 0: //recepcion nuevo estado
+                case RespuestasBluetooth.estado: //recepcion nuevo estado
                     estadoSistema = bufferEntradaSerie[3];
 
                     LogearMSG(String.Format(string.Format("{0} {1}", "Recibido nuevo estado del sistema: ", estadoSistema)));
                     break;
-                case 1: //recepcion medida
-                    dato = (bufferEntradaSerie[3] & 0xff) | ((bufferEntradaSerie[4] & 0xff) << 8) | ((bufferEntradaSerie[5] & 0xff) << 16) | ((bufferEntradaSerie[6] & 0xff) << 24);
-                    pitch = (dato) / 1000.0f * 180.0f / (float)Math.PI;
-                    dato = (bufferEntradaSerie[7] & 0xff) | ((bufferEntradaSerie[8] & 0xff) << 8) | ((bufferEntradaSerie[9] & 0xff) << 16) | ((bufferEntradaSerie[10] & 0xff) << 24);
-                    roll = dato / 1000.0f * 180.0f / (float)Math.PI;
-                    nuevoEstado = bufferEntradaSerie[11];
+
+                case RespuestasBluetooth.datos_coche: //recepcion medida
+                    posBuffer = 3;
+                    dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
+                    ConsignaRPMActual = (dato) * 10.0f;
+                    dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8) ;
+                    ConsignaDireccionActual = dato / 100.0f;
+                    dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
+                    AnguloRuedaDerecha = dato ;
+                    dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
+                    AnguloRuedaIzquierda = dato;
+                    dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
+                    ESC_VoltajeEntrada = dato / 10.0f;
+                    dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
+                    ESC_rpmActual = dato * 10.0f;
+                    dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
+                    ESC_avgMotorCurrent = dato / 100.0f;
+                    dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
+                    ESC_avgInputCurrent = dato / 100.0f;
+                    dato = (bufferEntradaSerie[posBuffer++] & 0xff);
+                    ESC_Dutycycle = dato ;
 
 
-                    //LogearMSG(String.Format(string.Format("medida: {0} {1} {2} {3} {4}", bufferEntradaSerie[7], bufferEntradaSerie[8], bufferEntradaSerie[9], bufferEntradaSerie[10], posicion)));
-                    //procesaAnguloPlataforma(anguloPlataforma);
-                    //procesaAnguloPendulo(AnguloPendulo);
-
-                    if (nuevoEstado != estadoSistema)
-                    {
-
-                    }
+                    //LogearMSG(String.Format(string.Format("medida: {0} {1} {2} {3} {4}", bufferEntradaSerie[7], bufferEntradaSerie[8], bufferEntradaSerie[9], bufferEntradaSerie[10], ConsignaRPMActual)));
+    
 
                     break;
-                case 2: // Mensajes
+
+                case RespuestasBluetooth.datosn_imu: //recepcion medida
+                    posBuffer = 3;
+                    dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 16) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 24);
+                    pitch = (dato) / 1000.0f;
+                    dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 16) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 24);
+                    roll = dato / 1000.0f;
+                    dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 16) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 24);
+                    yaw = dato / 1000.0f;
+                    dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 16) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 24);
+                    velocidad[0] = dato / 1000.0f;
+                    dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 16) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 24);
+                    velocidad[1] = dato / 1000.0f;
+                    dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 16) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 24);
+                    velocidad[2] = dato / 1000.0f;
+                    dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 16) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 24);
+                    aceleracion[0] = dato / 1000.0f;
+                    dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 16) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 24);
+                    aceleracion[1] = dato / 1000.0f;
+                    dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 16) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 24);
+                    aceleracion[2] = dato / 1000.0f;
+                    dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 16) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 24);
+                    angulos[0] = dato / 1000.0f;
+                    dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 16) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 24);
+                    angulos[1] = dato / 1000.0f;
+                    dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 16) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 24);
+                    angulos[2] = dato / 1000.0f;
+                    dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 16) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 24);
+                    angulos[3] = dato / 1000.0f;
+
+                    //LogearMSG(String.Format(string.Format("medida: {0} {1} {2} {3} {4}", bufferEntradaSerie[7], bufferEntradaSerie[8], bufferEntradaSerie[9], bufferEntradaSerie[10], posicion)));
+
+
+
+                    break;
+                case RespuestasBluetooth.msg: // Mensajes
 
                     dato = bufferEntradaSerie[3];
                     if (dato == 1)
@@ -461,7 +512,7 @@ namespace rc_car_config
                     }
 
                     break;
-                case 4: //Valores de calibracion recibidos
+                case RespuestasBluetooth.valores_calibracion: //Valores de calibracion recibidos
                     float k1Recibido;
                     float k2Recibido;
                     float k3Recibido;
@@ -491,7 +542,8 @@ namespace rc_car_config
             tInicio = DateTime.Now;
             Abrir_puerto_serie();
             timerActualizar.Enabled = true;
-            //Enviar_comando_Bluetooth(ComandosBluetooth.PedirEstado, 1);
+            Enviar_comando_Bluetooth(ComandosBluetooth.auto_parametros, 1);
+            Enviar_comando_Bluetooth(ComandosBluetooth.auto_imu, 1);
         }
 
 
