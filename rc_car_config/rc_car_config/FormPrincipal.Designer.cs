@@ -29,21 +29,21 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            this.tabControlPrincipal = new System.Windows.Forms.TabControl();
+            this.tab0Graficas = new System.Windows.Forms.TabPage();
             this.chartDatos = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.buttonResetZoomGraf = new System.Windows.Forms.Button();
             this.buttonLimpiarGraf = new System.Windows.Forms.Button();
             this.buttonContinarGrafica = new System.Windows.Forms.Button();
             this.buttonDetenerGrafica = new System.Windows.Forms.Button();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tab1Visual = new System.Windows.Forms.TabPage();
             this.panelGrafico = new System.Windows.Forms.Panel();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.tab2Log = new System.Windows.Forms.TabPage();
             this.textLogEventos = new System.Windows.Forms.RichTextBox();
-            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.tab3Calibracion = new System.Windows.Forms.TabPage();
             this.textconfig6 = new System.Windows.Forms.TextBox();
             this.configL6 = new System.Windows.Forms.Label();
             this.textconfig5 = new System.Windows.Forms.TextBox();
@@ -94,55 +94,56 @@
             this.buttonConectar = new System.Windows.Forms.Button();
             this.serialPortBluetooth = new System.IO.Ports.SerialPort(this.components);
             this.timerActualizar = new System.Windows.Forms.Timer(this.components);
-            this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
+            this.tabControlPrincipal.SuspendLayout();
+            this.tab0Graficas.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartDatos)).BeginInit();
-            this.tabPage2.SuspendLayout();
-            this.tabPage3.SuspendLayout();
-            this.tabPage4.SuspendLayout();
+            this.tab1Visual.SuspendLayout();
+            this.tab2Log.SuspendLayout();
+            this.tab3Calibracion.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBoxTipoRegula.SuspendLayout();
             this.SuspendLayout();
             // 
-            // tabControl1
+            // tabControlPrincipal
             // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Controls.Add(this.tabPage3);
-            this.tabControl1.Controls.Add(this.tabPage4);
-            this.tabControl1.Location = new System.Drawing.Point(12, 42);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1211, 539);
-            this.tabControl1.TabIndex = 20;
+            this.tabControlPrincipal.Controls.Add(this.tab0Graficas);
+            this.tabControlPrincipal.Controls.Add(this.tab1Visual);
+            this.tabControlPrincipal.Controls.Add(this.tab2Log);
+            this.tabControlPrincipal.Controls.Add(this.tab3Calibracion);
+            this.tabControlPrincipal.Location = new System.Drawing.Point(12, 42);
+            this.tabControlPrincipal.Name = "tabControlPrincipal";
+            this.tabControlPrincipal.SelectedIndex = 0;
+            this.tabControlPrincipal.Size = new System.Drawing.Size(1211, 539);
+            this.tabControlPrincipal.TabIndex = 20;
+            this.tabControlPrincipal.SelectedIndexChanged += new System.EventHandler(this.TabControl1_SelectedIndexChanged);
             // 
-            // tabPage1
+            // tab0Graficas
             // 
-            this.tabPage1.Controls.Add(this.chartDatos);
-            this.tabPage1.Controls.Add(this.buttonResetZoomGraf);
-            this.tabPage1.Controls.Add(this.buttonLimpiarGraf);
-            this.tabPage1.Controls.Add(this.buttonContinarGrafica);
-            this.tabPage1.Controls.Add(this.buttonDetenerGrafica);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1203, 513);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Graficas";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.tab0Graficas.Controls.Add(this.chartDatos);
+            this.tab0Graficas.Controls.Add(this.buttonResetZoomGraf);
+            this.tab0Graficas.Controls.Add(this.buttonLimpiarGraf);
+            this.tab0Graficas.Controls.Add(this.buttonContinarGrafica);
+            this.tab0Graficas.Controls.Add(this.buttonDetenerGrafica);
+            this.tab0Graficas.Location = new System.Drawing.Point(4, 22);
+            this.tab0Graficas.Name = "tab0Graficas";
+            this.tab0Graficas.Padding = new System.Windows.Forms.Padding(3);
+            this.tab0Graficas.Size = new System.Drawing.Size(1203, 513);
+            this.tab0Graficas.TabIndex = 0;
+            this.tab0Graficas.Text = "Graficas";
+            this.tab0Graficas.UseVisualStyleBackColor = true;
             // 
             // chartDatos
             // 
-            chartArea5.Name = "ChartArea1";
-            this.chartDatos.ChartAreas.Add(chartArea5);
-            legend5.Name = "Legend1";
-            this.chartDatos.Legends.Add(legend5);
+            chartArea1.Name = "ChartArea1";
+            this.chartDatos.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.chartDatos.Legends.Add(legend1);
             this.chartDatos.Location = new System.Drawing.Point(4, 4);
             this.chartDatos.Name = "chartDatos";
-            series5.ChartArea = "ChartArea1";
-            series5.Legend = "Legend1";
-            series5.Name = "Series1";
-            this.chartDatos.Series.Add(series5);
+            series1.ChartArea = "ChartArea1";
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            this.chartDatos.Series.Add(series1);
             this.chartDatos.Size = new System.Drawing.Size(1196, 503);
             this.chartDatos.TabIndex = 14;
             this.chartDatos.Text = "grafica";
@@ -183,16 +184,16 @@
             this.buttonDetenerGrafica.Text = "detener";
             this.buttonDetenerGrafica.UseVisualStyleBackColor = true;
             // 
-            // tabPage2
+            // tab1Visual
             // 
-            this.tabPage2.Controls.Add(this.panelGrafico);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(1203, 513);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Visual";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            this.tab1Visual.Controls.Add(this.panelGrafico);
+            this.tab1Visual.Location = new System.Drawing.Point(4, 22);
+            this.tab1Visual.Name = "tab1Visual";
+            this.tab1Visual.Padding = new System.Windows.Forms.Padding(3);
+            this.tab1Visual.Size = new System.Drawing.Size(1203, 513);
+            this.tab1Visual.TabIndex = 1;
+            this.tab1Visual.Text = "Visual";
+            this.tab1Visual.UseVisualStyleBackColor = true;
             // 
             // panelGrafico
             // 
@@ -201,16 +202,16 @@
             this.panelGrafico.Size = new System.Drawing.Size(1051, 513);
             this.panelGrafico.TabIndex = 2;
             // 
-            // tabPage3
+            // tab2Log
             // 
-            this.tabPage3.Controls.Add(this.textLogEventos);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(1203, 513);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Log";
-            this.tabPage3.UseVisualStyleBackColor = true;
+            this.tab2Log.Controls.Add(this.textLogEventos);
+            this.tab2Log.Location = new System.Drawing.Point(4, 22);
+            this.tab2Log.Name = "tab2Log";
+            this.tab2Log.Padding = new System.Windows.Forms.Padding(3);
+            this.tab2Log.Size = new System.Drawing.Size(1203, 513);
+            this.tab2Log.TabIndex = 2;
+            this.tab2Log.Text = "Log";
+            this.tab2Log.UseVisualStyleBackColor = true;
             // 
             // textLogEventos
             // 
@@ -220,42 +221,42 @@
             this.textLogEventos.TabIndex = 0;
             this.textLogEventos.Text = "";
             // 
-            // tabPage4
+            // tab3Calibracion
             // 
-            this.tabPage4.Controls.Add(this.textconfig6);
-            this.tabPage4.Controls.Add(this.configL6);
-            this.tabPage4.Controls.Add(this.textconfig5);
-            this.tabPage4.Controls.Add(this.configL5);
-            this.tabPage4.Controls.Add(this.groupBox1);
-            this.tabPage4.Controls.Add(this.label16);
-            this.tabPage4.Controls.Add(this.configL18);
-            this.tabPage4.Controls.Add(this.configL17);
-            this.tabPage4.Controls.Add(this.configL16);
-            this.tabPage4.Controls.Add(this.configL15);
-            this.tabPage4.Controls.Add(this.textconfig18);
-            this.tabPage4.Controls.Add(this.textconfig17);
-            this.tabPage4.Controls.Add(this.textconfig16);
-            this.tabPage4.Controls.Add(this.textconfig15);
-            this.tabPage4.Controls.Add(this.label11);
-            this.tabPage4.Controls.Add(this.configL14);
-            this.tabPage4.Controls.Add(this.configL13);
-            this.tabPage4.Controls.Add(this.configL12);
-            this.tabPage4.Controls.Add(this.configL11);
-            this.tabPage4.Controls.Add(this.textconfig14);
-            this.tabPage4.Controls.Add(this.textconfig13);
-            this.tabPage4.Controls.Add(this.textconfig12);
-            this.tabPage4.Controls.Add(this.textconfig11);
-            this.tabPage4.Controls.Add(this.labelFirmareVer);
-            this.tabPage4.Controls.Add(this.labelFirmware);
-            this.tabPage4.Controls.Add(this.groupBoxTipoRegula);
-            this.tabPage4.Controls.Add(this.buttonGuardarCalibracion);
-            this.tabPage4.Location = new System.Drawing.Point(4, 22);
-            this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(1203, 513);
-            this.tabPage4.TabIndex = 3;
-            this.tabPage4.Text = "Calibrar";
-            this.tabPage4.UseVisualStyleBackColor = true;
+            this.tab3Calibracion.Controls.Add(this.textconfig6);
+            this.tab3Calibracion.Controls.Add(this.configL6);
+            this.tab3Calibracion.Controls.Add(this.textconfig5);
+            this.tab3Calibracion.Controls.Add(this.configL5);
+            this.tab3Calibracion.Controls.Add(this.groupBox1);
+            this.tab3Calibracion.Controls.Add(this.label16);
+            this.tab3Calibracion.Controls.Add(this.configL18);
+            this.tab3Calibracion.Controls.Add(this.configL17);
+            this.tab3Calibracion.Controls.Add(this.configL16);
+            this.tab3Calibracion.Controls.Add(this.configL15);
+            this.tab3Calibracion.Controls.Add(this.textconfig18);
+            this.tab3Calibracion.Controls.Add(this.textconfig17);
+            this.tab3Calibracion.Controls.Add(this.textconfig16);
+            this.tab3Calibracion.Controls.Add(this.textconfig15);
+            this.tab3Calibracion.Controls.Add(this.label11);
+            this.tab3Calibracion.Controls.Add(this.configL14);
+            this.tab3Calibracion.Controls.Add(this.configL13);
+            this.tab3Calibracion.Controls.Add(this.configL12);
+            this.tab3Calibracion.Controls.Add(this.configL11);
+            this.tab3Calibracion.Controls.Add(this.textconfig14);
+            this.tab3Calibracion.Controls.Add(this.textconfig13);
+            this.tab3Calibracion.Controls.Add(this.textconfig12);
+            this.tab3Calibracion.Controls.Add(this.textconfig11);
+            this.tab3Calibracion.Controls.Add(this.labelFirmareVer);
+            this.tab3Calibracion.Controls.Add(this.labelFirmware);
+            this.tab3Calibracion.Controls.Add(this.groupBoxTipoRegula);
+            this.tab3Calibracion.Controls.Add(this.buttonGuardarCalibracion);
+            this.tab3Calibracion.Location = new System.Drawing.Point(4, 22);
+            this.tab3Calibracion.Name = "tab3Calibracion";
+            this.tab3Calibracion.Padding = new System.Windows.Forms.Padding(3);
+            this.tab3Calibracion.Size = new System.Drawing.Size(1203, 513);
+            this.tab3Calibracion.TabIndex = 3;
+            this.tab3Calibracion.Text = "Calibrar";
+            this.tab3Calibracion.UseVisualStyleBackColor = true;
             // 
             // textconfig6
             // 
@@ -265,7 +266,6 @@
             this.textconfig6.Size = new System.Drawing.Size(100, 20);
             this.textconfig6.TabIndex = 54;
             this.textconfig6.Tag = "6";
-            this.textconfig6.Visible = false;
             // 
             // configL6
             // 
@@ -276,7 +276,6 @@
             this.configL6.TabIndex = 55;
             this.configL6.Tag = "6";
             this.configL6.Text = "K4";
-            this.configL6.Visible = false;
             // 
             // textconfig5
             // 
@@ -286,7 +285,6 @@
             this.textconfig5.Size = new System.Drawing.Size(100, 20);
             this.textconfig5.TabIndex = 52;
             this.textconfig5.Tag = "5";
-            this.textconfig5.Visible = false;
             // 
             // configL5
             // 
@@ -297,7 +295,6 @@
             this.configL5.TabIndex = 53;
             this.configL5.Tag = "5";
             this.configL5.Text = "K4";
-            this.configL5.Visible = false;
             // 
             // groupBox1
             // 
@@ -494,7 +491,6 @@
             this.label11.Size = new System.Drawing.Size(76, 13);
             this.label11.TabIndex = 41;
             this.label11.Text = "Parametros X1";
-            this.label11.Visible = false;
             // 
             // configL14
             // 
@@ -505,7 +501,6 @@
             this.configL14.TabIndex = 40;
             this.configL14.Tag = "14";
             this.configL14.Text = "K4";
-            this.configL14.Visible = false;
             // 
             // configL13
             // 
@@ -516,7 +511,6 @@
             this.configL13.TabIndex = 39;
             this.configL13.Tag = "13";
             this.configL13.Text = "K3";
-            this.configL13.Visible = false;
             // 
             // configL12
             // 
@@ -527,7 +521,6 @@
             this.configL12.TabIndex = 38;
             this.configL12.Tag = "12";
             this.configL12.Text = "K2";
-            this.configL12.Visible = false;
             // 
             // configL11
             // 
@@ -538,7 +531,6 @@
             this.configL11.TabIndex = 37;
             this.configL11.Tag = "11";
             this.configL11.Text = "K1";
-            this.configL11.Visible = false;
             // 
             // textconfig14
             // 
@@ -548,7 +540,6 @@
             this.textconfig14.Size = new System.Drawing.Size(100, 20);
             this.textconfig14.TabIndex = 36;
             this.textconfig14.Tag = "14";
-            this.textconfig14.Visible = false;
             // 
             // textconfig13
             // 
@@ -558,7 +549,6 @@
             this.textconfig13.Size = new System.Drawing.Size(100, 20);
             this.textconfig13.TabIndex = 35;
             this.textconfig13.Tag = "13";
-            this.textconfig13.Visible = false;
             // 
             // textconfig12
             // 
@@ -568,7 +558,6 @@
             this.textconfig12.Size = new System.Drawing.Size(100, 20);
             this.textconfig12.TabIndex = 34;
             this.textconfig12.Tag = "12";
-            this.textconfig12.Visible = false;
             // 
             // textconfig11
             // 
@@ -578,7 +567,6 @@
             this.textconfig11.Size = new System.Drawing.Size(100, 20);
             this.textconfig11.TabIndex = 33;
             this.textconfig11.Tag = "11";
-            this.textconfig11.Visible = false;
             // 
             // labelFirmareVer
             // 
@@ -734,6 +722,7 @@
             this.buttonGuardarCalibracion.TabIndex = 9;
             this.buttonGuardarCalibracion.Text = "Guardar";
             this.buttonGuardarCalibracion.UseVisualStyleBackColor = true;
+            this.buttonGuardarCalibracion.Click += new System.EventHandler(this.ButtonGuardarCalibracion_Click);
             // 
             // comboPuertoSerie
             // 
@@ -757,30 +746,30 @@
             // 
             this.serialPortBluetooth.BaudRate = 115200;
             this.serialPortBluetooth.PortName = "COM8";
-            this.serialPortBluetooth.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(this.serialPortBluetooth_DataReceived);
+            this.serialPortBluetooth.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(this.SerialPortBluetooth_DataReceived);
             // 
             // timerActualizar
             // 
-            this.timerActualizar.Tick += new System.EventHandler(this.timerActualizar_Tick);
+            this.timerActualizar.Tick += new System.EventHandler(this.TimerActualizar_Tick);
             // 
             // FormPrincipal
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1230, 584);
-            this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.tabControlPrincipal);
             this.Controls.Add(this.comboPuertoSerie);
             this.Controls.Add(this.buttonConectar);
             this.Name = "FormPrincipal";
             this.Text = "Configurador de Despacito";
             this.Load += new System.EventHandler(this.FormPrincipal_Load);
-            this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
+            this.tabControlPrincipal.ResumeLayout(false);
+            this.tab0Graficas.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.chartDatos)).EndInit();
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage3.ResumeLayout(false);
-            this.tabPage4.ResumeLayout(false);
-            this.tabPage4.PerformLayout();
+            this.tab1Visual.ResumeLayout(false);
+            this.tab2Log.ResumeLayout(false);
+            this.tab3Calibracion.ResumeLayout(false);
+            this.tab3Calibracion.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBoxTipoRegula.ResumeLayout(false);
@@ -791,17 +780,17 @@
 
         #endregion
 
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabControl tabControlPrincipal;
+        private System.Windows.Forms.TabPage tab0Graficas;
         private System.Windows.Forms.Button buttonResetZoomGraf;
         private System.Windows.Forms.Button buttonLimpiarGraf;
         private System.Windows.Forms.Button buttonContinarGrafica;
         private System.Windows.Forms.Button buttonDetenerGrafica;
-        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TabPage tab1Visual;
         private System.Windows.Forms.Panel panelGrafico;
-        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.TabPage tab2Log;
         private System.Windows.Forms.RichTextBox textLogEventos;
-        private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.TabPage tab3Calibracion;
         private System.Windows.Forms.Label labelFirmareVer;
         private System.Windows.Forms.Label labelFirmware;
         private System.Windows.Forms.GroupBox groupBoxTipoRegula;

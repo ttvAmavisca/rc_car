@@ -28,12 +28,13 @@ struct ConfiguracionDispositivo
 class Configuracion
 {
 	
-	//******************************* VERSION *********************************
+	//******************************* constantes *********************************
+	const int EEPROM_SIZE = 64;
 	const int DIRECCION_CONFIG = 0;
 	
 
 
-	//******************************* Datos *********************************
+	//******************************* VERSION *********************************
 	public:
 	
 		const uint8_t VERSION_H = 1; // version del programa

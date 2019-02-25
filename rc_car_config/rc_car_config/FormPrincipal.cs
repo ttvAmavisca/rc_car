@@ -30,15 +30,17 @@ namespace rc_car_config
         int bytesRecibidos;
         bool conexionCorrecta;
         bool dibujarDatos = true;
+
+        public List<TextBox> textCalibracion;
         
 
         delegate void logearMSGDelegado(string nuevoMsg);
         delegate void cambiarModoManualDelegado(Boolean estado);
         delegate void anadirPuntoDelegado(double x, double y, byte dato);
 
-        delegate void rellenarCalibracionDelegado(float k1Recibido, float k2Recibido, float k3Recibido, float k4Recibido, byte modoRegulacion, byte vHigh, byte vLow);
+        delegate void rellenarCalibracionDelegado(float[] parRecibido, int x, int verHight, int verLow);
 
-        enum ComandosBluetooth : int { auto_parametros = 1, auto_imu, peticion_coche,peticion_imu, peticion_calibracion, Valores_Calibracion, cambiar_modo, control_remoto, PedirEstado };
+        enum ComandosBluetooth : int { auto_parametros = 1, auto_imu, peticion_coche,peticion_imu, peticion_calibracion, nueva_calibracion, cambiar_modo, control_remoto, PedirEstado };
 
         enum RespuestasBluetooth : int { auto_parametros = 1, auto_imu, datos_coche, datosn_imu, valores_calibracion, cambio_ok, cambiar_modo, control_remoto, estado, msg };
 
@@ -52,6 +54,7 @@ namespace rc_car_config
             conexionCorrecta = false;
             bufferEntradaSerie = new byte[80];
             ultimposicion = new float[4];
+            textCalibracion = new List<TextBox>();
         }
 
         private void FormPrincipal_Load(object sender, EventArgs e)
@@ -63,6 +66,26 @@ namespace rc_car_config
             }
             if (ports.Length > 0) comboPuertoSerie.SelectedIndex = 0;
             //comboEnsayo.SelectedIndex = 0;
+
+            textCalibracion.Add(textconfig1);
+            textCalibracion.Add(textconfig2);
+            textCalibracion.Add(textconfig3);
+            textCalibracion.Add(textconfig4);
+            textCalibracion.Add(textconfig5);
+            textCalibracion.Add(textconfig6);
+            textCalibracion.Add(textconfig7);
+            textCalibracion.Add(textconfig8);
+            textCalibracion.Add(textconfig9);
+            textCalibracion.Add(textconfig10);
+            textCalibracion.Add(textconfig11);
+            textCalibracion.Add(textconfig12);
+            textCalibracion.Add(textconfig13);
+            textCalibracion.Add(textconfig14);
+            textCalibracion.Add(textconfig15);
+            textCalibracion.Add(textconfig16);
+            textCalibracion.Add(textconfig17);
+            textCalibracion.Add(textconfig18);
+          
 
             Iniciar_grafica();
             chartDatos.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
@@ -222,10 +245,10 @@ namespace rc_car_config
             return false;
         }
 
-        public bool Enviar_calibracion_Bluetooth(int K1_nueva, int K2_nueva, int K3_nueva, int K4_nueva)
+        public bool Enviar_calibracion_Bluetooth(int[] nuevaConfig)
         {
 
-            byte[] cadenaEnvio = new byte[21];
+            byte[] cadenaEnvio = new byte[61];
             if (serialPortBluetooth != null)
             {
                 if (serialPortBluetooth.IsOpen)
@@ -235,34 +258,28 @@ namespace rc_car_config
                         //comando
                         int indice = 0;
 
+                    
+                       
+
                         cadenaEnvio[indice++] = (byte)'$';
                         cadenaEnvio[indice++] = 2;
-                        cadenaEnvio[indice++] = (byte) ComandosBluetooth.Valores_Calibracion;
-                        //NOTA: K1 es un int de 32 bit( - 2,147,483,647 <-> 2,147,483,647)
-                        cadenaEnvio[indice++] = (byte)(K1_nueva & 0xFF);
-                        cadenaEnvio[indice++] = (byte)((K1_nueva & 0xff00) >> 8);
-                        cadenaEnvio[indice++] = (byte)((K1_nueva & 0xff0000) >> 16);
-                        cadenaEnvio[indice++] = (byte)((K1_nueva & 0xff000000) >> 24);
-                        //NOTA: K2 es un int de 32 bit( - 2,147,483,647 <-> 2,147,483,647)
-                        cadenaEnvio[indice++] = (byte)(K2_nueva & 0xFF);
-                        cadenaEnvio[indice++] = (byte)((K2_nueva & 0xff00) >> 8);
-                        cadenaEnvio[indice++] = (byte)((K2_nueva & 0xff0000) >> 16);
-                        cadenaEnvio[indice++] = (byte)((K2_nueva & 0xff000000) >> 24);
-                        //NOTA: K3 es un int de 32 bit( - 2,147,483,647 <-> 2,147,483,647)
-                        cadenaEnvio[indice++] = (byte)(K3_nueva & 0xFF);
-                        cadenaEnvio[indice++] = (byte)((K3_nueva & 0xff00) >> 8);
-                        cadenaEnvio[indice++] = (byte)((K3_nueva & 0xff0000) >> 16);
-                        cadenaEnvio[indice++] = (byte)((K3_nueva & 0xff000000) >> 24);
-                        //NOTA: K4 es un int de 32 bit( - 2,147,483,647 <-> 2,147,483,647)
-                        cadenaEnvio[indice++] = (byte)(K4_nueva & 0xFF);
-                        cadenaEnvio[indice++] = (byte)((K4_nueva & 0xff00) >> 8);
-                        cadenaEnvio[indice++] = (byte)((K4_nueva & 0xff0000) >> 16);
-                        cadenaEnvio[indice++] = (byte)((K4_nueva & 0xff000000) >> 24);
+                        cadenaEnvio[indice++] = (byte) ComandosBluetooth.nueva_calibracion;
+
+                        for (int indiPar = 1; indiPar <= 14; indiPar++)
+                        {
+                            //NOTA: K1 es un int de 32 bit( - 2,147,483,647 <-> 2,147,483,647
+                            cadenaEnvio[indice++] = (byte)(nuevaConfig[indiPar] & 0xFF);
+                            cadenaEnvio[indice++] = (byte)((nuevaConfig[indiPar] & 0xff00) >> 8);
+                            cadenaEnvio[indice++] = (byte)((nuevaConfig[indiPar] & 0xff0000) >> 16);
+                            cadenaEnvio[indice++] = (byte)((nuevaConfig[indiPar] & 0xff000000) >> 24);
+                        }
+
+                       
 
                         cadenaEnvio[indice++] = (byte)'\r';
                         cadenaEnvio[indice++] = (byte)'\n';
 
-                        serialPortBluetooth.Write(cadenaEnvio, 0, 21);
+                        serialPortBluetooth.Write(cadenaEnvio, 0,61);
                         return true;
                     }
                     catch (Exception ex)
@@ -363,13 +380,13 @@ namespace rc_car_config
            
             if (comando == RespuestasBluetooth.valores_calibracion) //recepcion calibracion
             {
-                return 24;
+                return 64;
             }
           
             return 0;
         }
 
-        private void RellenarCalibracion(float k1Recibido, float k2Recibido, float k3Recibido, float k4Recibido, byte modoRegulacion, byte vHigh, byte vLow)
+        private void RellenarCalibracion(float[] parRecibido, int x , int verHight, int verLow)
         {
 
             try
@@ -378,18 +395,30 @@ namespace rc_car_config
                 {
                     rellenarCalibracionDelegado delegado = new rellenarCalibracionDelegado(RellenarCalibracion);
                     //ya que el delegado invocará a CambiarProgreso debemos indicarle los parámetros 
-                    object[] parametros = new object[] { k1Recibido, k2Recibido, k3Recibido, k4Recibido, modoRegulacion, vHigh, vLow };
+                    object[] parametros = new object[] { parRecibido,  x,  verHight,  verLow };
                     //invocamos el método a través del mismo contexto del formulario (this) y enviamos los parámetros 
                     this.BeginInvoke(delegado, parametros);
                 }
                 else
                 {
-                    textconfig1.Text = k1Recibido.ToString(); textconfig1.Enabled = true;
-                    textconfig2.Text = k2Recibido.ToString(); textconfig2.Enabled = true;
-                    textconfig3.Text = k3Recibido.ToString(); textconfig3.Enabled = true;
-                    textconfig4.Text = k4Recibido.ToString(); textconfig4.Enabled = true;
+                    int valor1;
+
+                    foreach (TextBox t in textCalibracion)
+                    {
+                        if (int.TryParse(t.Tag.ToString(), out valor1))
+                        {
+                           if ((valor1 >= parRecibido.GetLowerBound(0)) && (valor1 <= parRecibido.GetUpperBound(0)))
+                            {
+                                t.Text= parRecibido[valor1].ToString();
+                                t.Enabled = true;
+                            }
+
+                        }
+
+                    }
+
                     buttonGuardarCalibracion.Enabled = true;
-                    labelFirmareVer.Text = vHigh.ToString() + "." + vLow.ToString();
+                    labelFirmareVer.Text = verHight.ToString() + "." + verLow.ToString();
                 }
             }
             catch { }
@@ -506,6 +535,14 @@ namespace rc_car_config
                     {
                         LogearMSG(String.Format(string.Format("{0} {1}", "Nueva configuracion de calibracion recibida", comandoChar)));
                     }
+                    else if (dato == 8)
+                    {
+                        LogearMSG(String.Format(string.Format("{0} {1}", "Activado envio automatico de datos del coche", comandoChar)));
+                    }
+                    else if (dato == 9)
+                    {
+                        LogearMSG(String.Format(string.Format("{0} {1}", "Activado envio automatico de telemetria", comandoChar)));
+                    }
                     else
                     {
                         LogearMSG(String.Format(string.Format("{0} {1}", "Recibido msg: ", dato)));
@@ -513,22 +550,20 @@ namespace rc_car_config
 
                     break;
                 case RespuestasBluetooth.valores_calibracion: //Valores de calibracion recibidos
-                    float k1Recibido;
-                    float k2Recibido;
-                    float k3Recibido;
-                    float k4Recibido;
+                    float[] parRecibido = new float[19];
+                    
+                    posBuffer = 3;
+                    for (int indiPar = 1; indiPar <=14; indiPar++) { 
+                        dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 16) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 24);
+                        parRecibido[indiPar] = (dato) / 1000.0f;
+                    }
+                    int x, verHight, verLow;
 
-                    dato = (bufferEntradaSerie[3] & 0xff) | ((bufferEntradaSerie[4] & 0xff) << 8) | ((bufferEntradaSerie[5] & 0xff) << 16) | ((bufferEntradaSerie[6] & 0xff) << 24);
-                    k1Recibido = (dato) / 1000.0f;
-                    dato = (bufferEntradaSerie[7] & 0xff) | ((bufferEntradaSerie[8] & 0xff) << 8) | ((bufferEntradaSerie[9] & 0xff) << 16) | ((bufferEntradaSerie[10] & 0xff) << 24);
-                    k2Recibido = dato / 1000.0f;
-                    dato = (bufferEntradaSerie[11] & 0xff) | ((bufferEntradaSerie[12] & 0xff) << 8) | ((bufferEntradaSerie[13] & 0xff) << 16) | ((bufferEntradaSerie[14] & 0xff) << 24);
-                    k3Recibido = (dato) / 1000.0f;
-                    dato = (bufferEntradaSerie[15] & 0xff) | ((bufferEntradaSerie[16] & 0xff) << 8) | ((bufferEntradaSerie[17] & 0xff) << 16) | ((bufferEntradaSerie[18] & 0xff) << 24);
-                    k4Recibido = dato / 1000.0f;
-
-
-                    RellenarCalibracion(k1Recibido, k2Recibido, k3Recibido, k4Recibido, bufferEntradaSerie[19], bufferEntradaSerie[20], bufferEntradaSerie[21]);
+                    x = (bufferEntradaSerie[posBuffer++] & 0xff);
+                    verHight = (bufferEntradaSerie[posBuffer++] & 0xff);
+                    verLow = (bufferEntradaSerie[posBuffer++] & 0xff);
+                    
+                    RellenarCalibracion(parRecibido, x, verHight, verLow);
                     break;
                 default:
                     LogearMSG(String.Format(string.Format("{0} {1}", "Error comando no reconocido recibido", comandoChar)));
@@ -548,7 +583,7 @@ namespace rc_car_config
 
 
 
-        private void timerActualizar_Tick(object sender, EventArgs e)
+        private void TimerActualizar_Tick(object sender, EventArgs e)
         {
             if (serialPortBluetooth != null)
             {
@@ -558,10 +593,10 @@ namespace rc_car_config
                     //textInfo1.Text = punteroEntrada.ToString() + ". Plat: " + ultimoAnguloPlataforma.ToString() + "º. Pen: " + ultimoAnguloPendulo.ToString() + "º. E: " + arrastrandoPendulo.ToString() + " X: " + calcularAnguloRaton().ToString() + " pt "+ultimoMouse.ToString() + "|||| "+ (ultimoMouse.X - (panelGrafico.Width / 2 - DIBUJO_2D_OFFSET + 5) -46).ToString() + "/"+ (-(ultimoMouse.Y - (panelGrafico.Height / 2)) -46).ToString();
                     //textInfo1.Refresh();
 
-                    if (panelGrafico.Visible && (tabControl1.SelectedIndex == 1)) panelGrafico.Invalidate();
+                    if (panelGrafico.Visible && (tabControlPrincipal.SelectedIndex == 1)) panelGrafico.Invalidate();
                     //panelGrafico.Refresh();
 
-                    if (chartDatos.Visible && (tabControl1.SelectedIndex == 0))
+                    if (chartDatos.Visible && (tabControlPrincipal.SelectedIndex == 0))
                     {
                         chartDatos.Series[0].Points.ResumeUpdates(); chartDatos.Series[1].Points.ResumeUpdates();
                         chartDatos.Invalidate(); //TODO: resume updates ya parece pintar igualmente sin necesidad de invalidad
@@ -578,7 +613,7 @@ namespace rc_car_config
             }
         }
 
-        private void serialPortBluetooth_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        private void SerialPortBluetooth_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             SerialPort sp = (SerialPort)sender;
             while (sp.BytesToRead > 0)
@@ -620,38 +655,43 @@ namespace rc_car_config
             }
         }
 
+        private void TabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (tabControlPrincipal.SelectedIndex == 3)
+            {
+                Enviar_comando_Bluetooth(ComandosBluetooth.peticion_calibracion, 1);
+            }
+        }
+
+       
+
         private void ButtonGuardarCalibracion_Click(object sender, EventArgs e)
         {
-            int K1_nueva = 0, K2_nueva = 0, K3_nueva = 0, K4_nueva = 0;
+            int[] nueva_config = new int[19];
+            int valor1;
             double valor;
+            bool error = false;
 
-            bool valido1 = double.TryParse(textconfig1.Text, out valor);
-            if (valido1)
+
+            foreach (TextBox t in textCalibracion)
             {
-                K1_nueva = (int)Math.Round(valor * 1000);
+                if(int.TryParse(t.Tag.ToString(), out valor1))
+                {
+                    if (double.TryParse(t.Text, out valor))
+                    {
+                        nueva_config[valor1] = (int)Math.Round(valor * 1000);
+                    } else
+                    {
+                        error = true;
+                    }
+                }
+
             }
+            
 
-            bool valido2 = double.TryParse(textconfig2.Text, out valor);
-            if (valido2)
+            if (!error)
             {
-                K2_nueva = (int)Math.Round(valor * 1000);
-            }
-
-            bool valido3 = double.TryParse(textconfig3.Text, out valor);
-            if (valido3)
-            {
-                K3_nueva = (int)Math.Round(valor * 1000);
-            }
-
-            bool valido4 = double.TryParse(textconfig4.Text, out valor);
-            if (valido4)
-            {
-                K4_nueva = (int)Math.Round(valor * 1000);
-            }
-
-            if (valido1 && valido2 && valido3 && valido4)
-            {
-                Enviar_calibracion_Bluetooth(K1_nueva, K2_nueva, K3_nueva, K4_nueva);
+                Enviar_calibracion_Bluetooth(nueva_config);
             }
             else
             {

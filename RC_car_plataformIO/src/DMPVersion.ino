@@ -237,8 +237,7 @@ void calcular_consignas()
 
 void setup()
 {
-  //Leer configuracion de EEPROM
-  rc_Configuracion.getFromEEPROM();
+  
 
   Wire.begin();
   // TWBR = 12;  // 400 kbit/sec I2C speed
@@ -270,6 +269,9 @@ void setup()
   setup_pwmIN(); //Configurar lectura de pwm de entrada usando rmt
 
   setup_pwmOut(); //configurar salidas PWM de control
+
+  //Leer configuracion de EEPROM
+  rc_Configuracion.getFromEEPROM();
 
   modo_motor_actual = enum_full_auto; //modo actual para pruebas
   consigna[enum_motor] = 1000;        // consigna inicial del motor para pruebas

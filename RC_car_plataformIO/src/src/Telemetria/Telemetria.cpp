@@ -261,7 +261,7 @@ void Telemetria::enviarDatosImu()
 void Telemetria::enviarConfiguracionActual()
 {
 
-  uint8_t datosEnvioSerial[24] = {'$', 0x02, RESPUESTAS_BLUETOOTH_VALORES_CALIBRA, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '\r', '\n'};
+  uint8_t datosEnvioSerial[64] = {'$', 0x02, RESPUESTAS_BLUETOOTH_VALORES_CALIBRA, 0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0,  0,  0, '\r', '\n'};
   int32_t tmpLong = round(rc_Configuracion->configActual.C1 * 1000.0);
   int posicion = 3;
   datosEnvioSerial[posicion++] = (tmpLong & 0xff);
@@ -287,12 +287,72 @@ void Telemetria::enviarConfiguracionActual()
   datosEnvioSerial[posicion++] = (tmpLong & 0xff0000) >> 16;
   datosEnvioSerial[posicion++] = (tmpLong & 0xff000000) >> 24;
 
+  tmpLong = round(rc_Configuracion->configActual.C5 * 1000.0);
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff);
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff00) >> 8;
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff0000) >> 16;
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff000000) >> 24;
+
+  tmpLong = round(rc_Configuracion->configActual.C6 * 1000.0);
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff);
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff00) >> 8;
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff0000) >> 16;
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff000000) >> 24;
+
+  tmpLong = round(rc_Configuracion->configActual.C7 * 1000.0);
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff);
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff00) >> 8;
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff0000) >> 16;
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff000000) >> 24;
+
+  tmpLong = round(rc_Configuracion->configActual.C8 * 1000.0);
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff);
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff00) >> 8;
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff0000) >> 16;
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff000000) >> 24;
+
+  tmpLong = round(rc_Configuracion->configActual.C9 * 1000.0);
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff);
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff00) >> 8;
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff0000) >> 16;
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff000000) >> 24;
+
+  tmpLong = round(rc_Configuracion->configActual.C10 * 1000.0);
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff);
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff00) >> 8;
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff0000) >> 16;
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff000000) >> 24;
+
+  tmpLong = round(rc_Configuracion->configActual.C11 * 1000.0);
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff);
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff00) >> 8;
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff0000) >> 16;
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff000000) >> 24;
+
+  tmpLong = round(rc_Configuracion->configActual.C12 * 1000.0);
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff);
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff00) >> 8;
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff0000) >> 16;
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff000000) >> 24;
+
+  tmpLong = round(rc_Configuracion->configActual.C13 * 1000.0);
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff);
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff00) >> 8;
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff0000) >> 16;
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff000000) >> 24;
+
+  tmpLong = round(rc_Configuracion->configActual.C14 * 1000.0);
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff);
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff00) >> 8;
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff0000) >> 16;
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff000000) >> 24;
+
   datosEnvioSerial[posicion++] = tipoControl;
 
   datosEnvioSerial[posicion++] = rc_Configuracion->VERSION_H;
   datosEnvioSerial[posicion++] = rc_Configuracion->VERSION_L;
 
-  serialPort->write(datosEnvioSerial, 24);
+  serialPort->write(datosEnvioSerial, 64);
 }
 
 //Evento/Interrupcion de recepcion por bluetooth
@@ -392,7 +452,7 @@ int Telemetria::reconocerComando()
   //calibracion
   if (comando == COMANDOS_BLUETOOTH_VALORES_CALIBRA)
   {
-    return 21;
+    return 61;
   }
 
   return 0;
@@ -416,6 +476,7 @@ void Telemetria::procesaComando()
   if (accion == COMANDOS_BLUETOOTH_ENVIO_PARAMETROS)
   {
     envio_parametros_coche = (datosRecibidosSerial[3] == 1);
+     enviarMensaje(8);
     procesado = true;
   }
 
@@ -423,6 +484,7 @@ void Telemetria::procesaComando()
   if (accion == COMANDOS_BLUETOOTH_ENVIO_IMU)
   {
     envio_parametros_imu = (datosRecibidosSerial[3] == 1);
+     enviarMensaje(9);
     procesado = true;
   }
 
@@ -451,38 +513,118 @@ void Telemetria::procesaComando()
   if (accion == COMANDOS_BLUETOOTH_VALORES_CALIBRA)
   {
     //TODO REFACTOR
+    int32_t tmpindice =3;
+    int32_t tmpNum1 = datosRecibidosSerial[tmpindice++];
+    int32_t tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 8);
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 16);
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    rc_Configuracion->configActual.C1 = (tmpNum1 | (tmpNum2 << 24))/1000.0;
 
-    int32_t valorLQRK1Recibida = datosRecibidosSerial[3];
-    int32_t tmpLong = datosRecibidosSerial[4] & 0xFF;
-    valorLQRK1Recibida = valorLQRK1Recibida | (tmpLong << 8);
-    tmpLong = datosRecibidosSerial[5] & 0xFF;
-    valorLQRK1Recibida = valorLQRK1Recibida | (tmpLong << 16);
-    tmpLong = datosRecibidosSerial[6] & 0xFF;
-    rc_Configuracion->configActual.C1 = valorLQRK1Recibida | (tmpLong << 24);
+    tmpNum1 = datosRecibidosSerial[tmpindice++];
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 8);
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 16);
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    rc_Configuracion->configActual.C2 = (tmpNum1 | (tmpNum2 << 24))/1000.0;
 
-    int32_t valorLQRK2Recibida = datosRecibidosSerial[7];
-    tmpLong = datosRecibidosSerial[8] & 0xFF;
-    valorLQRK2Recibida = valorLQRK2Recibida | (tmpLong << 8);
-    tmpLong = datosRecibidosSerial[9] & 0xFF;
-    valorLQRK2Recibida = valorLQRK2Recibida | (tmpLong << 16);
-    tmpLong = datosRecibidosSerial[10] & 0xFF;
-    rc_Configuracion->configActual.C2 = valorLQRK2Recibida | (tmpLong << 24);
+   tmpNum1 = datosRecibidosSerial[tmpindice++];
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 8);
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 16);
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    rc_Configuracion->configActual.C3 = (tmpNum1 | (tmpNum2 << 24))/1000.0;
 
-    int32_t valorLQRK3Recibida = datosRecibidosSerial[11];
-    tmpLong = datosRecibidosSerial[12] & 0xFF;
-    valorLQRK3Recibida = valorLQRK3Recibida | (tmpLong << 8);
-    tmpLong = datosRecibidosSerial[13] & 0xFF;
-    valorLQRK3Recibida = valorLQRK3Recibida | (tmpLong << 16);
-    tmpLong = datosRecibidosSerial[14] & 0xFF;
-    rc_Configuracion->configActual.C3 = valorLQRK3Recibida | (tmpLong << 24);
+    tmpNum1 = datosRecibidosSerial[tmpindice++];
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 8);
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 16);
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    rc_Configuracion->configActual.C4 = (tmpNum1 | (tmpNum2 << 24))/1000.0;
 
-    int32_t valorLQRK4Recibida = datosRecibidosSerial[15];
-    tmpLong = datosRecibidosSerial[16] & 0xFF;
-    valorLQRK4Recibida = valorLQRK4Recibida | (tmpLong << 8);
-    tmpLong = datosRecibidosSerial[17] & 0xFF;
-    valorLQRK4Recibida = valorLQRK4Recibida | (tmpLong << 16);
-    tmpLong = datosRecibidosSerial[18] & 0xFF;
-    rc_Configuracion->configActual.C4 = valorLQRK4Recibida | (tmpLong << 24);
+    tmpNum1 = datosRecibidosSerial[tmpindice++];
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 8);
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 16);
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    rc_Configuracion->configActual.C5 = (tmpNum1 | (tmpNum2 << 24))/1000.0;
+
+    tmpNum1 = datosRecibidosSerial[tmpindice++];
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 8);
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 16);
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    rc_Configuracion->configActual.C6 = (tmpNum1 | (tmpNum2 << 24))/1000.0;
+
+    tmpNum1 = datosRecibidosSerial[tmpindice++];
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 8);
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 16);
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    rc_Configuracion->configActual.C7 = (tmpNum1 | (tmpNum2 << 24))/1000.0;
+    
+    tmpNum1 = datosRecibidosSerial[tmpindice++];
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 8);
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 16);
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    rc_Configuracion->configActual.C8 = (tmpNum1 | (tmpNum2 << 24))/1000.0;
+
+    tmpNum1 = datosRecibidosSerial[tmpindice++];
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 8);
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 16);
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    rc_Configuracion->configActual.C9 = (tmpNum1 | (tmpNum2 << 24))/1000.0;
+
+    tmpNum1 = datosRecibidosSerial[tmpindice++];
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 8);
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 16);
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    rc_Configuracion->configActual.C10 =(tmpNum1 | (tmpNum2 << 24))/1000.0;
+
+    tmpNum1 = datosRecibidosSerial[tmpindice++];
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 8);
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 16);
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    rc_Configuracion->configActual.C11 = (tmpNum1 | (tmpNum2 << 24))/1000.0;
+
+    tmpNum1 = datosRecibidosSerial[tmpindice++];
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 8);
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 16);
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    rc_Configuracion->configActual.C12 = (tmpNum1 | (tmpNum2 << 24))/1000.0;
+
+    tmpNum1 = datosRecibidosSerial[tmpindice++];
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 8);
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 16);
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    rc_Configuracion->configActual.C13 = (tmpNum1 | (tmpNum2 << 24))/1000.0;
+
+    tmpNum1 = datosRecibidosSerial[tmpindice++];
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 8);
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 16);
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    rc_Configuracion->configActual.C14 = (tmpNum1 | (tmpNum2 << 24))/1000.0;
 
     rc_Configuracion->saveToEEPROM();
 
