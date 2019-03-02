@@ -17,7 +17,8 @@
 		#define COMANDOS_BLUETOOTH_CAMBIAR_MODO 7
 		#define COMANDOS_BLUETOOTH_CONTROL_REMOTO 8
 		#define COMANDOS_BLUETOOTH_PEDIR_ESTADO 9
-
+		#define COMANDOS_BLUETOOTH_PEDIR_VALORESMANUAL 10
+		#define COMANDOS_BLUETOOTH_NUEVOS_VALORESMANUAL 11
 
 		#define RESPUESTAS_BLUETOOTH_AUTO_PARAMETROS 1
 		#define RESPUESTAS_BLUETOOTH_AUTO_IMU 2
@@ -29,6 +30,7 @@
 		#define RESPUESTAS_BLUETOOTH_CONTROL_REMOTO 8
 		#define RESPUESTAS_BLUETOOTH_ESTADO 9
 		#define RESPUESTAS_BLUETOOTH_MSG 10
+		#define RESPUESTAS_BLUETOOTH_VALORESMANUAL 11
 		
 		#define LONGITUD_BUFFER_BLUETOOTH 70 
 		
@@ -57,10 +59,14 @@ class Telemetria
 		void enviarDatosImu();
 		
 		void enviarConfiguracionActual();
+		void enviarDatosManual();
 		void serialEvent2();
 		void NuevosValoresImu();
 		void setDebug(bool estado);
 		void autoTelemetria();
+
+		
+ 
 		
 	private: 
 
@@ -70,19 +76,11 @@ class Telemetria
 		int reconocerComando();
 		void enviarMensaje(uint8_t idMensaje);
 		void procesaComando();
-		float angulos[4];
-		float pitch, roll, yaw;
-		float rpmActual;
-		float ConsignaRPMActual;
-		float ConsignaDireccionActual;
-		float AnguloRuedaDerecha;
-		float AnguloRuedaIzquierda;
-		float velocidad[3];
-		float aceleracion[3];
-		uint8_t tipoControl;
-		uint8_t modo_motor_actual;
-		float  ESC_Dutycycle, ESC_avgInputCurrent,ESC_avgMotorCurrent,ESC_rpmActual,ESC_VoltajeEntrada;
- 
+
+		
+
+			
+		
 		
 		MPU9250_DMP * imu;
 		Rc_car * rc_car;

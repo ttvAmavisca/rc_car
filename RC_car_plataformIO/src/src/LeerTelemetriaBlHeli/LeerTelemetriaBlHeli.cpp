@@ -36,7 +36,6 @@ void LeerTelemetriaBlHeli::processData() {
 					
 
 			 if(crc8 != messageReceived[9]) message_error=true;
-			
 				new_messageRead = true;
 				b_counter=0;
 				timeEnd=esp_timer_get_time()+100000;
@@ -44,7 +43,7 @@ void LeerTelemetriaBlHeli::processData() {
 		}
 		
 		if (esp_timer_get_time() > timeEnd && b_counter > 0) {
-			Serial.print("timeout" );
+			
 			message_error=true;
 			b_counter=0;
 			timeEnd=esp_timer_get_time()+100000;

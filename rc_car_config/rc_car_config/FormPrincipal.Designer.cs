@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.tabControlPrincipal = new System.Windows.Forms.TabControl();
             this.tab0Graficas = new System.Windows.Forms.TabPage();
             this.chartDatos = new System.Windows.Forms.DataVisualization.Charting.Chart();
@@ -90,6 +90,20 @@
             this.configL9 = new System.Windows.Forms.Label();
             this.configL10 = new System.Windows.Forms.Label();
             this.buttonGuardarCalibracion = new System.Windows.Forms.Button();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.labelMAH = new System.Windows.Forms.Label();
+            this.labelTemperatura = new System.Windows.Forms.Label();
+            this.labelRPM = new System.Windows.Forms.Label();
+            this.labelCorriente = new System.Windows.Forms.Label();
+            this.labelVoltage = new System.Windows.Forms.Label();
+            this.trackBarMotor = new System.Windows.Forms.TrackBar();
+            this.trackBarMarcha = new System.Windows.Forms.TrackBar();
+            this.trackBarRuedaIzq = new System.Windows.Forms.TrackBar();
+            this.trackBarRuedaDer = new System.Windows.Forms.TrackBar();
+            this.buttonSemiControler = new System.Windows.Forms.Button();
+            this.buttonSemiAuto = new System.Windows.Forms.Button();
+            this.buttonAuto = new System.Windows.Forms.Button();
+            this.buttonManual = new System.Windows.Forms.Button();
             this.comboPuertoSerie = new System.Windows.Forms.ComboBox();
             this.buttonConectar = new System.Windows.Forms.Button();
             this.serialPortBluetooth = new System.IO.Ports.SerialPort(this.components);
@@ -102,6 +116,11 @@
             this.tab3Calibracion.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBoxTipoRegula.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarMotor)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarMarcha)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarRuedaIzq)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarRuedaDer)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControlPrincipal
@@ -110,6 +129,7 @@
             this.tabControlPrincipal.Controls.Add(this.tab1Visual);
             this.tabControlPrincipal.Controls.Add(this.tab2Log);
             this.tabControlPrincipal.Controls.Add(this.tab3Calibracion);
+            this.tabControlPrincipal.Controls.Add(this.tabPage1);
             this.tabControlPrincipal.Location = new System.Drawing.Point(12, 42);
             this.tabControlPrincipal.Name = "tabControlPrincipal";
             this.tabControlPrincipal.SelectedIndex = 0;
@@ -134,16 +154,16 @@
             // 
             // chartDatos
             // 
-            chartArea1.Name = "ChartArea1";
-            this.chartDatos.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.chartDatos.Legends.Add(legend1);
+            chartArea2.Name = "ChartArea1";
+            this.chartDatos.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            this.chartDatos.Legends.Add(legend2);
             this.chartDatos.Location = new System.Drawing.Point(4, 4);
             this.chartDatos.Name = "chartDatos";
-            series1.ChartArea = "ChartArea1";
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            this.chartDatos.Series.Add(series1);
+            series2.ChartArea = "ChartArea1";
+            series2.Legend = "Legend1";
+            series2.Name = "Series1";
+            this.chartDatos.Series.Add(series2);
             this.chartDatos.Size = new System.Drawing.Size(1196, 503);
             this.chartDatos.TabIndex = 14;
             this.chartDatos.Text = "grafica";
@@ -724,6 +744,150 @@
             this.buttonGuardarCalibracion.UseVisualStyleBackColor = true;
             this.buttonGuardarCalibracion.Click += new System.EventHandler(this.ButtonGuardarCalibracion_Click);
             // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.labelMAH);
+            this.tabPage1.Controls.Add(this.labelTemperatura);
+            this.tabPage1.Controls.Add(this.labelRPM);
+            this.tabPage1.Controls.Add(this.labelCorriente);
+            this.tabPage1.Controls.Add(this.labelVoltage);
+            this.tabPage1.Controls.Add(this.trackBarMotor);
+            this.tabPage1.Controls.Add(this.trackBarMarcha);
+            this.tabPage1.Controls.Add(this.trackBarRuedaIzq);
+            this.tabPage1.Controls.Add(this.trackBarRuedaDer);
+            this.tabPage1.Controls.Add(this.buttonSemiControler);
+            this.tabPage1.Controls.Add(this.buttonSemiAuto);
+            this.tabPage1.Controls.Add(this.buttonAuto);
+            this.tabPage1.Controls.Add(this.buttonManual);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(1203, 513);
+            this.tabPage1.TabIndex = 4;
+            this.tabPage1.Text = "tabPage1";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // labelMAH
+            // 
+            this.labelMAH.AutoSize = true;
+            this.labelMAH.Location = new System.Drawing.Point(271, 404);
+            this.labelMAH.Name = "labelMAH";
+            this.labelMAH.Size = new System.Drawing.Size(53, 13);
+            this.labelMAH.TabIndex = 12;
+            this.labelMAH.Text = "labelMAH";
+            // 
+            // labelTemperatura
+            // 
+            this.labelTemperatura.AutoSize = true;
+            this.labelTemperatura.Location = new System.Drawing.Point(271, 367);
+            this.labelTemperatura.Name = "labelTemperatura";
+            this.labelTemperatura.Size = new System.Drawing.Size(89, 13);
+            this.labelTemperatura.TabIndex = 11;
+            this.labelTemperatura.Text = "labelTemperatura";
+            // 
+            // labelRPM
+            // 
+            this.labelRPM.AutoSize = true;
+            this.labelRPM.Location = new System.Drawing.Point(271, 324);
+            this.labelRPM.Name = "labelRPM";
+            this.labelRPM.Size = new System.Drawing.Size(53, 13);
+            this.labelRPM.TabIndex = 10;
+            this.labelRPM.Text = "labelRPM";
+            // 
+            // labelCorriente
+            // 
+            this.labelCorriente.AutoSize = true;
+            this.labelCorriente.Location = new System.Drawing.Point(271, 284);
+            this.labelCorriente.Name = "labelCorriente";
+            this.labelCorriente.Size = new System.Drawing.Size(71, 13);
+            this.labelCorriente.TabIndex = 9;
+            this.labelCorriente.Text = "labelCorriente";
+            // 
+            // labelVoltage
+            // 
+            this.labelVoltage.AutoSize = true;
+            this.labelVoltage.Location = new System.Drawing.Point(271, 246);
+            this.labelVoltage.Name = "labelVoltage";
+            this.labelVoltage.Size = new System.Drawing.Size(65, 13);
+            this.labelVoltage.TabIndex = 8;
+            this.labelVoltage.Text = "labelVoltage";
+            // 
+            // trackBarMotor
+            // 
+            this.trackBarMotor.Location = new System.Drawing.Point(874, 176);
+            this.trackBarMotor.Maximum = 10000;
+            this.trackBarMotor.Name = "trackBarMotor";
+            this.trackBarMotor.Size = new System.Drawing.Size(295, 45);
+            this.trackBarMotor.TabIndex = 7;
+            this.trackBarMotor.Scroll += new System.EventHandler(this.TrackBarMotor_Scroll);
+            // 
+            // trackBarMarcha
+            // 
+            this.trackBarMarcha.Location = new System.Drawing.Point(472, 176);
+            this.trackBarMarcha.Maximum = 10000;
+            this.trackBarMarcha.Name = "trackBarMarcha";
+            this.trackBarMarcha.Size = new System.Drawing.Size(347, 45);
+            this.trackBarMarcha.TabIndex = 6;
+            this.trackBarMarcha.Scroll += new System.EventHandler(this.TrackBarMarcha_Scroll);
+            // 
+            // trackBarRuedaIzq
+            // 
+            this.trackBarRuedaIzq.Location = new System.Drawing.Point(250, 176);
+            this.trackBarRuedaIzq.Maximum = 10000;
+            this.trackBarRuedaIzq.Name = "trackBarRuedaIzq";
+            this.trackBarRuedaIzq.Size = new System.Drawing.Size(166, 45);
+            this.trackBarRuedaIzq.TabIndex = 5;
+            this.trackBarRuedaIzq.Scroll += new System.EventHandler(this.TrackBarRuedaIzq_Scroll);
+            // 
+            // trackBarRuedaDer
+            // 
+            this.trackBarRuedaDer.Location = new System.Drawing.Point(27, 176);
+            this.trackBarRuedaDer.Maximum = 10000;
+            this.trackBarRuedaDer.Name = "trackBarRuedaDer";
+            this.trackBarRuedaDer.Size = new System.Drawing.Size(176, 45);
+            this.trackBarRuedaDer.TabIndex = 4;
+            this.trackBarRuedaDer.Scroll += new System.EventHandler(this.TrackBarRuedaDer_Scroll);
+            // 
+            // buttonSemiControler
+            // 
+            this.buttonSemiControler.Location = new System.Drawing.Point(687, 35);
+            this.buttonSemiControler.Name = "buttonSemiControler";
+            this.buttonSemiControler.Size = new System.Drawing.Size(132, 37);
+            this.buttonSemiControler.TabIndex = 3;
+            this.buttonSemiControler.Text = "buttonSemiControler";
+            this.buttonSemiControler.UseVisualStyleBackColor = true;
+            this.buttonSemiControler.Click += new System.EventHandler(this.ButtonSemiControler_Click);
+            // 
+            // buttonSemiAuto
+            // 
+            this.buttonSemiAuto.Location = new System.Drawing.Point(544, 35);
+            this.buttonSemiAuto.Name = "buttonSemiAuto";
+            this.buttonSemiAuto.Size = new System.Drawing.Size(107, 37);
+            this.buttonSemiAuto.TabIndex = 2;
+            this.buttonSemiAuto.Text = "buttonSemiAuto";
+            this.buttonSemiAuto.UseVisualStyleBackColor = true;
+            this.buttonSemiAuto.Click += new System.EventHandler(this.ButtonSemiAuto_Click);
+            // 
+            // buttonAuto
+            // 
+            this.buttonAuto.Location = new System.Drawing.Point(398, 35);
+            this.buttonAuto.Name = "buttonAuto";
+            this.buttonAuto.Size = new System.Drawing.Size(107, 37);
+            this.buttonAuto.TabIndex = 1;
+            this.buttonAuto.Text = "buttonAuto";
+            this.buttonAuto.UseVisualStyleBackColor = true;
+            this.buttonAuto.Click += new System.EventHandler(this.ButtonAuto_Click);
+            // 
+            // buttonManual
+            // 
+            this.buttonManual.Location = new System.Drawing.Point(261, 35);
+            this.buttonManual.Name = "buttonManual";
+            this.buttonManual.Size = new System.Drawing.Size(107, 37);
+            this.buttonManual.TabIndex = 0;
+            this.buttonManual.Text = "buttonManual";
+            this.buttonManual.UseVisualStyleBackColor = true;
+            this.buttonManual.Click += new System.EventHandler(this.Button1_Click);
+            // 
             // comboPuertoSerie
             // 
             this.comboPuertoSerie.FormattingEnabled = true;
@@ -774,6 +938,12 @@
             this.groupBox1.PerformLayout();
             this.groupBoxTipoRegula.ResumeLayout(false);
             this.groupBoxTipoRegula.PerformLayout();
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarMotor)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarMarcha)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarRuedaIzq)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarRuedaDer)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -842,6 +1012,20 @@
         private System.Windows.Forms.TextBox textconfig5;
         private System.Windows.Forms.Label configL5;
         private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.Button buttonSemiControler;
+        private System.Windows.Forms.Button buttonSemiAuto;
+        private System.Windows.Forms.Button buttonAuto;
+        private System.Windows.Forms.Button buttonManual;
+        private System.Windows.Forms.TrackBar trackBarMotor;
+        private System.Windows.Forms.TrackBar trackBarMarcha;
+        private System.Windows.Forms.TrackBar trackBarRuedaIzq;
+        private System.Windows.Forms.TrackBar trackBarRuedaDer;
+        private System.Windows.Forms.Label labelMAH;
+        private System.Windows.Forms.Label labelTemperatura;
+        private System.Windows.Forms.Label labelRPM;
+        private System.Windows.Forms.Label labelCorriente;
+        private System.Windows.Forms.Label labelVoltage;
     }
 }
 

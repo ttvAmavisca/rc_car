@@ -6,32 +6,7 @@ Telemetria::Telemetria(void)
   envio_parametros_imu = false;
   //TODO: BORRAR
 //test para pruebas
-  angulos[0]=1;
-  angulos[1]=2;
-  angulos[2]=3;
-  angulos[3]=4;
-		pitch=5;
-    roll=6;
-    yaw=7;
-		rpmActual=8;
-		ConsignaRPMActual=9;
-		ConsignaDireccionActual=10;
-		AnguloRuedaDerecha=11;
-		AnguloRuedaIzquierda=12;
-		velocidad[0]=13;
-    velocidad[1]=14;
-    velocidad[2]=15;
-		aceleracion[0]=16;
-    aceleracion[1]=17;
-    aceleracion[2]=18;
-    tipoControl=19;
-    tipoControl=20;
-		ESC_Dutycycle=21;
-    ESC_avgInputCurrent=22;
-    ESC_avgMotorCurrent=23;
-    ESC_rpmActual=24;
-    ESC_VoltajeEntrada=25;
-
+  
 }
 
 void Telemetria::setSerialPort(Stream *port)
@@ -64,21 +39,21 @@ void Telemetria::NuevosValoresImu()
     float q2 = imu->calcQuat(imu->qy);
     float q3 = imu->calcQuat(imu->qz);
 
-    angulos[0] = q0;
-    angulos[1] = q1;
-    angulos[2] = q2;
-    angulos[3] = q3;
+    rc_car->angulos[0] = q0;
+    rc_car->angulos[1] = q1;
+    rc_car->angulos[2] = q2;
+    rc_car->angulos[3] = q3;
 
-    pitch = q3;
-    roll = q3;
-    yaw = q3;
-    velocidad[0] = q0;
-    velocidad[1] = q1;
-    velocidad[2] = q2;
+    rc_car->pitch = q3;
+    rc_car->roll = q3;
+    rc_car->yaw = q3;
+    rc_car->velocidad[0] = q0;
+    rc_car->velocidad[1] = q1;
+    rc_car->velocidad[2] = q2;
 
-    aceleracion[0] = q0;
-    aceleracion[1] = q1;
-    aceleracion[2] = q2;
+    rc_car->aceleracion[0] = q0;
+    rc_car->aceleracion[1] = q1;
+    rc_car->aceleracion[2] = q2;
 
     serialPort->println("Q: " + String(q0, 4) + ", " +
                         String(q1, 4) + ", " + String(q2, 4) +
@@ -127,45 +102,73 @@ void Telemetria::enviarDatosCoche()
   int posicion = 3;
   int16_t tmpshort = 0;
 
-  tmpshort = round(ConsignaRPMActual / 10); //16bit (64bit en C# PC). /10 en saltos de 10rpms es resolucion suficiente ya que el error de calculo es mayor
+  tmpshort = round(rc_car->consigna[Rc_car::enum_motor]); //16bit (64bit en C# PC). /10 en saltos de 10rpms es resolucion suficiente ya que el error de calculo es mayor
   datosEnvioSerial[posicion++] = (tmpshort & 0xff);
   datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
 
-  tmpshort = round(ConsignaDireccionActual * 100); //16bit (64bit en C# PC). X100 para enviar 2 decimales
+  tmpshort = round(rc_car->consigna[Rc_car::enum_rueda_derecha] ); //16bit (64bit en C# PC). X100 para enviar 2 decimales
   datosEnvioSerial[posicion++] = (tmpshort & 0xff);
   datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
 
-  tmpshort = round(AnguloRuedaDerecha ); //16bit (64bit en C# PC). X100 para enviar 2 decimales
+  tmpshort = round(rc_car->consigna[Rc_car::enum_rueda_izquierda] ); //16bit (64bit en C# PC). X100 para enviar 2 decimales
   datosEnvioSerial[posicion++] = (tmpshort & 0xff);
   datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
 
-  tmpshort = round(AnguloRuedaIzquierda); //16bit (64bit en C# PC). X100 para enviar 2 decimales
+  tmpshort = round(rc_car->consigna[Rc_car::enum_marcha]); //16bit (64bit en C# PC). X100 para enviar 2 decimales
   datosEnvioSerial[posicion++] = (tmpshort & 0xff);
   datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
 
-  tmpshort = round(ESC_VoltajeEntrada * 10); //16bit (64bit en C# PC). X10 para enviar 1 decimales
+  tmpshort = round(rc_car->ESC_VoltajeEntrada * 10); //16bit (64bit en C# PC). X10 para enviar 1 decimales
   datosEnvioSerial[posicion++] = (tmpshort & 0xff);
   datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
 
-  tmpshort = round(ESC_rpmActual / 10); //16bit (64bit en C# PC). /10 en saltos de 10rpms es resolucion suficiente ya que el error de calculo es mayor
+  tmpshort = round(rc_car->ESC_rpmActual / 10); //16bit (64bit en C# PC). /10 en saltos de 10rpms es resolucion suficiente ya que el error de calculo es mayor
   datosEnvioSerial[posicion++] = (tmpshort & 0xff);
   datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
 
-  tmpshort = round( ESC_avgMotorCurrent * 100); //16bit (64bit en C# PC). X100 para enviar 2 decimales
+  tmpshort = round(rc_car->ESC_avgMotorCurrent * 100); //16bit (64bit en C# PC). X100 para enviar 2 decimales
   datosEnvioSerial[posicion++] = (tmpshort & 0xff);
   datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
 
-  tmpshort = round( ESC_avgInputCurrent * 100); //16bit (64bit en C# PC). X100 para enviar 2 decimales
+  tmpshort = round(rc_car->ESC_avgInputCurrent * 100); //16bit (64bit en C# PC). X100 para enviar 2 decimales
   datosEnvioSerial[posicion++] = (tmpshort & 0xff);
   datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
 
-  tmpshort = round(ESC_Dutycycle *100); 
-  datosEnvioSerial[posicion++] = ESC_Dutycycle;
+  tmpshort = round(rc_car->ESC_Dutycycle *100); 
+  datosEnvioSerial[posicion++] = rc_car->ESC_Dutycycle;
 
 
-  datosEnvioSerial[posicion++] = tipoControl;
+  datosEnvioSerial[posicion++] = rc_car->modo_motor_actual;
 
   serialPort->write(datosEnvioSerial, 23);
+}
+
+void Telemetria::enviarDatosManual()
+{
+  uint8_t datosEnvioSerial[13] = {'$', 0x02, RESPUESTAS_BLUETOOTH_VALORESMANUAL, 0,0, 0,0 ,0,0 ,0,0, '\r', '\n'};
+
+  int posicion = 3;
+  int16_t tmpshort = 0;
+
+
+
+  tmpshort = rc_car->consigna_manual[Rc_car::enum_rueda_derecha]; //16bit (64bit en C# PC).  en saltos de 10rpms es resolucion suficiente ya que el error de calculo es mayor
+  datosEnvioSerial[posicion++] = (tmpshort & 0xff);
+  datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
+
+  tmpshort = rc_car->consigna_manual[Rc_car::enum_rueda_izquierda]; //16bit (64bit en C# PC).para enviar 2 decimales
+  datosEnvioSerial[posicion++] = (tmpshort & 0xff);
+  datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
+
+  tmpshort = rc_car->consigna_manual[Rc_car::enum_marcha]; //16bit (64bit en C# PC).  para enviar 2 decimales
+  datosEnvioSerial[posicion++] = (tmpshort & 0xff);
+  datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
+
+  tmpshort = rc_car->consigna_manual[Rc_car::enum_motor]; //16bit (64bit en C# PC). para enviar 2 decimales
+  datosEnvioSerial[posicion++] = (tmpshort & 0xff);
+  datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
+  
+  serialPort->write(datosEnvioSerial, 13);
 }
 
 void Telemetria::enviarDatosImu()
@@ -174,85 +177,85 @@ void Telemetria::enviarDatosImu()
 
   int posicion = 3;
 
-  int32_t tmpLong = round(pitch * 1000); //32bit (64bit en C# PC). X1000 para enviar 3 decimales, se podria enviar directamente en coma flotante
+  int32_t tmpLong = round(rc_car->pitch * 1000); //32bit (64bit en C# PC). X1000 para enviar 3 decimales, se podria enviar directamente en coma flotante
   datosEnvioSerial[posicion++] = (tmpLong & 0xff);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff00) >> 8);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff0000) >> 16);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff000000) >> 24);
 
-  tmpLong = round(roll * 1000); //32bit (64bit en C# PC). X1000 para enviar 3 decimales, se podria enviar directamente en coma flotante
+  tmpLong = round(rc_car->roll * 1000); //32bit (64bit en C# PC). X1000 para enviar 3 decimales, se podria enviar directamente en coma flotante
   datosEnvioSerial[posicion++] = (tmpLong & 0xff);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff00) >> 8);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff0000) >> 16);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff000000) >> 24);
 
-  tmpLong = round(yaw * 1000); //32bit (64bit en C# PC). X1000 para enviar 3 decimales, se podria enviar directamente en coma flotante
+  tmpLong = round(rc_car->yaw * 1000); //32bit (64bit en C# PC). X1000 para enviar 3 decimales, se podria enviar directamente en coma flotante
   datosEnvioSerial[posicion++] = (tmpLong & 0xff);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff00) >> 8);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff0000) >> 16);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff000000) >> 24);
 
-  tmpLong = round(velocidad[0] * 1000); //16bit (64bit en C# PC). /10 en saltos de 10rpms es resolucion suficiente ya que el error de calculo es mayor
+  tmpLong = round(rc_car->velocidad[0] * 1000); //16bit (64bit en C# PC). /10 en saltos de 10rpms es resolucion suficiente ya que el error de calculo es mayor
   datosEnvioSerial[posicion++] = (tmpLong & 0xff);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff00) >> 8);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff0000) >> 16);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff000000) >> 24);
 
-  tmpLong = round(velocidad[1] * 1000); //16bit (64bit en C# PC). /10 en saltos de 10rpms es resolucion suficiente ya que el error de calculo es mayor
+  tmpLong = round(rc_car->velocidad[1] * 1000); //16bit (64bit en C# PC). /10 en saltos de 10rpms es resolucion suficiente ya que el error de calculo es mayor
   datosEnvioSerial[posicion++] = (tmpLong & 0xff);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff00) >> 8);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff0000) >> 16);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff000000) >> 24);
 
-  tmpLong = round(velocidad[2] * 1000); //16bit (64bit en C# PC). X100 para enviar 2 decimales
+  tmpLong = round(rc_car->velocidad[2] * 1000); //16bit (64bit en C# PC). X100 para enviar 2 decimales
   datosEnvioSerial[posicion++] = (tmpLong & 0xff);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff00) >> 8);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff0000) >> 16);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff000000) >> 24);
 
-  tmpLong = round(aceleracion[0] * 1000); //16bit (64bit en C# PC). /10 en saltos de 10rpms es resolucion suficiente ya que el error de calculo es mayor
+  tmpLong = round(rc_car->aceleracion[0] * 1000); //16bit (64bit en C# PC). /10 en saltos de 10rpms es resolucion suficiente ya que el error de calculo es mayor
   datosEnvioSerial[posicion++] = (tmpLong & 0xff);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff00) >> 8);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff0000) >> 16);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff000000) >> 24);
 
-  tmpLong = round(aceleracion[1] * 1000); //16bit (64bit en C# PC). /10 en saltos de 10rpms es resolucion suficiente ya que el error de calculo es mayor
+  tmpLong = round(rc_car->aceleracion[1] * 1000); //16bit (64bit en C# PC). /10 en saltos de 10rpms es resolucion suficiente ya que el error de calculo es mayor
   datosEnvioSerial[posicion++] = (tmpLong & 0xff);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff00) >> 8);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff0000) >> 16);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff000000) >> 24);
 
-  tmpLong = round(aceleracion[2] * 1000); //16bit (64bit en C# PC). X100 para enviar 2 decimales
+  tmpLong = round(rc_car->aceleracion[2] * 1000); //16bit (64bit en C# PC). X100 para enviar 2 decimales
   datosEnvioSerial[posicion++] = (tmpLong & 0xff);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff00) >> 8);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff0000) >> 16);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff000000) >> 24);
 
-  tmpLong = round(angulos[0] * 1000); //16bit (64bit en C# PC). X100 para enviar 2 decimales
+  tmpLong = round(rc_car->angulos[0] * 1000); //16bit (64bit en C# PC). X100 para enviar 2 decimales
   datosEnvioSerial[posicion++] = (tmpLong & 0xff);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff00) >> 8);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff0000) >> 16);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff000000) >> 24);
 
-  tmpLong = round(angulos[1] * 1000); //16bit (64bit en C# PC). X100 para enviar 2 decimales
+  tmpLong = round(rc_car->angulos[1] * 1000); //16bit (64bit en C# PC). X100 para enviar 2 decimales
   datosEnvioSerial[posicion++] = (tmpLong & 0xff);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff00) >> 8);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff0000) >> 16);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff000000) >> 24);
 
-  tmpLong = round(angulos[2] * 1000); //16bit (64bit en C# PC). X100 para enviar 2 decimales
+  tmpLong = round(rc_car->angulos[2] * 1000); //16bit (64bit en C# PC). X100 para enviar 2 decimales
   datosEnvioSerial[posicion++] = (tmpLong & 0xff);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff00) >> 8);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff0000) >> 16);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff000000) >> 24);
 
-  tmpLong = round(angulos[3] * 1000); //16bit (64bit en C# PC). X100 para enviar 2 decimales
+  tmpLong = round(rc_car->angulos[3] * 1000); //16bit (64bit en C# PC). X100 para enviar 2 decimales
   datosEnvioSerial[posicion++] = (tmpLong & 0xff);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff00) >> 8);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff0000) >> 16);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff000000) >> 24);
 
-  datosEnvioSerial[posicion++] = tipoControl;
+  datosEnvioSerial[posicion++] = rc_car->tipoControl;
 
   serialPort->write(datosEnvioSerial, 58);
 }
@@ -347,7 +350,7 @@ void Telemetria::enviarConfiguracionActual()
   datosEnvioSerial[posicion++] = (tmpLong & 0xff0000) >> 16;
   datosEnvioSerial[posicion++] = (tmpLong & 0xff000000) >> 24;
 
-  datosEnvioSerial[posicion++] = tipoControl;
+  datosEnvioSerial[posicion++] = rc_car->tipoControl;
 
   datosEnvioSerial[posicion++] = rc_Configuracion->VERSION_H;
   datosEnvioSerial[posicion++] = rc_Configuracion->VERSION_L;
@@ -376,13 +379,13 @@ void Telemetria::serialEvent2()
       {
         //Compatibilidad con app por defecto android
         if (inByte == 'U')
-          modo_motor_actual = 0;
+          rc_car->modo_motor_actual = 0;
         if (inByte == 'D')
-          modo_motor_actual = 1;
+          rc_car->modo_motor_actual = 1;
         if (inByte == 'a')
-          tipoControl = 0;
+         rc_car-> tipoControl = 0;
         if (inByte == 'e')
-          tipoControl = 1;
+          rc_car->tipoControl = 1;
         return;
       }
       conexionCorrecta = true;
@@ -444,18 +447,20 @@ int Telemetria::reconocerComando()
     return (LONGITUD_BUFFER_BLUETOOTH - 1); // aun no se ha recibido el ID de comando(NOTA al recibirlo en el array se suma por tanto el indice ha de ser 4 o mas para q este leido), suponer longitud maxima
 
   uint8_t comando = datosRecibidosSerial[2];
-  //todos los comandos basicos tienen un solo byte de datos
-  if (comando != COMANDOS_BLUETOOTH_VALORES_CALIBRA)
-  {
-    return 6;
-  }
-  //calibracion
+
   if (comando == COMANDOS_BLUETOOTH_VALORES_CALIBRA)
   {
     return 61;
   }
 
-  return 0;
+  if (comando == COMANDOS_BLUETOOTH_NUEVOS_VALORESMANUAL)
+  {
+    return 13;
+  }
+
+ 
+ //todos los comandos basicos tienen un solo byte de datos
+  return 6;
 }
 
 //envia un mensage que se mostrara en el GUI
@@ -635,7 +640,8 @@ void Telemetria::procesaComando()
   //Manual move
   if (accion == COMANDOS_BLUETOOTH_CAMBIAR_MODO)
   {
-
+    rc_car->modo_motor_actual =datosRecibidosSerial[3];
+    enviarMensaje(11); //cambio modo OK
     procesado = true;
   }
 
@@ -644,11 +650,11 @@ void Telemetria::procesaComando()
   {
     if (datosRecibidosSerial[3] == 1)
     {
-      tipoControl = 1;
+      rc_car->tipoControl = 1;
     }
     else
     {
-      tipoControl = 0;
+      rc_car->tipoControl = 0;
     }
     procesado = true;
   }
@@ -657,6 +663,40 @@ void Telemetria::procesaComando()
   if (accion == COMANDOS_BLUETOOTH_PEDIR_ESTADO)
   {
     enviarDatosCoche(); // TODO: crear una respuesta mas detallada?
+    procesado = true;
+  }
+
+    //Peticion valores manual
+  if (accion == COMANDOS_BLUETOOTH_PEDIR_VALORESMANUAL)
+  {
+    enviarDatosManual(); 
+    procesado = true;
+  }
+
+    //Nuevos valores manuales
+  if (accion == COMANDOS_BLUETOOTH_NUEVOS_VALORESMANUAL)
+  {
+    int32_t tmpindice =3;
+    int32_t tmpNum1 = datosRecibidosSerial[tmpindice++];
+    int32_t tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 8);
+    rc_car->consigna_manual[Rc_car::enum_rueda_derecha] = tmpNum1;
+
+    tmpNum1 = datosRecibidosSerial[tmpindice++];
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 8);
+    rc_car->consigna_manual[Rc_car::enum_rueda_izquierda] = tmpNum1;
+
+    tmpNum1 = datosRecibidosSerial[tmpindice++];
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 8);
+    rc_car->consigna_manual[Rc_car::enum_marcha] = tmpNum1;
+
+    tmpNum1 = datosRecibidosSerial[tmpindice++];
+    tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
+    tmpNum1 = tmpNum1 | (tmpNum2 << 8);
+    rc_car->consigna_manual[Rc_car::enum_motor] = tmpNum1;
+    enviarMensaje(10); // Nuevos valores manuales
     procesado = true;
   }
 

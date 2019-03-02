@@ -23,7 +23,7 @@ void CanalesPwM::initCanales(){
     rmt_rx.rmt_mode = RMT_MODE_RX;
     rmt_rx.rx_config.filter_en = true;
     rmt_rx.rx_config.filter_ticks_thresh = 100;
-    rmt_rx.rx_config.idle_threshold = 1000000000;
+    rmt_rx.rx_config.idle_threshold = 50000u;
 	
    
    /***** CANAL 1 ******/

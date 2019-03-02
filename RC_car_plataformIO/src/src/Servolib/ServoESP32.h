@@ -40,10 +40,11 @@ class Servo {
     // are part of the public API; DO NOT CHANGE THEM.
     static const int MIN_ANGLE = 0;
     static const int MAX_ANGLE = 180;
+    static const int BITS_RESOLUTION = 16;
     
     static const int MIN_PULSE_WIDTH = 544;     // the shortest pulse sent to a servo
     static const int MAX_PULSE_WIDTH = 2400;     // the longest pulse sent to a servo
-    static const int MAX_COMPARE = ((1 << 16) - 1); // 65535
+    static const int MAX_COMPARE = ((1 << BITS_RESOLUTION) - 1); // 65535
     
     static const int TAU_MSEC = 20;
     static const int TAU_USEC = (TAU_MSEC * 1000);
@@ -99,7 +100,7 @@ public:
      *
      * @return true if successful, false when pin doesn't support PWM.
      */
-    bool attach(int pin, int channel = CHANNEL_NOT_ATTACHED, 
+    bool attach(int pin,  long us_period =TAU_USEC , int channel = CHANNEL_NOT_ATTACHED,
                 int minAngle = MIN_ANGLE, int maxAngle = MAX_ANGLE, 
                 int minPulseWidth = MIN_PULSE_WIDTH, int maxPulseWidth = MAX_PULSE_WIDTH);
 
@@ -170,17 +171,18 @@ public:
 private:
     void _resetFields(void);
 
-    int _usToDuty(int us)    { return map(us, 0, TAU_USEC, 0, MAX_COMPARE); }
-    int _dutyToUs(int duty)  { return map(duty, 0, MAX_COMPARE, 0, TAU_USEC); }
-    int _usToAngle(int us)   { return map(us, _minPulseWidth, _maxPulseWidth, _minAngle, _maxAngle); }
-    int _angleToUs(int angle){ return map(angle, _minAngle, _maxAngle, _minPulseWidth, _maxPulseWidth); }
+    uint32_t _usToDuty(uint32_t us)    { return map(us, 0, US_period[_channel], 0, MAX_COMPARE); }
+    uint32_t _dutyToUs(uint32_t duty)  { return map(duty, 0, MAX_COMPARE, 0, US_period[_channel]); }
+    uint32_t _usToAngle(uint32_t us)   { return map(us, _minPulseWidth, _maxPulseWidth, _minAngle, _maxAngle); }
+    uint32_t _angleToUs(uint32_t angle){ return map(angle, _minAngle, _maxAngle, _minPulseWidth, _maxPulseWidth); }
 
     static int channel_next_free;
 
     int _pin;
-    int _pulseWidthDuty;
+    uint32_t _pulseWidthDuty;
     int _channel;
-    int _min, _max;
-    int _minPulseWidth, _maxPulseWidth;
+    uint32_t _min, _max;
+    uint32_t _minPulseWidth, _maxPulseWidth;
     int _minAngle, _maxAngle;
+    uint32_t US_period[CHANNEL_MAX_NUM];
 };
