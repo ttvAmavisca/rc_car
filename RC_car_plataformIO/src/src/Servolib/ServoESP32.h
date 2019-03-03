@@ -137,6 +137,18 @@ public:
     void writeMicroseconds(int pulseUs);
 
     /**
+     * @brief Set the pulse width, in % from -100 to 100.
+     *
+     * @param pulseWidth Pulse width to send to the servomotor, in
+     *                   %. If outside of the range
+     *                   specified at attach() time, it is clamped to
+     *                   lie in that range.
+     *
+     * @see Servo::attach()
+     */
+    void writePerCent(float percent);
+
+    /**
      * Get the servomotor's target angle, in degrees.  This will
      * lie inside the range specified at attach() time.
      *

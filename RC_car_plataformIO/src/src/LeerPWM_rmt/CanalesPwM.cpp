@@ -34,6 +34,7 @@ void CanalesPwM::initCanales(){
     rmt_driver_install(rmt_rx.channel, 0, 0);
     rmt_rx_start(RMT_CHANNEL_0, 1);
 	
+	
 	/***** CANAL 2 ******/
 	rmt_rx.channel = RMT_CHANNEL_1; //canal(7 disponibles)
     rmt_rx.gpio_num =(gpio_num_t) PIN2; // pin

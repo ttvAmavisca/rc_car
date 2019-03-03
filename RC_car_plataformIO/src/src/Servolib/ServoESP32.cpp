@@ -63,6 +63,9 @@ bool Servo::attach(int pin, long us_period, int channel,
     _maxPulseWidth = maxPulseWidth;
     US_period[_channel] = us_period;
 
+    _min=map(_minPulseWidth,0,us_period,0,MAX_COMPARE);
+    _max=map(_maxPulseWidth,0,us_period,0,MAX_COMPARE);
+
     ledcSetup(_channel,round( 1.0/ ((float)US_period[_channel] /1000000.0)) , BITS_RESOLUTION); // channel X, 50 Hz, 16-bit depth
     
     ledcAttachPin(_pin, _channel);
@@ -93,6 +96,19 @@ void Servo::writeMicroseconds(int pulseUs) {
     }
     pulseUs = constrain(pulseUs, _minPulseWidth, _maxPulseWidth);
     _pulseWidthDuty = map(pulseUs, 0, US_period[_channel], 0, MAX_COMPARE);//_usToDuty(pulseUs);
+     
+    ledcWrite(_channel, _pulseWidthDuty);
+}
+
+void Servo::writePerCent(float percent) {
+    if (!attached()) {
+        return;
+    }
+    
+    percent = constrain(percent, -100, 100);
+    
+
+    _pulseWidthDuty =  (percent + 100.0f) * (MAX_COMPARE) / (200.f);
      
     ledcWrite(_channel, _pulseWidthDuty);
 }

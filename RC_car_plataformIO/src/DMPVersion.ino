@@ -22,10 +22,10 @@
 #include "src/MPU9250_DMP/MPU9250-DMP.h"
 
 //Libreria VESC
-//#include "src/VescUart/VescUart.h"
+#include "src/VescUart/VescUart.h"
 
 //Libreria BLHeli
-#include "src/LeerTelemetriaBlHeli/LeerTelemetriaBlHeli.h"
+//#include "src/LeerTelemetriaBlHeli/LeerTelemetriaBlHeli.h"
 
 //Lectura de Pwm usando RMT
 #include "src/LeerPWM_rmt/CanalesPwM.h"
@@ -69,9 +69,9 @@ MPU9250_DMP imu;
 
 /** Initiate VescUart class */
 
-//VescUart UART;
+VescUart UART;
 
-LeerTelemetriaBlHeli BLHeli;
+//LeerTelemetriaBlHeli BLHeli;
 
 
 //Servos
@@ -93,7 +93,7 @@ void setupBluetooth()
 String command;
 int throttle = 127;
 HardwareSerial pSerial2(2);
-
+/*
 void setupBLHeli(){
   pSerial2.begin(115200, SERIAL_8N1, 16, 17);
 
@@ -114,7 +114,7 @@ void BLHeliControl(){
   rc_car.ESC_avgMotorCurrent = BLHeli.temperatura;
 }
 
-/*
+*/
 void setupVesc()
 {
 
@@ -149,7 +149,7 @@ void vescControl()
     }
   }
 }
-*/
+
 
 void setupMPU9250()
 {
@@ -187,18 +187,27 @@ void imuGetValues()
       // quaternion values -- to estimate roll, pitch, and yaw
       imu.computeEulerAngles();
       rc_Telemetria.NuevosValoresImu(); //Actualizar valores de telemetria
-      Serial.print((int)esp_timer_get_time());Serial.print(" trolo ");Serial.print((int)imu.time);Serial.println("su");
+      
     }
-    else{
-      Serial.print((int)esp_timer_get_time());Serial.println("nu");
-    }
-  } else {Serial.print((int)esp_timer_get_time());Serial.println("nunu");}
+  }
 }
 
 void setup_pwmIN()
 {
   //Inicia los 6 canales de lectura PWM
   leerCanales.initCanales();
+}
+
+void leer_pwmIN()
+{
+  //Lee el ultimo valor leido desde memoria
+  rc_car.consigna_rc[Rc_car::enum_rc_canal_1]=leerCanales.valor(1) / 8;
+  rc_car.consigna_rc[Rc_car::enum_rc_canal_2]=leerCanales.valor(2) / 8;
+  rc_car.consigna_rc[Rc_car::enum_rc_canal_3]=leerCanales.valor(3) / 8;
+  rc_car.consigna_rc[Rc_car::enum_rc_canal_4]=leerCanales.valor(4) / 8;
+  rc_car.consigna_rc[Rc_car::enum_rc_canal_5]=leerCanales.valor(5) / 8;
+  rc_car.consigna_rc[Rc_car::enum_rc_canal_6]=leerCanales.valor(6) / 8;
+
 }
 
 void setup_pwmOut()
@@ -213,43 +222,10 @@ void setup_pwmOut()
 void calcular_pwmOut()
 {
   //servos[enum_rueda_derecha].write((100 + (35 * 1)) % 180);
-  servos[Rc_car::enum_rueda_derecha].writeMicroseconds(rc_car.consigna[Rc_car::enum_rueda_derecha]);
-  //servos[Rc_car::enum_rueda_izquierda].writeMicroseconds(rc_car.consigna[Rc_car::enum_rueda_izquierda]);
+  servos[Rc_car::enum_rueda_derecha].writeMicroseconds(1000 + rc_car.consigna[Rc_car::enum_rueda_derecha]);
+  servos[Rc_car::enum_rueda_izquierda].writeMicroseconds(rc_car.consigna[Rc_car::enum_rueda_izquierda]);
   servos[Rc_car::enum_marcha].writeMicroseconds(rc_car.consigna[Rc_car::enum_marcha]);
   servos[Rc_car::enum_motor].writeMicroseconds(rc_car.consigna[Rc_car::enum_motor]);
-}
-
-void calcular_consignas()
-{
-
-  //motor
-  switch (rc_car.modo_motor_actual)
-  {
-  case Rc_car::enum_manual:
-    rc_car.consigna[Rc_car::enum_rueda_derecha] = 1000+  rc_car.consigna_manual[Rc_car::enum_rueda_derecha]/10;
-    rc_car.consigna[Rc_car::enum_rueda_izquierda] = 1000  +  rc_car.consigna_manual[Rc_car::enum_rueda_izquierda]/10;
-    rc_car.consigna[Rc_car::enum_marcha] =1000 +  rc_car.consigna_manual[Rc_car::enum_marcha]/10;
-    rc_car.consigna[Rc_car::enum_motor] = 1000 + rc_car.consigna_manual[Rc_car::enum_motor]/10 ;
-    break;
-  case Rc_car::enum_sistema_salida:
-    rc_car.consigna[Rc_car::enum_rueda_derecha] = leerCanales.valor(1) / 8;
-    rc_car.consigna[Rc_car::enum_rueda_izquierda] = leerCanales.valor(1) / 8;
-    rc_car.consigna[Rc_car::enum_marcha] = leerCanales.valor(3) / 8;
-    rc_car.consigna[Rc_car::enum_motor] = 1700;
-    break;
-  case Rc_car::enum_semi_auto:
-    rc_car.consigna[Rc_car::enum_rueda_derecha] = leerCanales.valor(1) / 8;
-    rc_car.consigna[Rc_car::enum_rueda_izquierda] = leerCanales.valor(1) / 8;
-    rc_car.consigna[Rc_car::enum_marcha] = leerCanales.valor(3) / 8;
-    rc_car.consigna[Rc_car::enum_motor] = leerCanales.valor(4) / 8;
-    break;
-  case Rc_car::enum_full_auto:
-    rc_car.consigna[Rc_car::enum_rueda_derecha] = leerCanales.valor(1) / 8;
-    rc_car.consigna[Rc_car::enum_rueda_izquierda] = leerCanales.valor(1) / 8;
-    rc_car.consigna[Rc_car::enum_marcha] = leerCanales.valor(3) / 8;
-    //consigna[enum_motor]=leerCanales.valor(4) / 8;
-    break;
-  }
 }
 
 void setup()
@@ -281,8 +257,8 @@ void setup()
   rc_Telemetria.setConfig(&rc_Configuracion); //pasar objeto de config
   rc_Telemetria.setDebug(SerialDebugTelemetria);
 
-  //setupVesc(); //configurar conumicacion con VESC
-  setupBLHeli();
+  setupVesc(); //configurar conumicacion con VESC
+  //setupBLHeli();
 
   setup_pwmIN(); //Configurar lectura de pwm de entrada usando rmt
 
@@ -298,10 +274,11 @@ void setup()
 void loop()
 {
 
-  //vescControl();
-  BLHeliControl();
+  vescControl();
+  //BLHeliControl();
 
   
+  leer_pwmIN();
 
   if (SerialDebugPWMIN)
     leerCanales.debugOutSerial(&Serial);
@@ -309,7 +286,8 @@ void loop()
   if (rc_mpu_init)
     imuGetValues();
  
-  calcular_consignas();
+  rc_car.calcular_consignas();
+
   calcular_pwmOut();
 
   rc_Telemetria.serialEvent2(); //comprueba si hay nuevo mensaje bluetooth y responde
@@ -319,10 +297,5 @@ void loop()
   {
     debug100ms = millis() + 1000;
     rc_Telemetria.autoTelemetria(); // Si habilitado envia cada 100ms datos de telemetria
-    servos[Rc_car::enum_rueda_izquierda].writeMicroseconds(30);//rc_car.consigna[Rc_car::enum_rueda_izquierda]);
-    
-  } else {
-    
-    servos[Rc_car::enum_rueda_izquierda].writeMicroseconds(rc_car.consigna[Rc_car::enum_rueda_izquierda]);
   }
 }
