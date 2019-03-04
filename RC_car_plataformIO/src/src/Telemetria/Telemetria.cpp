@@ -102,19 +102,20 @@ void Telemetria::enviarDatosCoche()
   int posicion = 3;
   int16_t tmpshort = 0;
 
-  tmpshort = round(rc_car->consigna[Rc_car::enum_motor]); //16bit (64bit en C# PC). /10 en saltos de 10rpms es resolucion suficiente ya que el error de calculo es mayor
+  
+  tmpshort = round(rc_car->consigna[Rc_car::enum_motor]*10); //16bit (64bit en C# PC). /10 en saltos de 10rpms es resolucion suficiente ya que el error de calculo es mayor
   datosEnvioSerial[posicion++] = (tmpshort & 0xff);
   datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
 
-  tmpshort = round(rc_car->consigna[Rc_car::enum_rueda_derecha] ); //16bit (64bit en C# PC). X100 para enviar 2 decimales
+  tmpshort = round(rc_car->consigna[Rc_car::enum_rueda_derecha]*10); //16bit (64bit en C# PC). X100 para enviar 2 decimales
   datosEnvioSerial[posicion++] = (tmpshort & 0xff);
   datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
 
-  tmpshort = round(rc_car->consigna[Rc_car::enum_rueda_izquierda] ); //16bit (64bit en C# PC). X100 para enviar 2 decimales
+  tmpshort = round(rc_car->consigna[Rc_car::enum_rueda_izquierda] *10); //16bit (64bit en C# PC). X100 para enviar 2 decimales
   datosEnvioSerial[posicion++] = (tmpshort & 0xff);
   datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
 
-  tmpshort = round(rc_car->consigna[Rc_car::enum_marcha]); //16bit (64bit en C# PC). X100 para enviar 2 decimales
+  tmpshort = round(rc_car->consigna[Rc_car::enum_marcha] *10); //16bit (64bit en C# PC). X100 para enviar 2 decimales
   datosEnvioSerial[posicion++] = (tmpshort & 0xff);
   datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
 
@@ -152,19 +153,19 @@ void Telemetria::enviarDatosManual()
 
 
 
-  tmpshort = rc_car->consigna_manual[Rc_car::enum_rueda_derecha]; //16bit (64bit en C# PC).  en saltos de 10rpms es resolucion suficiente ya que el error de calculo es mayor
+  tmpshort = rc_car->consigna_manual[Rc_car::enum_rueda_derecha] * 10; //16bit (64bit en C# PC).  en saltos de 10rpms es resolucion suficiente ya que el error de calculo es mayor
   datosEnvioSerial[posicion++] = (tmpshort & 0xff);
   datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
 
-  tmpshort = rc_car->consigna_manual[Rc_car::enum_rueda_izquierda]; //16bit (64bit en C# PC).para enviar 2 decimales
+  tmpshort = rc_car->consigna_manual[Rc_car::enum_rueda_izquierda] * 10; //16bit (64bit en C# PC).para enviar 2 decimales
   datosEnvioSerial[posicion++] = (tmpshort & 0xff);
   datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
 
-  tmpshort = rc_car->consigna_manual[Rc_car::enum_marcha]; //16bit (64bit en C# PC).  para enviar 2 decimales
+  tmpshort = rc_car->consigna_manual[Rc_car::enum_marcha] * 10; //16bit (64bit en C# PC).  para enviar 2 decimales
   datosEnvioSerial[posicion++] = (tmpshort & 0xff);
   datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
 
-  tmpshort = rc_car->consigna_manual[Rc_car::enum_motor]; //16bit (64bit en C# PC). para enviar 2 decimales
+  tmpshort = rc_car->consigna_manual[Rc_car::enum_motor] * 10; //16bit (64bit en C# PC). para enviar 2 decimales
   datosEnvioSerial[posicion++] = (tmpshort & 0xff);
   datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
   
@@ -680,22 +681,22 @@ void Telemetria::procesaComando()
     int32_t tmpNum1 = datosRecibidosSerial[tmpindice++];
     int32_t tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
     tmpNum1 = tmpNum1 | (tmpNum2 << 8);
-    rc_car->consigna_manual[Rc_car::enum_rueda_derecha] = tmpNum1;
+    rc_car->consigna_manual[Rc_car::enum_rueda_derecha] = (tmpNum1 -5000.0f) / 50.0f;
 
     tmpNum1 = datosRecibidosSerial[tmpindice++];
     tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
     tmpNum1 = tmpNum1 | (tmpNum2 << 8);
-    rc_car->consigna_manual[Rc_car::enum_rueda_izquierda] = tmpNum1;
+    rc_car->consigna_manual[Rc_car::enum_rueda_izquierda] =  (tmpNum1 -5000.0f) / 50.0f;
 
     tmpNum1 = datosRecibidosSerial[tmpindice++];
     tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
     tmpNum1 = tmpNum1 | (tmpNum2 << 8);
-    rc_car->consigna_manual[Rc_car::enum_marcha] = tmpNum1;
+    rc_car->consigna_manual[Rc_car::enum_marcha] = (tmpNum1 -5000.0f) / 50.0f;
 
     tmpNum1 = datosRecibidosSerial[tmpindice++];
     tmpNum2 = datosRecibidosSerial[tmpindice++] & 0xFF;
     tmpNum1 = tmpNum1 | (tmpNum2 << 8);
-    rc_car->consigna_manual[Rc_car::enum_motor] = tmpNum1;
+    rc_car->consigna_manual[Rc_car::enum_motor] =  ( tmpNum1 -5000.0f) / 50.0f;
     enviarMensaje(10); // Nuevos valores manuales
     procesado = true;
   }

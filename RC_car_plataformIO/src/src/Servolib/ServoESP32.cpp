@@ -61,6 +61,8 @@ bool Servo::attach(int pin, long us_period, int channel,
     _maxAngle = maxAngle;
     _minPulseWidth = minPulseWidth;
     _maxPulseWidth = maxPulseWidth;
+    if(us_period <= 0)us_period=  TAU_USEC; //si se pasa valor menor que 0 usar defecto
+    if(us_period <= _maxPulseWidth)us_period=  _maxPulseWidth + 100 ; // el periodo numca puede ser menor que el pulso maximo
     US_period[_channel] = us_period;
 
     _min=map(_minPulseWidth,0,us_period,0,MAX_COMPARE);
@@ -108,8 +110,11 @@ void Servo::writePerCent(float percent) {
     percent = constrain(percent, -100, 100);
     
 
-    _pulseWidthDuty =  (percent + 100.0f) * (MAX_COMPARE) / (200.f);
-     
+    Serial.print(_channel); Serial.print( " d "); Serial.print( percent ); Serial.print( "% min" ); Serial.print( _min);Serial.print( " max " );Serial.print(_max );Serial.print( " valor " );
+    
+    _pulseWidthDuty = (percent + 100.0f) * (_max - _min) / (200.0f) + _min;
+     Serial.println( _pulseWidthDuty );
+
     ledcWrite(_channel, _pulseWidthDuty);
 }
 

@@ -85,6 +85,10 @@ uint64_t CanalesPwM::valor(uint8_t canal) {
 	
 	uint64_t returnvalue=0;
 	rmt_item32_t* item;
+
+	//TODO: Leer interrupcion para asegurar que se esta recibiendo nuevos datos
+	//if (REG_GET_BIT(RMT_INT_RAW_REG ,RMT_CH0_RX_END_INT_RAW) != 0 ) ; //leer bit de interrupcion de recepcion y borrarlo
+
 	switch(canal){
 	case 1:
 		item = (rmt_item32_t*) (RMT_CHANNEL_MEM(RMT_CHANNEL_0));

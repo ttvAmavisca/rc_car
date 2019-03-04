@@ -41,10 +41,12 @@ namespace rc_car_config
         delegate void rellenarCalibracionDelegado(float[] parRecibido, int x, int verHight, int verLow);
         delegate void rellenarValoresManualDelegado(int[] valoresManual);
 
+        delegate void nuevosValoresCocheDelegado(float ConsignaMarcha,float ConsignaRPMActual,float AnguloRuedaDerecha,float AnguloRuedaIzquierda,float ESC_VoltajeEntrada,float ESC_rpmActual,float ESC_avgMotorCurrent, float ESC_avgInputCurrent,float ESC_Dutycycle,float modo_actual);
+        delegate void nuevosValoresImuDelegado(float pitch, float roll, float yaw, float[] velocidad, float[] aceleracion, float[] angulos, int tipo_control);
 
-       
-            float pitch, roll, yaw;
-            float ConsignaDireccionActual, ConsignaRPMActual, AnguloRuedaDerecha, AnguloRuedaIzquierda, ESC_VoltajeEntrada, ESC_rpmActual, ESC_avgMotorCurrent, ESC_avgInputCurrent, ESC_Dutycycle, modo_actual, tipo_control;
+
+        float pitch, roll, yaw;
+            float ConsignaMarcha, ConsignaRPMActual, AnguloRuedaDerecha, AnguloRuedaIzquierda, ESC_VoltajeEntrada, ESC_rpmActual, ESC_avgMotorCurrent, ESC_avgInputCurrent, ESC_Dutycycle, modo_actual, tipo_control;
             float[] velocidad ;
             float[] aceleracion;
             float[] angulos;
@@ -537,13 +539,13 @@ namespace rc_car_config
                 case RespuestasBluetooth.datos_coche: //recepcion medida
                     posBuffer = 3;
                     dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
-                    ConsignaRPMActual = (dato) ;
+                    ConsignaRPMActual = (dato) /  10.0f ;
                     dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8) ;
-                    ConsignaDireccionActual = dato;
+                    ConsignaMarcha = dato / 10.0f;
                     dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
-                    AnguloRuedaDerecha = dato ;
+                    AnguloRuedaDerecha = dato / 10.0f;
                     dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
-                    AnguloRuedaIzquierda = dato;
+                    AnguloRuedaIzquierda = dato / 10.0f;
                     dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
                     ESC_VoltajeEntrada = dato / 10.0f;
                     dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
@@ -738,6 +740,8 @@ namespace rc_car_config
             }
         }
 
+        
+
         private void SerialPortBluetooth_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             SerialPort sp = (SerialPort)sender;
@@ -869,6 +873,42 @@ namespace rc_car_config
                 }
             }
             catch { }
+        }
+
+
+        private void RellenarValoresCoche(float ConsignaMarcha, float ConsignaRPMActual, float AnguloRuedaDerecha, float AnguloRuedaIzquierda, float ESC_VoltajeEntrada, float ESC_rpmActual, float ESC_avgMotorCurrent, float ESC_avgInputCurrent, float ESC_Dutycycle, float modo_actual)
+        {
+            if (trackBarRuedaDer.InvokeRequired)
+            {
+                nuevosValoresCocheDelegado delegado = new nuevosValoresCocheDelegado(RellenarValoresCoche);
+                //ya que el delegado invocará a CambiarProgreso debemos indicarle los parámetros 
+                object[] parametros = new object[] { ConsignaMarcha,  ConsignaRPMActual,  AnguloRuedaDerecha,  AnguloRuedaIzquierda,  ESC_VoltajeEntrada,  ESC_rpmActual,  ESC_avgMotorCurrent,  ESC_avgInputCurrent,  ESC_Dutycycle,  modo_actual };
+                //invocamos el método a través del mismo contexto del formulario (this) y enviamos los parámetros 
+                this.BeginInvoke(delegado, parametros);
+            }
+            else
+            {
+                
+
+            }
+
+        }
+        private void RellenarValoresIMU(float pitch, float roll, float yaw, float[] velocidad, float[] aceleracion, float[] angulos, int tipo_control)
+        {
+            if (trackBarRuedaDer.InvokeRequired)
+            {
+                nuevosValoresImuDelegado delegado = new nuevosValoresImuDelegado(RellenarValoresIMU);
+                //ya que el delegado invocará a CambiarProgreso debemos indicarle los parámetros 
+                object[] parametros = new object[] {  pitch,  roll,  yaw,  velocidad,  aceleracion, angulos,  tipo_control };
+                //invocamos el método a través del mismo contexto del formulario (this) y enviamos los parámetros 
+                this.BeginInvoke(delegado, parametros);
+            }
+            else
+            {
+
+
+            }
+           
         }
 
 

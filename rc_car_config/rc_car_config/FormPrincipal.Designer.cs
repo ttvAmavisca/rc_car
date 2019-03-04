@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.tabControlPrincipal = new System.Windows.Forms.TabControl();
             this.tab0Graficas = new System.Windows.Forms.TabPage();
             this.chartDatos = new System.Windows.Forms.DataVisualization.Charting.Chart();
@@ -91,6 +91,11 @@
             this.configL10 = new System.Windows.Forms.Label();
             this.buttonGuardarCalibracion = new System.Windows.Forms.Button();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.labelMAH = new System.Windows.Forms.Label();
             this.labelTemperatura = new System.Windows.Forms.Label();
             this.labelRPM = new System.Windows.Forms.Label();
@@ -154,16 +159,16 @@
             // 
             // chartDatos
             // 
-            chartArea2.Name = "ChartArea1";
-            this.chartDatos.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.chartDatos.Legends.Add(legend2);
+            chartArea1.Name = "ChartArea1";
+            this.chartDatos.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.chartDatos.Legends.Add(legend1);
             this.chartDatos.Location = new System.Drawing.Point(4, 4);
             this.chartDatos.Name = "chartDatos";
-            series2.ChartArea = "ChartArea1";
-            series2.Legend = "Legend1";
-            series2.Name = "Series1";
-            this.chartDatos.Series.Add(series2);
+            series1.ChartArea = "ChartArea1";
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            this.chartDatos.Series.Add(series1);
             this.chartDatos.Size = new System.Drawing.Size(1196, 503);
             this.chartDatos.TabIndex = 14;
             this.chartDatos.Text = "grafica";
@@ -746,6 +751,11 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.label5);
+            this.tabPage1.Controls.Add(this.label4);
+            this.tabPage1.Controls.Add(this.label3);
+            this.tabPage1.Controls.Add(this.label2);
+            this.tabPage1.Controls.Add(this.label1);
             this.tabPage1.Controls.Add(this.labelMAH);
             this.tabPage1.Controls.Add(this.labelTemperatura);
             this.tabPage1.Controls.Add(this.labelRPM);
@@ -764,8 +774,53 @@
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage1.Size = new System.Drawing.Size(1203, 513);
             this.tabPage1.TabIndex = 4;
-            this.tabPage1.Text = "tabPage1";
+            this.tabPage1.Text = "tab4Manual";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(452, 246);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(35, 13);
+            this.label5.TabIndex = 17;
+            this.label5.Text = "label5";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(994, 148);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(42, 13);
+            this.label4.TabIndex = 16;
+            this.label4.Text = "marcha";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(627, 148);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(33, 13);
+            this.label3.TabIndex = 15;
+            this.label3.Text = "motor";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(316, 148);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(79, 13);
+            this.label2.TabIndex = 14;
+            this.label2.Text = "rueda_derecha";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(96, 148);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(84, 13);
+            this.label1.TabIndex = 13;
+            this.label1.Text = "Rueda izquierda";
             // 
             // labelMAH
             // 
@@ -819,6 +874,7 @@
             this.trackBarMotor.Name = "trackBarMotor";
             this.trackBarMotor.Size = new System.Drawing.Size(295, 45);
             this.trackBarMotor.TabIndex = 7;
+            this.trackBarMotor.Value = 5000;
             this.trackBarMotor.Scroll += new System.EventHandler(this.TrackBarMotor_Scroll);
             // 
             // trackBarMarcha
@@ -828,6 +884,7 @@
             this.trackBarMarcha.Name = "trackBarMarcha";
             this.trackBarMarcha.Size = new System.Drawing.Size(347, 45);
             this.trackBarMarcha.TabIndex = 6;
+            this.trackBarMarcha.Value = 5000;
             this.trackBarMarcha.Scroll += new System.EventHandler(this.TrackBarMarcha_Scroll);
             // 
             // trackBarRuedaIzq
@@ -837,15 +894,18 @@
             this.trackBarRuedaIzq.Name = "trackBarRuedaIzq";
             this.trackBarRuedaIzq.Size = new System.Drawing.Size(166, 45);
             this.trackBarRuedaIzq.TabIndex = 5;
+            this.trackBarRuedaIzq.Value = 5000;
             this.trackBarRuedaIzq.Scroll += new System.EventHandler(this.TrackBarRuedaIzq_Scroll);
             // 
             // trackBarRuedaDer
             // 
+            this.trackBarRuedaDer.LargeChange = 1000;
             this.trackBarRuedaDer.Location = new System.Drawing.Point(27, 176);
             this.trackBarRuedaDer.Maximum = 10000;
             this.trackBarRuedaDer.Name = "trackBarRuedaDer";
             this.trackBarRuedaDer.Size = new System.Drawing.Size(176, 45);
             this.trackBarRuedaDer.TabIndex = 4;
+            this.trackBarRuedaDer.Value = 5000;
             this.trackBarRuedaDer.Scroll += new System.EventHandler(this.TrackBarRuedaDer_Scroll);
             // 
             // buttonSemiControler
@@ -1026,6 +1086,11 @@
         private System.Windows.Forms.Label labelRPM;
         private System.Windows.Forms.Label labelCorriente;
         private System.Windows.Forms.Label labelVoltage;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label5;
     }
 }
 

@@ -201,31 +201,31 @@ void setup_pwmIN()
 void leer_pwmIN()
 {
   //Lee el ultimo valor leido desde memoria
-  rc_car.consigna_rc[Rc_car::enum_rc_canal_1]=leerCanales.valor(1) / 8;
-  rc_car.consigna_rc[Rc_car::enum_rc_canal_2]=leerCanales.valor(2) / 8;
-  rc_car.consigna_rc[Rc_car::enum_rc_canal_3]=leerCanales.valor(3) / 8;
-  rc_car.consigna_rc[Rc_car::enum_rc_canal_4]=leerCanales.valor(4) / 8;
-  rc_car.consigna_rc[Rc_car::enum_rc_canal_5]=leerCanales.valor(5) / 8;
-  rc_car.consigna_rc[Rc_car::enum_rc_canal_6]=leerCanales.valor(6) / 8;
+  rc_car.consigna_rc[Rc_car::enum_rc_canal_1]=(leerCanales.valor(1) / 8);
+  rc_car.consigna_rc[Rc_car::enum_rc_canal_2]=(leerCanales.valor(2) / 8);
+  rc_car.consigna_rc[Rc_car::enum_rc_canal_3]=(leerCanales.valor(3) / 8);
+  rc_car.consigna_rc[Rc_car::enum_rc_canal_4]=(leerCanales.valor(4) / 8);
+  rc_car.consigna_rc[Rc_car::enum_rc_canal_5]=(leerCanales.valor(5) / 8);
+  rc_car.consigna_rc[Rc_car::enum_rc_canal_6]=(leerCanales.valor(6) / 8);
 
 }
 
 void setup_pwmOut()
 {
   //asignar pines de salida y inicializar canales
-  servos[Rc_car::enum_rueda_derecha].attach(25);
-  servos[Rc_car::enum_rueda_izquierda].attach(26,5000,-1,0,180,0,5000);
-  servos[Rc_car::enum_marcha].attach(27);
-  servos[Rc_car::enum_motor].attach(14);
+  servos[Rc_car::enum_rueda_derecha].attach(25,-1,-1,0,180,1000,2000);
+  servos[Rc_car::enum_rueda_izquierda].attach(26,5000,-1,0,180,1000,2000);
+  servos[Rc_car::enum_marcha].attach(27,-1,-1,0,180,1000,2000);
+  servos[Rc_car::enum_motor].attach(14,-1,-1,0,180,1000,2000);
 }
 
 void calcular_pwmOut()
 {
   //servos[enum_rueda_derecha].write((100 + (35 * 1)) % 180);
-  servos[Rc_car::enum_rueda_derecha].writeMicroseconds(1000 + rc_car.consigna[Rc_car::enum_rueda_derecha]);
-  servos[Rc_car::enum_rueda_izquierda].writeMicroseconds(rc_car.consigna[Rc_car::enum_rueda_izquierda]);
-  servos[Rc_car::enum_marcha].writeMicroseconds(rc_car.consigna[Rc_car::enum_marcha]);
-  servos[Rc_car::enum_motor].writeMicroseconds(rc_car.consigna[Rc_car::enum_motor]);
+  servos[Rc_car::enum_rueda_derecha].writePerCent(rc_car.consigna[Rc_car::enum_rueda_derecha]);
+  servos[Rc_car::enum_rueda_izquierda].writePerCent(rc_car.consigna[Rc_car::enum_rueda_izquierda]);
+  servos[Rc_car::enum_marcha].writePerCent(rc_car.consigna[Rc_car::enum_marcha]);
+  servos[Rc_car::enum_motor].writePerCent(rc_car.consigna[Rc_car::enum_motor]);
 }
 
 void setup()
@@ -293,9 +293,9 @@ void loop()
   rc_Telemetria.serialEvent2(); //comprueba si hay nuevo mensaje bluetooth y responde
 
 
-  if (millis() > debug100ms)
+  if (esp_timer_get_time() > debug100ms)
   {
-    debug100ms = millis() + 1000;
+    debug100ms = esp_timer_get_time() + 1000000ul;
     rc_Telemetria.autoTelemetria(); // Si habilitado envia cada 100ms datos de telemetria
   }
 }

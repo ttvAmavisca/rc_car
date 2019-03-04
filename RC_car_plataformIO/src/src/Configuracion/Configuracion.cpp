@@ -39,10 +39,10 @@ bool Configuracion::getFromEEPROM(void){
    
     //Config no encontrada, reinicializar
 	  saveToEEPROM();
-    
+    return false;
   } else {
     //lectura correcta existente
-    
+    return true;
   }
 }
 

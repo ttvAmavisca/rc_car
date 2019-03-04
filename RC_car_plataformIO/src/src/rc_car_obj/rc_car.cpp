@@ -3,46 +3,46 @@
 
 Rc_car::Rc_car(void){
 	angulos[0]=1;
-    angulos[1]=2;
-    angulos[2]=3;
-    angulos[3]=4;
-    pitch=5;
-    roll=6;
-    yaw=7;
-    rpmActual=8;
-    
-    
-    velocidad[0]=13;
-    velocidad[1]=14;
-    velocidad[2]=15;
-    aceleracion[0]=16;
-    aceleracion[1]=17;
-    aceleracion[2]=18;
-    tipoControl=19;
-   
-    ESC_Dutycycle=21;
-    ESC_avgInputCurrent=22;
-    ESC_avgMotorCurrent=23;
-    ESC_rpmActual=24;
-    ESC_VoltajeEntrada=25;
+  angulos[1]=2;
+  angulos[2]=3;
+  angulos[3]=4;
+  pitch=5;
+  roll=6;
+  yaw=7;
+  rpmActual=8;
+  
+  
+  velocidad[0]=13;
+  velocidad[1]=14;
+  velocidad[2]=15;
+  aceleracion[0]=16;
+  aceleracion[1]=17;
+  aceleracion[2]=18;
+  tipoControl=19;
+  
+  ESC_Dutycycle=21;
+  ESC_avgInputCurrent=22;
+  ESC_avgMotorCurrent=23;
+  ESC_rpmActual=24;
+  ESC_VoltajeEntrada=25;
 
-    consigna[enum_rueda_derecha]=9;
-    consigna[enum_rueda_izquierda]=10;
-    consigna[enum_marcha]=11;
-    consigna[enum_motor]=12;
+  consigna[enum_rueda_derecha]=9;
+  consigna[enum_rueda_izquierda]=10;
+  consigna[enum_marcha]=11;
+  consigna[enum_motor]=12;
 
-    consigna_manual[enum_rueda_derecha]=26;
-    consigna_manual[enum_rueda_izquierda]=27;
-    consigna_manual[enum_marcha]=28;
-    consigna_manual[enum_motor]=29;
+  consigna_manual[enum_rueda_derecha]=0.0f;
+  consigna_manual[enum_rueda_izquierda]=0.0f;
+  consigna_manual[enum_marcha]=0.0f;
+  consigna_manual[enum_motor]=0.0f;
 
-    consigna_rc[enum_rueda_derecha]=26;
-    consigna_rc[enum_rueda_izquierda]=27;
-    consigna_rc[enum_marcha]=28;
-    consigna_rc[enum_motor]=29;
+  consigna_rc[enum_rueda_derecha]=26;
+  consigna_rc[enum_rueda_izquierda]=27;
+  consigna_rc[enum_marcha]=28;
+  consigna_rc[enum_motor]=29;
 
-    estado_arranque=0;
-    estado_auto=0;
+  estado_arranque=0;
+  estado_auto=0;
 	estado_semi_auto=0;
 
   arranque_aceleracion_fase_1 =1;
@@ -64,10 +64,10 @@ void Rc_car::calcular_consignas()
   switch (modo_motor_actual)
   {
   case Rc_car::enum_manual:
-    consigna[Rc_car::enum_rueda_derecha] = 1000+  consigna_manual[Rc_car::enum_rueda_derecha]/10;
-    consigna[Rc_car::enum_rueda_izquierda] = 1000  +  consigna_manual[Rc_car::enum_rueda_izquierda]/10;
-    consigna[Rc_car::enum_marcha] =1000 +  consigna_manual[Rc_car::enum_marcha]/10;
-    consigna[Rc_car::enum_motor] = 1000 + consigna_manual[Rc_car::enum_motor]/10 ;
+    consigna[Rc_car::enum_rueda_derecha] =consigna_manual[Rc_car::enum_rueda_derecha];
+    consigna[Rc_car::enum_rueda_izquierda] =consigna_manual[Rc_car::enum_rueda_izquierda];
+    consigna[Rc_car::enum_marcha] =consigna_manual[Rc_car::enum_marcha];
+    consigna[Rc_car::enum_motor] = consigna_manual[Rc_car::enum_motor] ;
     break;
   case Rc_car::enum_sistema_salida:
     consigna[Rc_car::enum_rueda_derecha] = consigna_rc[Rc_car::enum_rc_canal_1];
