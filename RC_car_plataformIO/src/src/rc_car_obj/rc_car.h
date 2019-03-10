@@ -60,7 +60,7 @@ class Rc_car
 		
 		float AnguloRuedaDerecha;
 		float AnguloRuedaIzquierda;
-		float velocidad[3];
+		float giro_val[3];
 		float aceleracion[3];
 		uint8_t tipoControl;
 		uint8_t modo_motor_actual;

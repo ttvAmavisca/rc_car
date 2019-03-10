@@ -433,7 +433,7 @@ void Telemetria::procesaComando() {
   //Peticion estado
   if (accion ==COMANDOS_BLUETOOTH_PEDIR_ESTADO)
   {
-    enviarDatosBluetooth(); // TODO: crear una respuesta mas detallada?
+    enviarDatosCoche(); // TODO: crear una respuesta mas detallada?
     procesado=true;
   }
   

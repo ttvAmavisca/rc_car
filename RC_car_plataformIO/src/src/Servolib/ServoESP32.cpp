@@ -110,11 +110,10 @@ void Servo::writePerCent(float percent) {
     percent = constrain(percent, -100, 100);
     
 
-    Serial.print(_channel); Serial.print( " d "); Serial.print( percent ); Serial.print( "% min" ); Serial.print( _min);Serial.print( " max " );Serial.print(_max );Serial.print( " valor " );
+    //Serial.print(_channel); Serial.print( " d "); Serial.print( percent ); Serial.print( "% min" ); Serial.print( _min);Serial.print( " max " );Serial.print(_max );Serial.print( " valor " );
     
     _pulseWidthDuty = (percent + 100.0f) * (_max - _min) / (200.0f) + _min;
-     Serial.println( _pulseWidthDuty );
-
+     
     ledcWrite(_channel, _pulseWidthDuty);
 }
 

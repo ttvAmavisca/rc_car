@@ -43,6 +43,8 @@ class Telemetria
 		void enviarDatosBluetooth();
 		
 		void enviarConfiguracionActual();
+		void enviarDatosCoche();
+		void enviarDatosImu();
 		void serialEvent2();
 		void NuevosValoresImu();
 		void setDebug(bool estado);

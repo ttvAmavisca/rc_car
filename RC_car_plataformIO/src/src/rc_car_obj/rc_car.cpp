@@ -12,9 +12,9 @@ Rc_car::Rc_car(void){
   rpmActual=8;
   
   
-  velocidad[0]=13;
-  velocidad[1]=14;
-  velocidad[2]=15;
+  giro_val[0]=13;
+  giro_val[1]=14;
+  giro_val[2]=15;
   aceleracion[0]=16;
   aceleracion[1]=17;
   aceleracion[2]=18;

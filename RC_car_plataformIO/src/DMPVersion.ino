@@ -18,14 +18,21 @@
 #define OUTPUT_TEAPOT false         // paquete teapot para ejemplo de fabricante IMU (intelsense)
 #define CON_BLUETOOTH false         // habilitar envio por bluetooth, nota las librerias ocupan mas de la mitad de memoria de programa normal
 
+#define CON_VESC false         // habilitar envio por bluetooth, nota las librerias ocupan mas de la mitad de memoria de programa normal
+#define CON_BLHELI true         // habilitar envio por bluetooth, nota las librerias ocupan mas de la mitad de memoria de programa normal
+
 //Libreria MPU9250, utilizando el DMP(mas lento pero valores filtrados)
 #include "src/MPU9250_DMP/MPU9250-DMP.h"
 
+#if CON_VESC
 //Libreria VESC
 #include "src/VescUart/VescUart.h"
+#endif
 
+#if CON_BLHELI
 //Libreria BLHeli
-//#include "src/LeerTelemetriaBlHeli/LeerTelemetriaBlHeli.h"
+#include "src/LeerTelemetriaBlHeli/LeerTelemetriaBlHeli.h"
+#endif
 
 //Lectura de Pwm usando RMT
 #include "src/LeerPWM_rmt/CanalesPwM.h"
@@ -67,12 +74,14 @@ bool rc_mpu_init = false;
 
 MPU9250_DMP imu;
 
+#if CON_VESC
 /** Initiate VescUart class */
-
 VescUart UART;
+#endif
 
-//LeerTelemetriaBlHeli BLHeli;
-
+#if CON_BLHELI
+LeerTelemetriaBlHeli BLHeli;
+#endif
 
 //Servos
 Servo servos[4];
@@ -93,7 +102,8 @@ void setupBluetooth()
 String command;
 int throttle = 127;
 HardwareSerial pSerial2(2);
-/*
+
+#if CON_BLHELI
 void setupBLHeli(){
   pSerial2.begin(115200, SERIAL_8N1, 16, 17);
 
@@ -113,8 +123,9 @@ void BLHeliControl(){
   rc_car.ESC_VoltajeEntrada = BLHeli.Voltage;
   rc_car.ESC_avgMotorCurrent = BLHeli.temperatura;
 }
+#endif
 
-*/
+#if CON_VESC
 void setupVesc()
 {
 
@@ -149,7 +160,7 @@ void vescControl()
     }
   }
 }
-
+#endif
 
 void setupMPU9250()
 {
@@ -163,9 +174,10 @@ void setupMPU9250()
     delay(5000);
   }
 
-  imu.dmpBegin(DMP_FEATURE_6X_LP_QUAT |  // Enable 6-axis quat
-                   DMP_FEATURE_GYRO_CAL, // Use gyro calibration
-               1000);                    // Set DMP FIFO rate to 1000 Hz
+ 
+  imu.dmpBegin(DMP_FEATURE_6X_LP_QUAT | // Enable 6-axis quat
+               DMP_FEATURE_GYRO_CAL, // Use gyro calibration
+               1000); // Set DMP FIFO rate to 1000 Hz
   // DMP_FEATURE_LP_QUAT can also be used. It uses the
   // accelerometer in low-power mode to estimate quat's.
   // DMP_FEATURE_LP_QUAT and 6X_LP_QUAT are mutually exclusive
@@ -188,7 +200,11 @@ void imuGetValues()
       imu.computeEulerAngles();
       rc_Telemetria.NuevosValoresImu(); //Actualizar valores de telemetria
       
+    }else {
+      Serial.println("not success");
     }
+  } else {
+    Serial.println("not available");
   }
 }
 
@@ -257,8 +273,12 @@ void setup()
   rc_Telemetria.setConfig(&rc_Configuracion); //pasar objeto de config
   rc_Telemetria.setDebug(SerialDebugTelemetria);
 
+#if CON_VESC
   setupVesc(); //configurar conumicacion con VESC
-  //setupBLHeli();
+#endif
+#if CON_BLHELI
+  setupBLHeli();
+#endif
 
   setup_pwmIN(); //Configurar lectura de pwm de entrada usando rmt
 
@@ -274,9 +294,14 @@ void setup()
 void loop()
 {
 
+  
+ 
+#if CON_VESC
   vescControl();
-  //BLHeliControl();
-
+#endif
+#if CON_BLHELI
+  BLHeliControl();
+#endif
   
   leer_pwmIN();
 

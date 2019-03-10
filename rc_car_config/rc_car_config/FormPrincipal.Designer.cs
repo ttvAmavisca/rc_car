@@ -113,6 +113,25 @@
             this.buttonConectar = new System.Windows.Forms.Button();
             this.serialPortBluetooth = new System.IO.Ports.SerialPort(this.components);
             this.timerActualizar = new System.Windows.Forms.Timer(this.components);
+            this.label7 = new System.Windows.Forms.Label();
+            this.labelT_control = new System.Windows.Forms.Label();
+            this.labelCRuedaIzq = new System.Windows.Forms.Label();
+            this.labelCRuedaDer = new System.Windows.Forms.Label();
+            this.labelCmotor = new System.Windows.Forms.Label();
+            this.labelCmarcha = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.labelIMUVelocidad2 = new System.Windows.Forms.Label();
+            this.labelIMUVelocidad1 = new System.Windows.Forms.Label();
+            this.labelIMUYaw = new System.Windows.Forms.Label();
+            this.labelIMURoll = new System.Windows.Forms.Label();
+            this.labelIMUPitch = new System.Windows.Forms.Label();
+            this.labelIMUVelocidad3 = new System.Windows.Forms.Label();
+            this.labelIMUAceleracion3 = new System.Windows.Forms.Label();
+            this.labelIMUAceleracion2 = new System.Windows.Forms.Label();
+            this.labelIMUAceleracion1 = new System.Windows.Forms.Label();
+            this.labelIMUAngulo3 = new System.Windows.Forms.Label();
+            this.labelIMUAngulo2 = new System.Windows.Forms.Label();
+            this.labelIMUAngulo1 = new System.Windows.Forms.Label();
             this.tabControlPrincipal.SuspendLayout();
             this.tab0Graficas.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartDatos)).BeginInit();
@@ -751,6 +770,25 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.labelIMUAngulo3);
+            this.tabPage1.Controls.Add(this.labelIMUAngulo2);
+            this.tabPage1.Controls.Add(this.labelIMUAngulo1);
+            this.tabPage1.Controls.Add(this.labelIMUAceleracion3);
+            this.tabPage1.Controls.Add(this.labelIMUAceleracion2);
+            this.tabPage1.Controls.Add(this.labelIMUAceleracion1);
+            this.tabPage1.Controls.Add(this.labelIMUVelocidad3);
+            this.tabPage1.Controls.Add(this.label8);
+            this.tabPage1.Controls.Add(this.labelIMUVelocidad2);
+            this.tabPage1.Controls.Add(this.label7);
+            this.tabPage1.Controls.Add(this.labelIMUVelocidad1);
+            this.tabPage1.Controls.Add(this.labelT_control);
+            this.tabPage1.Controls.Add(this.labelIMUYaw);
+            this.tabPage1.Controls.Add(this.labelCRuedaIzq);
+            this.tabPage1.Controls.Add(this.labelIMURoll);
+            this.tabPage1.Controls.Add(this.labelCRuedaDer);
+            this.tabPage1.Controls.Add(this.labelIMUPitch);
+            this.tabPage1.Controls.Add(this.labelCmotor);
+            this.tabPage1.Controls.Add(this.labelCmarcha);
             this.tabPage1.Controls.Add(this.label5);
             this.tabPage1.Controls.Add(this.label4);
             this.tabPage1.Controls.Add(this.label3);
@@ -780,11 +818,11 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(452, 246);
+            this.label5.Location = new System.Drawing.Point(316, 269);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(35, 13);
+            this.label5.Size = new System.Drawing.Size(28, 13);
             this.label5.TabIndex = 17;
-            this.label5.Text = "label5";
+            this.label5.Text = "ESC";
             // 
             // label4
             // 
@@ -825,7 +863,7 @@
             // labelMAH
             // 
             this.labelMAH.AutoSize = true;
-            this.labelMAH.Location = new System.Drawing.Point(271, 404);
+            this.labelMAH.Location = new System.Drawing.Point(303, 459);
             this.labelMAH.Name = "labelMAH";
             this.labelMAH.Size = new System.Drawing.Size(53, 13);
             this.labelMAH.TabIndex = 12;
@@ -834,7 +872,7 @@
             // labelTemperatura
             // 
             this.labelTemperatura.AutoSize = true;
-            this.labelTemperatura.Location = new System.Drawing.Point(271, 367);
+            this.labelTemperatura.Location = new System.Drawing.Point(303, 422);
             this.labelTemperatura.Name = "labelTemperatura";
             this.labelTemperatura.Size = new System.Drawing.Size(89, 13);
             this.labelTemperatura.TabIndex = 11;
@@ -843,7 +881,7 @@
             // labelRPM
             // 
             this.labelRPM.AutoSize = true;
-            this.labelRPM.Location = new System.Drawing.Point(271, 324);
+            this.labelRPM.Location = new System.Drawing.Point(303, 379);
             this.labelRPM.Name = "labelRPM";
             this.labelRPM.Size = new System.Drawing.Size(53, 13);
             this.labelRPM.TabIndex = 10;
@@ -852,7 +890,7 @@
             // labelCorriente
             // 
             this.labelCorriente.AutoSize = true;
-            this.labelCorriente.Location = new System.Drawing.Point(271, 284);
+            this.labelCorriente.Location = new System.Drawing.Point(303, 339);
             this.labelCorriente.Name = "labelCorriente";
             this.labelCorriente.Size = new System.Drawing.Size(71, 13);
             this.labelCorriente.TabIndex = 9;
@@ -861,7 +899,7 @@
             // labelVoltage
             // 
             this.labelVoltage.AutoSize = true;
-            this.labelVoltage.Location = new System.Drawing.Point(271, 246);
+            this.labelVoltage.Location = new System.Drawing.Point(303, 301);
             this.labelVoltage.Name = "labelVoltage";
             this.labelVoltage.Size = new System.Drawing.Size(65, 13);
             this.labelVoltage.TabIndex = 8;
@@ -975,6 +1013,177 @@
             // timerActualizar
             // 
             this.timerActualizar.Tick += new System.EventHandler(this.TimerActualizar_Tick);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(109, 250);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(38, 13);
+            this.label7.TabIndex = 23;
+            this.label7.Text = "Coche";
+            // 
+            // labelT_control
+            // 
+            this.labelT_control.AutoSize = true;
+            this.labelT_control.Location = new System.Drawing.Point(96, 440);
+            this.labelT_control.Name = "labelT_control";
+            this.labelT_control.Size = new System.Drawing.Size(35, 13);
+            this.labelT_control.TabIndex = 22;
+            this.labelT_control.Text = "label8";
+            // 
+            // labelCRuedaIzq
+            // 
+            this.labelCRuedaIzq.AutoSize = true;
+            this.labelCRuedaIzq.Location = new System.Drawing.Point(96, 403);
+            this.labelCRuedaIzq.Name = "labelCRuedaIzq";
+            this.labelCRuedaIzq.Size = new System.Drawing.Size(35, 13);
+            this.labelCRuedaIzq.TabIndex = 21;
+            this.labelCRuedaIzq.Text = "label9";
+            // 
+            // labelCRuedaDer
+            // 
+            this.labelCRuedaDer.AutoSize = true;
+            this.labelCRuedaDer.Location = new System.Drawing.Point(96, 360);
+            this.labelCRuedaDer.Name = "labelCRuedaDer";
+            this.labelCRuedaDer.Size = new System.Drawing.Size(41, 13);
+            this.labelCRuedaDer.TabIndex = 20;
+            this.labelCRuedaDer.Text = "label10";
+            // 
+            // labelCmotor
+            // 
+            this.labelCmotor.AutoSize = true;
+            this.labelCmotor.Location = new System.Drawing.Point(96, 320);
+            this.labelCmotor.Name = "labelCmotor";
+            this.labelCmotor.Size = new System.Drawing.Size(41, 13);
+            this.labelCmotor.TabIndex = 19;
+            this.labelCmotor.Text = "label12";
+            // 
+            // labelCmarcha
+            // 
+            this.labelCmarcha.AutoSize = true;
+            this.labelCmarcha.Location = new System.Drawing.Point(96, 282);
+            this.labelCmarcha.Name = "labelCmarcha";
+            this.labelCmarcha.Size = new System.Drawing.Size(41, 13);
+            this.labelCmarcha.TabIndex = 18;
+            this.labelCmarcha.Text = "label13";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(627, 269);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(27, 13);
+            this.label8.TabIndex = 26;
+            this.label8.Text = "IMU";
+            // 
+            // labelIMUVelocidad2
+            // 
+            this.labelIMUVelocidad2.AutoSize = true;
+            this.labelIMUVelocidad2.Location = new System.Drawing.Point(778, 338);
+            this.labelIMUVelocidad2.Name = "labelIMUVelocidad2";
+            this.labelIMUVelocidad2.Size = new System.Drawing.Size(102, 13);
+            this.labelIMUVelocidad2.TabIndex = 25;
+            this.labelIMUVelocidad2.Text = "labelIMUVelocidad2";
+            // 
+            // labelIMUVelocidad1
+            // 
+            this.labelIMUVelocidad1.AutoSize = true;
+            this.labelIMUVelocidad1.Location = new System.Drawing.Point(778, 301);
+            this.labelIMUVelocidad1.Name = "labelIMUVelocidad1";
+            this.labelIMUVelocidad1.Size = new System.Drawing.Size(102, 13);
+            this.labelIMUVelocidad1.TabIndex = 24;
+            this.labelIMUVelocidad1.Text = "labelIMUVelocidad1";
+            // 
+            // labelIMUYaw
+            // 
+            this.labelIMUYaw.AutoSize = true;
+            this.labelIMUYaw.Location = new System.Drawing.Point(614, 379);
+            this.labelIMUYaw.Name = "labelIMUYaw";
+            this.labelIMUYaw.Size = new System.Drawing.Size(70, 13);
+            this.labelIMUYaw.TabIndex = 23;
+            this.labelIMUYaw.Text = "labelIMUYaw";
+            // 
+            // labelIMURoll
+            // 
+            this.labelIMURoll.AutoSize = true;
+            this.labelIMURoll.Location = new System.Drawing.Point(614, 339);
+            this.labelIMURoll.Name = "labelIMURoll";
+            this.labelIMURoll.Size = new System.Drawing.Size(67, 13);
+            this.labelIMURoll.TabIndex = 22;
+            this.labelIMURoll.Text = "labelIMURoll";
+            // 
+            // labelIMUPitch
+            // 
+            this.labelIMUPitch.AutoSize = true;
+            this.labelIMUPitch.Location = new System.Drawing.Point(614, 301);
+            this.labelIMUPitch.Name = "labelIMUPitch";
+            this.labelIMUPitch.Size = new System.Drawing.Size(73, 13);
+            this.labelIMUPitch.TabIndex = 21;
+            this.labelIMUPitch.Text = "labelIMUPitch";
+            // 
+            // labelIMUVelocidad3
+            // 
+            this.labelIMUVelocidad3.AutoSize = true;
+            this.labelIMUVelocidad3.Location = new System.Drawing.Point(772, 379);
+            this.labelIMUVelocidad3.Name = "labelIMUVelocidad3";
+            this.labelIMUVelocidad3.Size = new System.Drawing.Size(102, 13);
+            this.labelIMUVelocidad3.TabIndex = 27;
+            this.labelIMUVelocidad3.Text = "labelIMUVelocidad3";
+            // 
+            // labelIMUAceleracion3
+            // 
+            this.labelIMUAceleracion3.AutoSize = true;
+            this.labelIMUAceleracion3.Location = new System.Drawing.Point(878, 380);
+            this.labelIMUAceleracion3.Name = "labelIMUAceleracion3";
+            this.labelIMUAceleracion3.Size = new System.Drawing.Size(41, 13);
+            this.labelIMUAceleracion3.TabIndex = 30;
+            this.labelIMUAceleracion3.Text = "label13";
+            // 
+            // labelIMUAceleracion2
+            // 
+            this.labelIMUAceleracion2.AutoSize = true;
+            this.labelIMUAceleracion2.Location = new System.Drawing.Point(884, 339);
+            this.labelIMUAceleracion2.Name = "labelIMUAceleracion2";
+            this.labelIMUAceleracion2.Size = new System.Drawing.Size(41, 13);
+            this.labelIMUAceleracion2.TabIndex = 29;
+            this.labelIMUAceleracion2.Text = "label14";
+            // 
+            // labelIMUAceleracion1
+            // 
+            this.labelIMUAceleracion1.AutoSize = true;
+            this.labelIMUAceleracion1.Location = new System.Drawing.Point(884, 302);
+            this.labelIMUAceleracion1.Name = "labelIMUAceleracion1";
+            this.labelIMUAceleracion1.Size = new System.Drawing.Size(111, 13);
+            this.labelIMUAceleracion1.TabIndex = 28;
+            this.labelIMUAceleracion1.Text = "labelIMUAceleracion1";
+            // 
+            // labelIMUAngulo3
+            // 
+            this.labelIMUAngulo3.AutoSize = true;
+            this.labelIMUAngulo3.Location = new System.Drawing.Point(1023, 380);
+            this.labelIMUAngulo3.Name = "labelIMUAngulo3";
+            this.labelIMUAngulo3.Size = new System.Drawing.Size(41, 13);
+            this.labelIMUAngulo3.TabIndex = 33;
+            this.labelIMUAngulo3.Text = "label17";
+            // 
+            // labelIMUAngulo2
+            // 
+            this.labelIMUAngulo2.AutoSize = true;
+            this.labelIMUAngulo2.Location = new System.Drawing.Point(1029, 339);
+            this.labelIMUAngulo2.Name = "labelIMUAngulo2";
+            this.labelIMUAngulo2.Size = new System.Drawing.Size(41, 13);
+            this.labelIMUAngulo2.TabIndex = 32;
+            this.labelIMUAngulo2.Text = "label18";
+            // 
+            // labelIMUAngulo1
+            // 
+            this.labelIMUAngulo1.AutoSize = true;
+            this.labelIMUAngulo1.Location = new System.Drawing.Point(1029, 302);
+            this.labelIMUAngulo1.Name = "labelIMUAngulo1";
+            this.labelIMUAngulo1.Size = new System.Drawing.Size(41, 13);
+            this.labelIMUAngulo1.TabIndex = 31;
+            this.labelIMUAngulo1.Text = "label19";
             // 
             // FormPrincipal
             // 
@@ -1091,6 +1300,25 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label labelT_control;
+        private System.Windows.Forms.Label labelCRuedaIzq;
+        private System.Windows.Forms.Label labelCRuedaDer;
+        private System.Windows.Forms.Label labelCmotor;
+        private System.Windows.Forms.Label labelCmarcha;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label labelIMUVelocidad2;
+        private System.Windows.Forms.Label labelIMUVelocidad1;
+        private System.Windows.Forms.Label labelIMUYaw;
+        private System.Windows.Forms.Label labelIMURoll;
+        private System.Windows.Forms.Label labelIMUPitch;
+        private System.Windows.Forms.Label labelIMUAngulo3;
+        private System.Windows.Forms.Label labelIMUAngulo2;
+        private System.Windows.Forms.Label labelIMUAngulo1;
+        private System.Windows.Forms.Label labelIMUAceleracion3;
+        private System.Windows.Forms.Label labelIMUAceleracion2;
+        private System.Windows.Forms.Label labelIMUAceleracion1;
+        private System.Windows.Forms.Label labelIMUVelocidad3;
     }
 }
 

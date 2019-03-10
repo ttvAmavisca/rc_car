@@ -46,7 +46,8 @@ namespace rc_car_config
 
 
         float pitch, roll, yaw;
-            float ConsignaMarcha, ConsignaRPMActual, AnguloRuedaDerecha, AnguloRuedaIzquierda, ESC_VoltajeEntrada, ESC_rpmActual, ESC_avgMotorCurrent, ESC_avgInputCurrent, ESC_Dutycycle, modo_actual, tipo_control;
+        float ConsignaMarcha, ConsignaRPMActual, AnguloRuedaDerecha, AnguloRuedaIzquierda, ESC_VoltajeEntrada, ESC_rpmActual, ESC_avgMotorCurrent, ESC_avgInputCurrent, ESC_Dutycycle, modo_actual;
+            int tipo_control;
             float[] velocidad ;
             float[] aceleracion;
             float[] angulos;
@@ -524,6 +525,8 @@ namespace rc_car_config
         private void ProcesarComandoSerie()
         {
             int dato, nuevoEstado;
+            short dato16;
+               
            
             int posBuffer = 3;
 
@@ -538,27 +541,31 @@ namespace rc_car_config
 
                 case RespuestasBluetooth.datos_coche: //recepcion medida
                     posBuffer = 3;
-                    dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
+                    short test = (short)((bufferEntradaSerie[posBuffer++]) | ((bufferEntradaSerie[posBuffer++]) << 8) & 0xffff);
+                    short test2= (short)((bufferEntradaSerie[posBuffer++]) | ((bufferEntradaSerie[posBuffer++]) << 8));
+                    short test3 = (short) ((bufferEntradaSerie[posBuffer++]) << 8);
+
+                    dato =(short) ((bufferEntradaSerie[posBuffer++]) | ((bufferEntradaSerie[posBuffer++]) << 8) & 0xffff);
                     ConsignaRPMActual = (dato) /  10.0f ;
-                    dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8) ;
+                    dato = (bufferEntradaSerie[posBuffer++]) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8) ;
                     ConsignaMarcha = dato / 10.0f;
-                    dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
+                    dato = (bufferEntradaSerie[posBuffer++] ) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
                     AnguloRuedaDerecha = dato / 10.0f;
-                    dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
+                    dato = (bufferEntradaSerie[posBuffer++]) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
                     AnguloRuedaIzquierda = dato / 10.0f;
-                    dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
+                    dato = (bufferEntradaSerie[posBuffer++]) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
                     ESC_VoltajeEntrada = dato / 10.0f;
-                    dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
+                    dato = (bufferEntradaSerie[posBuffer++]) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
                     ESC_rpmActual = dato * 10.0f;
-                    dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
+                    dato = (bufferEntradaSerie[posBuffer++] ) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
                     ESC_avgMotorCurrent = dato / 100.0f;
-                    dato = (bufferEntradaSerie[posBuffer++] & 0xff) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
+                    dato = (bufferEntradaSerie[posBuffer++]) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
                     ESC_avgInputCurrent = dato / 100.0f;
                     dato = (bufferEntradaSerie[posBuffer++] & 0xff);
                     ESC_Dutycycle = dato ;
                     dato = (bufferEntradaSerie[posBuffer++] & 0xff);
                     modo_actual = dato;
-                    
+                    RellenarValoresCoche(ConsignaMarcha, ConsignaRPMActual, AnguloRuedaDerecha, AnguloRuedaIzquierda, ESC_VoltajeEntrada, ESC_rpmActual, ESC_avgInputCurrent, ESC_avgInputCurrent, ESC_Dutycycle, modo_actual);
                     // LogearMSG(String.Format(string.Format(@"RPM: {0} RuedaDer {1} RuedaIzq {2}  Marcha {3} ESC_Voltaje {4} ESC_rpm {5} ESC_avgMotorCurrent {6} ESC_avgInputCurrent {7} ESC_Dutycycle {8}",
                     //     ConsignaRPMActual, ConsignaDireccionActual, AnguloRuedaDerecha, AnguloRuedaIzquierda, ESC_VoltajeEntrada, ESC_rpmActual, ESC_avgMotorCurrent, ESC_avgInputCurrent, ESC_Dutycycle)));
 
@@ -596,6 +603,7 @@ namespace rc_car_config
                     dato = (bufferEntradaSerie[posBuffer++] & 0xff);
                     tipo_control = dato;
 
+                    RellenarValoresIMU(pitch,roll,yaw,velocidad,aceleracion,angulos,tipo_control);
                     //LogearMSG(String.Format(string.Format("medida: {0} {1} {2} {3} {4}", pitch, roll, yaw, velocidad[0], tipo_control)));
 
 
@@ -888,7 +896,18 @@ namespace rc_car_config
             }
             else
             {
-                
+
+                labelCmarcha.Text = ConsignaMarcha.ToString();
+                labelCmotor.Text = ConsignaRPMActual.ToString();
+                labelCRuedaDer .Text = AnguloRuedaDerecha.ToString();
+                labelCRuedaIzq.Text = AnguloRuedaIzquierda.ToString();
+                labelT_control.Text = modo_actual.ToString();
+
+                labelVoltage.Text = "V: " + ESC_VoltajeEntrada.ToString();
+                labelCorriente.Text = "A: " + ESC_avgMotorCurrent.ToString();
+                labelRPM.Text = "RPM: " + ESC_rpmActual.ToString();
+                labelTemperatura.Text = "temp: " + ESC_Dutycycle.ToString();
+                labelMAH.Text = "MaH: " + ESC_avgInputCurrent.ToString();
 
             }
 
@@ -905,8 +924,22 @@ namespace rc_car_config
             }
             else
             {
+                labelIMUAceleracion1.Text = aceleracion[0].ToString();
+                labelIMUAceleracion2.Text = aceleracion[1].ToString();
+                labelIMUAceleracion3.Text = aceleracion[2].ToString();
 
+                labelIMUVelocidad1.Text = velocidad[0].ToString();
+                labelIMUVelocidad2.Text = velocidad[1].ToString();
+                labelIMUVelocidad3.Text = velocidad[2].ToString();
 
+                labelIMUAngulo1.Text = angulos[0].ToString();
+                labelIMUAngulo2.Text = angulos[1].ToString();
+                labelIMUAngulo3.Text = angulos[2].ToString();
+
+                labelIMUPitch.Text = pitch.ToString();
+                labelIMURoll.Text = roll.ToString();
+                labelIMUYaw.Text = yaw.ToString();
+               
             }
            
         }
