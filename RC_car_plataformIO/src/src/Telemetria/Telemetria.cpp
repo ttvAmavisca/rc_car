@@ -31,9 +31,6 @@ void Telemetria::setConfig(Configuracion *p_rc_Configuracion)
 
 void Telemetria::NuevosValoresImu()
 {
-
-  if (tel_Debug)
-  {
     float q0 = imu->calcQuat(imu->qw);
     float q1 = imu->calcQuat(imu->qx);
     float q2 = imu->calcQuat(imu->qy);
@@ -56,6 +53,11 @@ void Telemetria::NuevosValoresImu()
     rc_car->aceleracion[1] = imu->ay;
     rc_car->aceleracion[2] = imu->az;
 
+    rc_car->imu_temp = imu->temperature;
+
+  if (tel_Debug)
+  {
+    
     serialPort->println("Q: " + String(q0, 4) + ", " +
                         String(q1, 4) + ", " + String(q2, 4) +
                         ", " + String(q3, 4));
@@ -175,7 +177,7 @@ void Telemetria::enviarDatosManual()
 
 void Telemetria::enviarDatosImu()
 {
-  uint8_t datosEnvioSerial[58] = {'$', 0x02, RESPUESTAS_BLUETOOTH_DATOS_IMU, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '\r', '\n'};
+  uint8_t datosEnvioSerial[62] = {'$', 0x02, RESPUESTAS_BLUETOOTH_DATOS_IMU, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0, 0, 0, 0, 0, '\r', '\n'};
 
   int posicion = 3;
 
@@ -257,9 +259,15 @@ void Telemetria::enviarDatosImu()
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff0000) >> 16);
   datosEnvioSerial[posicion++] = ((tmpLong & 0xff000000) >> 24);
 
+  tmpLong = round(rc_car->imu_temp * 100); //16bit (64bit en C# PC). X100 para enviar 2 decimales
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff);
+  datosEnvioSerial[posicion++] = ((tmpLong & 0xff00) >> 8);
+  datosEnvioSerial[posicion++] = ((tmpLong & 0xff0000) >> 16);
+  datosEnvioSerial[posicion++] = ((tmpLong & 0xff000000) >> 24);
+
   datosEnvioSerial[posicion++] = rc_car->tipoControl;
 
-  serialPort->write(datosEnvioSerial, 58);
+  serialPort->write(datosEnvioSerial, 62);
 }
 
 //Envia los valores de calibracion por bluetooth

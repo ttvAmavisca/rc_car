@@ -433,19 +433,21 @@ inv_error_t MPU9250_DMP::dmpUpdateFifo(void)
 		ax = accel[X_AXIS];
 		ay = accel[Y_AXIS];
 		az = accel[Z_AXIS];
+		Serial.println("omega1");
 	}
-	if (sensors & INV_X_GYRO)
-		gx = gyro[X_AXIS];
-	if (sensors & INV_Y_GYRO)
-		gy = gyro[Y_AXIS];
-	if (sensors & INV_Z_GYRO)
-		gz = gyro[Z_AXIS];
+	if (sensors & INV_X_GYRO){Serial.println("omega1");
+		gx = gyro[X_AXIS];}
+	if (sensors & INV_Y_GYRO){Serial.println("omega1");
+		gy = gyro[Y_AXIS];}
+	if (sensors & INV_Z_GYRO){Serial.println("omega1");
+		gz = gyro[Z_AXIS];}
 	if (sensors & INV_WXYZ_QUAT)
 	{
 		qw = quat[0];
 		qx = quat[1];
 		qy = quat[2];
 		qz = quat[3];
+		Serial.println("omega6");
 	}
 	
 	time = timestamp;

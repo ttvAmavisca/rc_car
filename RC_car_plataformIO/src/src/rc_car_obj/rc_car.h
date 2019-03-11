@@ -58,14 +58,16 @@ class Rc_car
 		float consigna_manual[4];
 		float consigna_rc[6];
 		
+		
 		float AnguloRuedaDerecha;
 		float AnguloRuedaIzquierda;
 		float giro_val[3];
 		float aceleracion[3];
+		float imu_temp;
 		uint8_t tipoControl;
 		uint8_t modo_motor_actual;
 		float  ESC_Dutycycle, ESC_avgInputCurrent,ESC_avgMotorCurrent,ESC_rpmActual,ESC_VoltajeEntrada;
-
+		
 
 		float arranque_aceleracion_fase_1, arranque_tmax_fase_1, arranque_Vmax_fase_1;
 		float arranque_aceleracion_fase_2, arranque_tmax_fase_2, arranque_Vmax_fase_2;
