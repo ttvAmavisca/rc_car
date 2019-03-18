@@ -10,8 +10,7 @@ using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using System.IO.Ports;
 using System.Windows.Forms.DataVisualization.Charting;
-
-
+using System.Threading;
 
 namespace rc_car_config
 {
@@ -25,6 +24,7 @@ namespace rc_car_config
         Telemetria telemetria;
         ControlConJoystick joystick;
         DateTime tInicio, tUltimaRecepcionTout;
+        CocheSolar3D coche3d;
 
 
         public List<TextBox> textCalibracion;
@@ -39,6 +39,9 @@ namespace rc_car_config
         delegate void rellenarValoresManualDelegado(object sender, Telemetria.DatosManualEventArgs e);
         delegate void nuevosValoresCocheDelegado(object sender, Telemetria.DatosCocheEventArgs e);
         delegate void nuevosValoresImuDelegado(object sender, Telemetria.DatosIMUEventArgs e);
+        delegate void nuevosValoresEstadoDelegado(object sender, Telemetria.DatosEstadoEventArgs e);
+        delegate void conexionSerieDelegado(object sender, Telemetria.CambioEstadoConexionArgs e);
+
         delegate void ValoresJoystickDelegado(object sender, ControlConJoystick.CambioEstadoJoystickArgs e);
 
 
@@ -55,6 +58,8 @@ namespace rc_car_config
             telemetria.RecividosDatosCocheEvent += new EventHandler<Telemetria.DatosCocheEventArgs>(RellenarValoresCoche);
             telemetria.RecividosDatosIMUEvent += new EventHandler<Telemetria.DatosIMUEventArgs>(RellenarValoresIMU);
             telemetria.RecividosDatosManual += new EventHandler<Telemetria.DatosManualEventArgs>(RellenarValoresManual);
+            telemetria.RecividosEstado += new EventHandler<Telemetria.DatosEstadoEventArgs>(RellenarValoresEstado);
+            telemetria.CambioEstadoConexion += new EventHandler<Telemetria.CambioEstadoConexionArgs>(CambioEstadoConexion);
 
             joystick = new ControlConJoystick();
             joystick.CambioEstadoJoystickevent += new EventHandler<ControlConJoystick.CambioEstadoJoystickArgs>(ValoresJoystick);
@@ -170,6 +175,8 @@ namespace rc_car_config
 
         private void ButtonConectar_Click(object sender, EventArgs e)
         {
+            
+
             tInicio = DateTime.Now;
             String PuertoSerie = "COM1";
             if (comboPuertoSerie.SelectedItem != null) {
@@ -178,7 +185,7 @@ namespace rc_car_config
             telemetria.PuertoSerie = PuertoSerie;
             telemetria.Abrir_puerto_serie();
             timerActualizar.Enabled = true;
-
+            buttonConectar.BackColor = Color.Green;
             
         }
 
@@ -268,23 +275,23 @@ namespace rc_car_config
 
         private void Button1_Click(object sender, EventArgs e)
         {
-            telemetria.CambiarModo(Telemetria.E_modo.enum_manual);
+            telemetria.CambiarModo(Telemetria.E_modo.e_modo_manual);
           
         }
 
         private void ButtonAuto_Click(object sender, EventArgs e)
         {
-            telemetria.CambiarModo(Telemetria.E_modo.enum_full_auto);
+            telemetria.CambiarModo(Telemetria.E_modo.e_modo_full_auto);
         }
 
         private void ButtonSemiAuto_Click(object sender, EventArgs e)
         {
-            telemetria.CambiarModo(Telemetria.E_modo.enum_semi_auto);
+            telemetria.CambiarModo(Telemetria.E_modo.e_modo_semi_auto);
         }
 
         private void ButtonSemiControler_Click(object sender, EventArgs e)
         {
-            telemetria.CambiarModo(Telemetria.E_modo.enum_sistema_salida);
+            telemetria.CambiarModo(Telemetria.E_modo.e_modo_sistema_salida);
         }
 
         private void TrackBarRuedaDer_Scroll(object sender, EventArgs e)
@@ -397,13 +404,30 @@ namespace rc_car_config
                 labelCmotor.Text = e.ConsignaRPMActual.ToString();
                 labelCRuedaDer .Text = e.AnguloRuedaDerecha.ToString();
                 labelCRuedaIzq.Text = e.AnguloRuedaIzquierda.ToString();
-                labelT_control.Text = e.Modo_actual.ToString();
+                labelT_control.Text = e.Modo_motor_actual.ToString();
+
+                labelT_control.Text = e.Tipo_control_actual.ToString();
+                labelT_control.Text = e.Tipo_regulacion_direccion.ToString();
+                labelT_control.Text = e.Tipo_regulacion_potencia.ToString();
 
                 labelVoltage.Text = "V: " + e.ESC_VoltajeEntrada.ToString();
                 labelCorriente.Text = "A: " + e.ESC_avgMotorCurrent.ToString();
                 labelRPM.Text = "RPM: " + e.ESC_rpmActual.ToString();
                 labelTemperatura.Text = "temp: " + e.ESC_Dutycycle.ToString();
                 labelMAH.Text = "MaH: " + e.ESC_avgInputCurrent.ToString();
+
+
+                //TODO: no enviar esta informacion?
+                Telemetria.DatosEstadoEventArgs par = new Telemetria.DatosEstadoEventArgs()
+                {
+                    Modo_motor_actual = e.Modo_motor_actual,
+                    Tipo_control_actual = e.Tipo_control_actual,
+                    Tipo_regulacion_direccion = e.Tipo_regulacion_direccion,
+                    Tipo_regulacion_potencia = e.Tipo_regulacion_potencia
+                };
+                
+                RellenarValoresEstado(sender, par);
+
 
             }
 
@@ -421,29 +445,176 @@ namespace rc_car_config
             }
             else
             {
-                labelIMUAceleracion1.Text = e.Aceleracion[0].ToString();
-                labelIMUAceleracion2.Text = e.Aceleracion[1].ToString();
-                labelIMUAceleracion3.Text = e.Aceleracion[2].ToString();
+                labelIMUAceleracion1.Text ="Acel.x: " + e.Aceleracion[0].ToString();
+                labelIMUAceleracion2.Text = "Acel.y: " + e.Aceleracion[1].ToString();
+                labelIMUAceleracion3.Text = "Acel.z: " + e.Aceleracion[2].ToString();
 
-                labelIMUVelocidad1.Text = e.Velocidad[0].ToString();
-                labelIMUVelocidad2.Text = e.Velocidad[1].ToString();
-                labelIMUVelocidad3.Text = e.Velocidad[2].ToString();
+                labelIMUVelocidad1.Text = "Gyro.x: " + e.Gyro[0].ToString();
+                labelIMUVelocidad2.Text = "Gyro.y: " + e.Gyro[1].ToString();
+                labelIMUVelocidad3.Text = "Gyro.z: " + e.Gyro[2].ToString();
 
-                labelIMUAngulo1.Text = e.Angulos[0].ToString();
-                labelIMUAngulo2.Text = e.Angulos[1].ToString();
-                labelIMUAngulo3.Text = e.Angulos[2].ToString();
-                labelIMUAngulo4.Text = e.Angulos[3].ToString();
+                labelIMUAngulo1.Text = "Quad.1: " + e.Angulos[0].ToString();
+                labelIMUAngulo2.Text = "Quad.2: " + e.Angulos[1].ToString();
+                labelIMUAngulo3.Text = "Quad.3: " + e.Angulos[2].ToString();
+                labelIMUAngulo4.Text = "Quad.4: " + e.Angulos[3].ToString();
 
-                labelIMUPitch.Text = e.Pitch.ToString();
-                labelIMURoll.Text = e.Roll.ToString();
-                labelIMUYaw.Text = e.Yaw.ToString();
+                labelIMUPitch.Text = "Pitch: " + e.Pitch.ToString();
+                labelIMURoll.Text = "Rool: " + e.Roll.ToString();
+                labelIMUYaw.Text = "Yaw: " + e.Yaw.ToString();
 
-                labelIMUTemp.Text = e.Imu_temp.ToString();
+                labelIMUTemp.Text = "Imu temp: " +  e.Imu_temp.ToString();
 
+                labelBARPresion.Text = "Bar press: " + e.bar_presion.ToString();
+                labelBARTemp.Text = "Bar temp: " + e.bar_temp.ToString();
+
+                if (coche3d != null) { 
+                    coche3d.pitch =  e.Pitch * (float) Math.PI /180.0f;
+                    coche3d.yaw = e.Yaw * (float)Math.PI / 180.0f;
+                    coche3d.roll =  e.Roll * (float)Math.PI / 180.0f;
+                }
+
+                AnadirPunto((DateTime.Now - tInicio).TotalSeconds, e.Gyro[0], 1);
+                AnadirPunto((DateTime.Now - tInicio).TotalSeconds, e.Gyro[1], 2);
+                AnadirPunto((DateTime.Now - tInicio).TotalSeconds, e.Gyro[2], 3);
 
             }
-           
+
         }
+
+        private void RellenarValoresEstado(object sender, Telemetria.DatosEstadoEventArgs e)//(float pitch, float roll, float yaw, float[] velocidad, float[] aceleracion, float[] angulos, int tipo_control, float imu_temp)
+        {
+            if (labelControl.InvokeRequired)
+            {
+                nuevosValoresEstadoDelegado delegado = new nuevosValoresEstadoDelegado(RellenarValoresEstado);
+                //ya que el delegado invocará a CambiarProgreso debemos indicarle los parámetros 
+                object[] parametros = new object[] { sender, e };
+                //invocamos el método a través del mismo contexto del formulario (this) y enviamos los parámetros 
+                this.BeginInvoke(delegado, parametros);
+            }
+            else
+            {
+                switch (e.Modo_motor_actual)
+                {
+                    case Telemetria.E_modo.e_modo_manual:
+                        labelModo.BackColor = Color.LightSteelBlue;
+                        labelModo.Text = "manual";
+                        break;
+
+                    case Telemetria.E_modo.e_modo_full_auto:
+                        labelModo.BackColor = Color.Green;
+                        labelModo.Text = "Auto";
+                        break;
+                    case Telemetria.E_modo.e_modo_semi_auto:
+                        labelModo.BackColor = Color.LightYellow;
+                        labelModo.Text = "Semi-auto";
+                        break;
+                    case Telemetria.E_modo.e_modo_sistema_salida:
+                        labelModo.BackColor = Color.Magenta;
+                        labelModo.Text = "Sistema salida";
+                        break;
+                    default:
+                        labelModo.BackColor = Color.Gray;
+                        labelModo.Text = "-";
+                        break;
+                }
+
+                switch (e.Tipo_control_actual)
+                {
+                    case Telemetria.E_tipo_control.e_control_BT:
+                        labelControl.BackColor = Color.LightSkyBlue;
+                        labelControl.Text = "Control Bluetooth";
+                        break;
+
+                    case Telemetria.E_tipo_control.e_control_RC:
+                        labelControl.BackColor = Color.LightGreen;
+                        labelControl.Text = "Control RC";
+                        break;
+                    default:
+                        labelControl.BackColor = Color.Gray;
+                        labelControl.Text = "-";
+                        break;
+                }
+
+                switch (e.Tipo_regulacion_potencia)
+                {
+                    case Telemetria.E_regulacion_potencia.e_reg_pot_agresiva:
+                        labelPotencia.BackColor = Color.LightGoldenrodYellow;
+                        labelPotencia.Text = "pot. agresiva";
+                        break;
+
+                    case Telemetria.E_regulacion_potencia.e_reg_pot_incremental:
+                        labelPotencia.BackColor = Color.Coral;
+                        labelPotencia.Text = "pot. incremental";
+                        break;
+                    case Telemetria.E_regulacion_potencia.e_reg_pot_max:
+                        labelPotencia.BackColor = Color.Red;
+                        labelPotencia.Text = "pot. max";
+                        break;
+                    case Telemetria.E_regulacion_potencia.e_reg_pot_conservadora:
+                        labelPotencia.BackColor = Color.LightSeaGreen;
+                        labelPotencia.Text = "pot. conservadora";
+                        break;
+                    case Telemetria.E_regulacion_potencia.e_reg_pot_directa:
+                        labelPotencia.BackColor = Color.AliceBlue;
+                        labelPotencia.Text = "pot. directa";
+                        break;
+                    default:
+                        labelPotencia.BackColor = Color.Gray;
+                        labelPotencia.Text = "-";
+                        break;
+                }
+
+                switch (e.Tipo_regulacion_direccion)
+                {
+                    case Telemetria.E_regulacion_direccion.e_reg_dir_directa:
+                        labelDireccion.BackColor = Color.LightSalmon;
+                        labelDireccion.Text = "Direcion norm";
+                        break;
+
+                    case Telemetria.E_regulacion_direccion.e_reg_dir_Ackermann:
+                        labelDireccion.BackColor = Color.Green;
+                        labelDireccion.Text = "Ackermann";
+                        break;
+                    default:
+                        labelDireccion.BackColor = Color.Gray;
+                        labelDireccion.Text = "-";
+                        break;
+                }
+
+            }
+
+        }
+
+        private void CambioEstadoConexion(object sender, Telemetria.CambioEstadoConexionArgs e)
+        {
+            if (buttonConectar.InvokeRequired)
+            {
+                conexionSerieDelegado delegado = new conexionSerieDelegado(CambioEstadoConexion);
+                //ya que el delegado invocará a CambiarProgreso debemos indicarle los parámetros 
+                object[] parametros = new object[] { sender, e };
+                //invocamos el método a través del mismo contexto del formulario (this) y enviamos los parámetros 
+                this.BeginInvoke(delegado, parametros);
+            }
+            else
+            {
+               switch (e.EstadoActual)
+                {
+                    case 1:
+                        buttonConectar.BackColor = Color.Green;
+                        break;
+
+                   case 0:
+                        buttonConectar.BackColor = Color.Red;
+                        break;
+                    default:
+                        buttonConectar.BackColor = Color.Gray;
+                        break;
+                }
+
+            }
+
+        }
+
 
 
         private void ButtonGuardarCalibracion_Click(object sender, EventArgs e)
@@ -481,20 +652,35 @@ namespace rc_car_config
 
         }
 
-        private void checkBoxXinput_CheckedChanged(object sender, EventArgs e)
+        private void CheckBoxXinput_CheckedChanged(object sender, EventArgs e)
         {
             joystick.Habilitado = this.checkBoxXinput.Checked;
         }
 
-        private void checkBoxActualizarCoche_CheckedChanged(object sender, EventArgs e)
+        private void CheckBoxActualizarCoche_CheckedChanged(object sender, EventArgs e)
         {
             telemetria.Change_autoTelemetry(checkBoxActualizarCoche.Checked, checkBoxActualizarImu.Checked);
         }
 
-        private void checkBoxActualizarImu_CheckedChanged(object sender, EventArgs e)
+        private void CheckBoxActualizarImu_CheckedChanged(object sender, EventArgs e)
         {
             telemetria.Change_autoTelemetry(checkBoxActualizarCoche.Checked, checkBoxActualizarImu.Checked);
         }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            coche3d = new CocheSolar3D();
+            var thread = new Thread(coche3d.Run);
+            thread.TrySetApartmentState(ApartmentState.STA);
+            thread.Start();
+        }
+
+        private void timerPing_Tick(object sender, EventArgs e)
+        {
+            telemetria.ping();
+        }
+
+      
 
         private void RellenarCalibracion(object sender, Telemetria.DatosCalibracionEventArgs e)//float[] parRecibido, int x, int verHight, int verLow)
         {

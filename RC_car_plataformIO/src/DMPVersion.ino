@@ -25,6 +25,7 @@
 
 //Libreria MPU9250, utilizando el DMP(mas lento pero valores filtrados)
 #include "src/MPU9250_DMP/MPU9250-DMP.h"
+#include "src/BMP280/BMP280.h"
 
 
 #if CON_VESC
@@ -75,6 +76,7 @@ bool rc_mpu_init = false;
 #define SerialPort Serial
 
 MPU9250_DMP imu;
+BMP280 barometro;
 
 /** Initiate VescUart class */
 #if CON_VESC
@@ -119,10 +121,10 @@ void setupBLHeli(){
 void BLHeliControl(){
   BLHeli.processData();
   rc_car.ESC_avgInputCurrent = BLHeli.Current;
-  rc_car.ESC_Dutycycle = BLHeli.mAh;
+  rc_car.ESC_mah = BLHeli.mAh;
   rc_car.ESC_rpmActual = BLHeli.eRpM;
   rc_car.ESC_VoltajeEntrada = BLHeli.Voltage;
-  rc_car.ESC_avgMotorCurrent = BLHeli.temperatura;
+  rc_car.ESC_temp = BLHeli.temperatura;
 }
 #endif
 #if CON_VESC
@@ -175,11 +177,23 @@ void setupMPU9250()
   }
 
   imu.dmpBegin(DMP_FEATURE_6X_LP_QUAT |  // Enable 6-axis quat
-                   DMP_FEATURE_GYRO_CAL, // Use gyro calibration
+                   DMP_FEATURE_GYRO_CAL | // Use gyro calibration
+                  DMP_FEATURE_SEND_CAL_GYRO | // Enviar info de gyro calibrada
+                  DMP_FEATURE_SEND_RAW_ACCEL, // Enviar aceleracion raw
                1000);                    // Set DMP FIFO rate to 1000 Hz
-  // DMP_FEATURE_LP_QUAT can also be used. It uses the
-  // accelerometer in low-power mode to estimate quat's.
-  // DMP_FEATURE_LP_QUAT and 6X_LP_QUAT are mutually exclusive
+ 
+ if (!barometro.begin(BMP280_ADDRESS_ALT)) {
+    Serial.println(F("imposible conectar con barometro!"));
+     delay(5000);
+  }
+
+  /* Default settings from datasheet. */
+  barometro.setSampling(BMP280::MODE_NORMAL,     /* Operating Mode. */
+                  BMP280::SAMPLING_X2,     /* Temp. oversampling */
+                  BMP280::SAMPLING_X16,    /* Pressure oversampling */
+                  BMP280::FILTER_X16,      /* Filtering. */
+                  BMP280::STANDBY_MS_250); /* Standby time. */
+  
 
   rc_mpu_init = true;
 }
@@ -198,7 +212,14 @@ void imuGetValues()
       // quaternion values -- to estimate roll, pitch, and yaw
       imu.computeEulerAngles();
       rc_Telemetria.NuevosValoresImu(); //Actualizar valores de telemetria
+      
     }
+  
+  }
+
+  if (barometro.actualizar()){
+      rc_Telemetria.NuevosValoresBar();
+      
   }
 }
 
@@ -211,40 +232,40 @@ void setup_pwmIN()
 void leer_pwmIN()
 {
   //Lee el ultimo valor leido desde memoria
-  rc_car.consigna_rc[Rc_car::enum_rc_canal_1]=(leerCanales.valor(1) / 8);
-  rc_car.consigna_rc[Rc_car::enum_rc_canal_2]=(leerCanales.valor(2) / 8);
-  rc_car.consigna_rc[Rc_car::enum_rc_canal_3]=(leerCanales.valor(3) / 8);
-  rc_car.consigna_rc[Rc_car::enum_rc_canal_4]=(leerCanales.valor(4) / 8);
-  rc_car.consigna_rc[Rc_car::enum_rc_canal_5]=(leerCanales.valor(5) / 8);
-  rc_car.consigna_rc[Rc_car::enum_rc_canal_6]=(leerCanales.valor(6) / 8);
+  rc_car.consigna_rc[Rc_car::e_ch_rc_canal_1]=(leerCanales.valor(1) / 8);
+  rc_car.consigna_rc[Rc_car::e_ch_rc_canal_2]=(leerCanales.valor(2) / 8);
+  rc_car.consigna_rc[Rc_car::e_ch_rc_canal_3]=(leerCanales.valor(3) / 8);
+  rc_car.consigna_rc[Rc_car::e_ch_rc_canal_4]=(leerCanales.valor(4) / 8);
+  rc_car.consigna_rc[Rc_car::e_ch_rc_canal_5]=(leerCanales.valor(5) / 8);
+  rc_car.consigna_rc[Rc_car::e_ch_rc_canal_6]=(leerCanales.valor(6) / 8);
 
 }
 
 void setup_pwmOut()
 {
   //asignar pines de salida y inicializar canales
-  servos[Rc_car::enum_rueda_derecha].attach(25,-1,-1,0,180,1000,2000);
-  servos[Rc_car::enum_rueda_izquierda].attach(26,5000,-1,0,180,1000,2000);
-  servos[Rc_car::enum_marcha].attach(27,-1,-1,0,180,1000,2000);
-  servos[Rc_car::enum_motor].attach(14,-1,-1,0,180,1000,2000);
+  servos[Rc_car::e_servo_rueda_derecha].attach(25,-1,-1,0,180,1000,2000);
+  servos[Rc_car::e_servo_rueda_izquierda].attach(26,5000,-1,0,180,1000,2000);
+  servos[Rc_car::e_servo_marcha].attach(27,-1,-1,0,180,1000,2000);
+  servos[Rc_car::e_servo_motor].attach(14,-1,-1,0,180,1000,2000);
 }
 
 void calcular_pwmOut()
 {
   //servos[enum_rueda_derecha].write((100 + (35 * 1)) % 180);
-  servos[Rc_car::enum_rueda_derecha].writePerCent(rc_car.consigna[Rc_car::enum_rueda_derecha]);
-  servos[Rc_car::enum_rueda_izquierda].writePerCent(rc_car.consigna[Rc_car::enum_rueda_izquierda]);
-  servos[Rc_car::enum_marcha].writePerCent(rc_car.consigna[Rc_car::enum_marcha]);
-  servos[Rc_car::enum_motor].writePerCent(rc_car.consigna[Rc_car::enum_motor]);
+  servos[Rc_car::e_servo_rueda_derecha].writePerCent(rc_car.consigna[Rc_car::e_servo_rueda_derecha]);
+  servos[Rc_car::e_servo_rueda_izquierda].writePerCent(rc_car.consigna[Rc_car::e_servo_rueda_izquierda]);
+  servos[Rc_car::e_servo_marcha].writePerCent(rc_car.consigna[Rc_car::e_servo_marcha]);
+  servos[Rc_car::e_servo_motor].writePerCent(rc_car.consigna[Rc_car::e_servo_motor]);
 }
 
 void setup()
 {
   
 
-  Wire.begin();
-  // TWBR = 12;  // 400 kbit/sec I2C speed
-  Serial.begin(115200);
+  //Wire.begin(21,22,400000);// pines 21 y 22 400 kbit/sec I2C speed
+   
+  Serial.begin(115200); //usb
 
   while (!Serial)
   {
@@ -265,6 +286,7 @@ void setup()
   rc_Telemetria.setImu(&imu);                 //pasar objeto de imu a telemetria
   rc_Telemetria.setCar(&rc_car);              //pasar objeto de coche
   rc_Telemetria.setConfig(&rc_Configuracion); //pasar objeto de config
+  rc_Telemetria.setBar(&barometro);
   rc_Telemetria.setDebug(SerialDebugTelemetria);
 
 
@@ -284,7 +306,7 @@ void setup()
   rc_Configuracion.getFromEEPROM();
 
   
-  rc_car.consigna[Rc_car::enum_motor] = 1000;        // consigna inicial del motor para pruebas
+  //rc_car.consigna[Rc_car::e_servo_motor] = 100;        // consigna inicial del motor para pruebas
 }
 
 void loop()
@@ -310,10 +332,6 @@ void loop()
 
   rc_Telemetria.serialEvent2(); //comprueba si hay nuevo mensaje bluetooth y responde
 
+   rc_Telemetria.autoTelemetria();
 
-  if (esp_timer_get_time() > debug100ms)
-  {
-    debug100ms = esp_timer_get_time() + 1000000ul;
-    rc_Telemetria.autoTelemetria(); // Si habilitado envia cada 100ms datos de telemetria
-  }
 }

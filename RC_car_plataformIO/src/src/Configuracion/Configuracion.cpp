@@ -21,8 +21,8 @@ bool Configuracion::getFromEEPROM(void){
     configActual.C2=-5.9878;   // 
     configActual.C3=-0.2408;   // 
     configActual.C4=0.0;   // 
-    configActual.C5=0.0;   // 
-    configActual.C6=0.0;   // 
+    configActual.C5=100.0; // tiempo de envio de datos coche
+    configActual.C6=100.0; // tiempo de envio de datos IMU
     configActual.C7=0.0;   // 
     configActual.C8=0.0;   // 
     configActual.C9=0.0;   // 

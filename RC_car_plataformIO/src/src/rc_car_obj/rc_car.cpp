@@ -18,7 +18,11 @@ Rc_car::Rc_car(void){
   aceleracion[0]=16;
   aceleracion[1]=17;
   aceleracion[2]=18;
-  tipoControl=19;
+  modo_motor_actual=0;
+  tipo_control_actual=0;
+  tipo_regulacion_direccion=0;
+  tipo_regulacion_potencia=0;
+
   
   ESC_Dutycycle=21;
   ESC_avgInputCurrent=22;
@@ -26,20 +30,20 @@ Rc_car::Rc_car(void){
   ESC_rpmActual=24;
   ESC_VoltajeEntrada=25;
 
-  consigna[enum_rueda_derecha]=9;
-  consigna[enum_rueda_izquierda]=10;
-  consigna[enum_marcha]=11;
-  consigna[enum_motor]=12;
+  consigna[e_servo_rueda_derecha]=9;
+  consigna[e_servo_rueda_izquierda]=10;
+  consigna[e_servo_marcha]=11;
+  consigna[e_servo_motor]=12;
 
-  consigna_manual[enum_rueda_derecha]=0.0f;
-  consigna_manual[enum_rueda_izquierda]=0.0f;
-  consigna_manual[enum_marcha]=0.0f;
-  consigna_manual[enum_motor]=0.0f;
+  consigna_manual[e_servo_rueda_derecha]=0.0f;
+  consigna_manual[e_servo_rueda_izquierda]=0.0f;
+  consigna_manual[e_servo_marcha]=0.0f;
+  consigna_manual[e_servo_motor]=0.0f;
 
-  consigna_rc[enum_rueda_derecha]=26;
-  consigna_rc[enum_rueda_izquierda]=27;
-  consigna_rc[enum_marcha]=28;
-  consigna_rc[enum_motor]=29;
+  consigna_rc[e_servo_rueda_derecha]=26;
+  consigna_rc[e_servo_rueda_izquierda]=27;
+  consigna_rc[e_servo_marcha]=28;
+  consigna_rc[e_servo_motor]=29;
 
   estado_arranque=0;
   estado_auto=0;
@@ -60,33 +64,80 @@ Rc_car::Rc_car(void){
 void Rc_car::calcular_consignas()
 {
 
+//si se pierde la conexion poner a 0
+  if(esp_timer_get_time() >last_manual_received) consigna_manual[Rc_car::e_servo_motor] =0;
+  if(esp_timer_get_time() >last_rc_received) consigna_rc[Rc_car::e_servo_motor] =0;
+
+switch (tipo_control_actual)
+  {
+    case e_control_RC:
+      //consigna_control[e_servo_rueda_derecha] =consigna_rc[Rc_car::e_ch_rc_canal_1];
+      //consigna_control[e_servo_rueda_izquierda] =consigna_rc[Rc_car::e_ch_rc_canal_1];
+      consigna_control[e_servo_direccion] =consigna_rc[Rc_car::e_ch_rc_canal_1];
+      consigna_control[e_servo_marcha] =consigna_rc[Rc_car::e_ch_rc_canal_3];
+      consigna_control[e_servo_motor] = consigna_rc[Rc_car::e_ch_rc_canal_2] ;
+      break;
+    case e_control_BT:
+      //[Rc_car::e_servo_rueda_derecha] =consigna_manual[Rc_car::e_servo_rueda_derecha];
+      //consigna_control[Rc_car::e_servo_rueda_izquierda] =consigna_manual[Rc_car::e_servo_rueda_izquierda];
+      consigna_control[Rc_car::e_servo_direccion] =consigna_manual[Rc_car::e_servo_rueda_derecha];
+      consigna_control[Rc_car::e_servo_marcha] =consigna_manual[Rc_car::e_servo_marcha];
+      consigna_control[Rc_car::e_servo_motor] = consigna_manual[Rc_car::e_servo_motor] ;
+      break;
+  }
+
   //motor
   switch (modo_motor_actual)
   {
-  case Rc_car::enum_manual:
-    consigna[Rc_car::enum_rueda_derecha] =consigna_manual[Rc_car::enum_rueda_derecha];
-    consigna[Rc_car::enum_rueda_izquierda] =consigna_manual[Rc_car::enum_rueda_izquierda];
-    consigna[Rc_car::enum_marcha] =consigna_manual[Rc_car::enum_marcha];
-    consigna[Rc_car::enum_motor] = consigna_manual[Rc_car::enum_motor] ;
+  case Rc_car::e_modo_manual: //modo de control manual directo sobre todo los motores
+    consigna[Rc_car::e_servo_rueda_derecha] =consigna_manual[Rc_car::e_servo_rueda_derecha];
+    consigna[Rc_car::e_servo_rueda_izquierda] =consigna_manual[Rc_car::e_servo_rueda_izquierda];
+    consigna[Rc_car::e_servo_marcha] =consigna_manual[Rc_car::e_servo_marcha];
+    consigna[Rc_car::e_servo_motor] = consigna_manual[Rc_car::e_servo_motor];
     break;
-  case Rc_car::enum_sistema_salida:
-    consigna[Rc_car::enum_rueda_derecha] = consigna_rc[Rc_car::enum_rc_canal_1];
-    consigna[Rc_car::enum_rueda_izquierda] = consigna_rc[Rc_car::enum_rc_canal_1];
+  case Rc_car::e_modo_sistema_salida: //sistema de salida
     Modo_salida();
     break;
-  case Rc_car::enum_semi_auto:
-    consigna[Rc_car::enum_rueda_derecha] = consigna_rc[Rc_car::enum_rc_canal_1];
-    consigna[Rc_car::enum_rueda_izquierda] = consigna_rc[Rc_car::enum_rc_canal_1];
-    consigna[Rc_car::enum_marcha] = consigna_rc[Rc_car::enum_rc_canal_3];
-    consigna[Rc_car::enum_motor] = consigna_rc[Rc_car::enum_rc_canal_2];
+  case Rc_car::e_modo_semi_auto: //modo de cambio manual
+    modo_semi_auto();
     break;
-  case Rc_car::enum_full_auto:
-    consigna[Rc_car::enum_rueda_derecha] = consigna_rc[Rc_car::enum_rc_canal_1];
-    consigna[Rc_car::enum_rueda_izquierda] = consigna_rc[Rc_car::enum_rc_canal_1];
-    consigna[Rc_car::enum_marcha] = consigna_rc[Rc_car::enum_rc_canal_3];
-    consigna[Rc_car::enum_motor] = consigna_rc[Rc_car::enum_rc_canal_2];
+  case Rc_car::e_modo_full_auto: //modo de cambio automatico
+    modo_auto();
     break;
   }
+
+  if ( modo_motor_actual !=Rc_car::e_modo_manual){
+    switch(tipo_regulacion_direccion){
+      case Rc_car::e_reg_dir_directa: //Directa, se pasa a las 2 ruedas el mismo valor(rueda derecha)
+          consigna[Rc_car::e_servo_rueda_derecha] = consigna_control[Rc_car::e_servo_rueda_derecha];
+          consigna[Rc_car::e_servo_rueda_izquierda] = consigna_control[Rc_car::e_servo_rueda_derecha];//consigna_control[Rc_car::e_servo_rueda_izquierda];  
+      break;
+      case Rc_car::e_reg_dir_Ackermann:
+          calculateAckerman();
+      break;
+    }
+  }
+}
+
+void Rc_car::modo_semi_auto()
+{
+ 
+  consigna[Rc_car::e_servo_marcha] = consigna_control[Rc_car::e_servo_marcha];
+  consigna[Rc_car::e_servo_motor] = consigna_control[Rc_car::e_servo_motor];
+}
+
+void Rc_car::modo_auto()
+{
+  consigna[Rc_car::e_servo_rueda_derecha] = consigna_control[Rc_car::e_servo_rueda_derecha];
+  consigna[Rc_car::e_servo_rueda_izquierda] = consigna_control[Rc_car::e_servo_rueda_izquierda];
+  consigna[Rc_car::e_servo_marcha] = consigna_control[Rc_car::e_servo_marcha];
+  consigna[Rc_car::e_servo_motor] = consigna_control[Rc_car::e_servo_motor];
+}
+
+void Rc_car::calculateAckerman()
+{
+  consigna[Rc_car::e_servo_rueda_derecha] = consigna_control[Rc_car::e_servo_rueda_derecha];
+  consigna[Rc_car::e_servo_rueda_izquierda] = consigna_control[Rc_car::e_servo_rueda_derecha];//consigna_control[Rc_car::e_servo_rueda_izquierda]; 
 }
 
 
@@ -95,16 +146,16 @@ bool Rc_car::Cambiar_modo(int nuevo_modo )
 
   switch (modo_motor_actual)
   {
-  case Rc_car::enum_manual:
+  case Rc_car::e_modo_manual:
     
     break;
-  case Rc_car::enum_sistema_salida:
+  case Rc_car::e_modo_sistema_salida:
     
     break;
-  case Rc_car::enum_semi_auto:
+  case Rc_car::e_modo_semi_auto:
     
     break;
-  case Rc_car::enum_full_auto:
+  case Rc_car::e_modo_full_auto:
     
     break;
   }
@@ -117,31 +168,29 @@ void Rc_car::Modo_salida()
 {
   int64_t tiempo_Fase;
 
-  //motor
-  switch (estado_arranque)
-  {
-
-    //si se suelta el acelerador parar
-    if (consigna_rc[Rc_car::enum_rc_canal_2] < 0.1){
+//si se suelta el acelerador parar
+    if (consigna_control[Rc_car::e_servo_motor] < 0.1){
         estado_arranque =0; //cambiar a etapa 1 al detectar acelerador
     }
     
-
-      //estado inicial
+  //motor
+  switch (estado_arranque)
+  {
+  //estado inicial
   case 0:
     //Esperando acelerador
-    consigna[Rc_car::enum_marcha] = -100.0;
-    consigna[Rc_car::enum_motor] = 0.0;
-    if (consigna_rc[Rc_car::enum_rc_canal_2] > 0.5) {
+    consigna[Rc_car::e_servo_marcha] = -100.0;
+    consigna[Rc_car::e_servo_motor] = 0.0;
+    if (consigna_control[Rc_car::e_servo_motor] > 0.5) {
         estado_arranque =1; //cambiar a etapa 1 al detectar acelerador
         t_arranque=esp_timer_get_time();
     }
     break;
   case 1:
-    consigna[Rc_car::enum_marcha] = 0.0; //enum_marcha
+    consigna[Rc_car::e_servo_marcha] = 0.0; //enum_marcha
    
      tiempo_Fase = esp_timer_get_time() -t_arranque;
-    consigna[Rc_car::enum_motor] += (tiempo_Fase /1000000.f) * arranque_aceleracion_fase_1 ;
+    consigna[Rc_car::e_servo_motor] += (tiempo_Fase /1000000.f) * arranque_aceleracion_fase_1 ;
 
     
     if ( ESC_rpmActual > arranque_Vmax_fase_1 || tiempo_Fase > arranque_tmax_fase_1) {
@@ -151,10 +200,10 @@ void Rc_car::Modo_salida()
 
     break;
   case 2:
-    consigna[Rc_car::enum_marcha] = 100.0; 
+    consigna[Rc_car::e_servo_marcha] = 100.0; 
    
      tiempo_Fase = esp_timer_get_time() -t_arranque;
-    consigna[Rc_car::enum_motor] += (tiempo_Fase /1000000.f) * arranque_aceleracion_fase_2 ;
+    consigna[Rc_car::e_servo_motor] += (tiempo_Fase /1000000.f) * arranque_aceleracion_fase_2 ;
 
     
     if ( ESC_rpmActual > arranque_Vmax_fase_2 || tiempo_Fase > arranque_tmax_fase_2) {
@@ -163,14 +212,14 @@ void Rc_car::Modo_salida()
     }
     break;
   case 3:
-    consigna[Rc_car::enum_marcha] = 100.0; 
+    consigna[Rc_car::e_servo_marcha] = 100.0; 
    
      tiempo_Fase = esp_timer_get_time() -t_arranque;
-    consigna[Rc_car::enum_motor] += (tiempo_Fase /1000000.f) * arranque_aceleracion_fase_3 ;
+    consigna[Rc_car::e_servo_motor] += (tiempo_Fase /1000000.f) * arranque_aceleracion_fase_3 ;
 
     
     if ( ESC_rpmActual > arranque_Vmax_fase_3 || tiempo_Fase > arranque_tmax_fase_3) {
-        Cambiar_modo(Rc_car::enum_semi_auto);
+        Cambiar_modo(Rc_car::e_modo_semi_auto);
     }
     break;
     

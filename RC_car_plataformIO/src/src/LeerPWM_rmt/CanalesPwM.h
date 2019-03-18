@@ -20,6 +20,7 @@ public:
 	uint64_t valor(uint8_t canal);
 	void debugOutSerial(Stream* port);
 
+	void IRAM_ATTR rmt_isr_handler(void* arg);
 private:
 	const uint8_t PIN1 , PIN2, PIN3 ,PIN4 ,PIN5 ,PIN6;
    

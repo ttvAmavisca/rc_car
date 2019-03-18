@@ -165,3 +165,21 @@ void CanalesPwM::debugOutSerial(Stream* debugPort) {
 	debugPort->println(") .");
 	
 }
+
+//test interrupcion
+void IRAM_ATTR CanalesPwM::rmt_isr_handler(void* arg){
+  //read RMT interrupt status.
+  uint32_t intr_st = RMT.int_st.val;
+
+  RMT.conf_ch[0].conf1.rx_en = 0;
+  RMT.conf_ch[0].conf1.mem_owner = RMT_MEM_OWNER_TX;
+  volatile rmt_item32_t* item = RMTMEM.chan[0].data32;
+  if (item) Serial.print ((item)->duration0);
+  
+  RMT.conf_ch[0].conf1.mem_wr_rst = 1;
+  RMT.conf_ch[0].conf1.mem_owner = RMT_MEM_OWNER_RX;
+  RMT.conf_ch[0].conf1.rx_en = 1;
+
+  //clear RMT interrupt status.
+  RMT.int_clr.val = intr_st;
+}
