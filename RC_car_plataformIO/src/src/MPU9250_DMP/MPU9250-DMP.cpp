@@ -74,6 +74,8 @@ inv_error_t MPU9250_DMP::setIntLatched(unsigned char enable)
 	return mpu_set_int_latched(enable);
 }
 
+
+
 short MPU9250_DMP::getIntStatus(void)
 {
 	short status;
@@ -225,6 +227,8 @@ unsigned char MPU9250_DMP::getFifoConfig(void)
 	}
 	return 0;
 }
+
+
 
 inv_error_t MPU9250_DMP::configureFifo(unsigned char sensors)
 {
@@ -516,6 +520,8 @@ inv_error_t MPU9250_DMP::dmpSetTap(
 	return INV_SUCCESS;
 }
 
+
+
 unsigned char MPU9250_DMP::getTapDir(void)
 {
 	_tap_available = false;
@@ -694,6 +700,55 @@ unsigned short MPU9250_DMP::orientation_row_2_scale(const signed char *row)
         b = 7;		// error
     return b;
 }
+
+
+bool MPU9250_DMP::interrupt_Low_power_accel(unsigned short p_thresh, unsigned char p_time,unsigned short lpa_freq)
+{
+    
+   return (mpu_lp_motion_interrupt(p_thresh,p_time,lpa_freq)==0);
+}
+
+bool MPU9250_DMP::calibrar(float *gyro, float *accel){
+	accelgyrocalMPU9250(gyro, accel);
+	return true;
+}
+
+int MPU9250_DMP::test_imu(long *gyro, long *accel){
+	//return mpu_run_self_test(gyro, accel);
+	return mpu_run_6500_self_test(gyro, accel,0);
+}
+
+bool MPU9250_DMP::getValues(){
+	//return mpu_run_self_test(gyro, accel);
+ if (fifoAvailable())
+  {
+    // Use dmpUpdateFifo to update the ax, gx, mx, etc. values
+    if (dmpUpdateFifo() == INV_SUCCESS)
+    {
+      debugtiming_count = esp_timer_get_time() - debugtiming; // tiempo entre updates de IMU para calculos performance
+      debugtiming = esp_timer_get_time();
+
+      // computeEulerAngles can be used -- after updating the
+      // quaternion values -- to estimate roll, pitch, and yaw
+      computeEulerAngles();
+
+	q0 = calcQuat(qw);
+	q1 = calcQuat(qx);
+	q2 = calcQuat(qy);
+	q3 = calcQuat(qz);
+     return true;
+      
+    }
+  }
+  return false;
+}
+
+ 
+/*
+int mpu_run_self_test(long *gyro, long *accel);
+int mpu_run_6500_self_test(long *gyro, long *accel, unsigned char debug);
+*/
+
 		
 static void tap_cb(unsigned char direction, unsigned char count)
 {

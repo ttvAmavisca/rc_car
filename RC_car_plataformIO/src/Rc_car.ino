@@ -17,14 +17,19 @@
 #define SerialDebugTelemetria false // Set to true to get Serial output for debugging
 #define OUTPUT_TEAPOT false         // paquete teapot para ejemplo de fabricante IMU (intelsense)
 #define CON_BLUETOOTH false         // habilitar envio por bluetooth, nota las librerias ocupan mas de la mitad de memoria de programa normal
-
+#define Usar_DMP true           // Set to true to get Serial output for debugging
 
 #define CON_VESC false         // Utilizar VESC como ESC
 #define CON_BLHELI true         //Utilizar ESC BLHELI
 
 
+#if Usar_DMP
 //Libreria MPU9250, utilizando el DMP(mas lento pero valores filtrados)
 #include "src/MPU9250_DMP/MPU9250-DMP.h"
+#else
+//Libreria MPU9250, utilizando el DMP(mas lento pero valores filtrados)
+#include "src/MPU9250/MPU9250.h"
+#endif
 #include "src/BMP280/BMP280.h"
 
 
@@ -75,7 +80,11 @@ uint64_t debugtiming_count = 0;
 bool rc_mpu_init = false;
 #define SerialPort Serial
 
+#if Usar_DMP
 MPU9250_DMP imu;
+#else
+IMU_MPU9250 imu;
+#endif
 BMP280 barometro;
 
 /** Initiate VescUart class */
@@ -167,6 +176,8 @@ void vescControl()
 void setupMPU9250()
 {
   // Call imu.begin() to verify communication and initialize
+
+  #if Usar_DMP
   if (imu.begin() != INV_SUCCESS)
   {
     rc_mpu_init = false;
@@ -175,13 +186,18 @@ void setupMPU9250()
     Serial.println();
     delay(5000);
   }
+  
+
 
   imu.dmpBegin(DMP_FEATURE_6X_LP_QUAT |  // Enable 6-axis quat
                    DMP_FEATURE_GYRO_CAL | // Use gyro calibration
                   DMP_FEATURE_SEND_CAL_GYRO | // Enviar info de gyro calibrada
                   DMP_FEATURE_SEND_RAW_ACCEL, // Enviar aceleracion raw
                1000);                    // Set DMP FIFO rate to 1000 Hz
- 
+ #else
+    imu.Setup();
+    imu.imu_SerialDebug=SerialDebug;
+ #endif
  if (!barometro.begin(BMP280_ADDRESS_ALT)) {
     Serial.println(F("imposible conectar con barometro!"));
      delay(5000);
@@ -200,22 +216,10 @@ void setupMPU9250()
 
 void imuGetValues()
 {
-  if (imu.fifoAvailable())
-  {
-    // Use dmpUpdateFifo to update the ax, gx, mx, etc. values
-    if (imu.dmpUpdateFifo() == INV_SUCCESS)
-    {
-      debugtiming_count = esp_timer_get_time() - debugtiming; // tiempo entre updates de IMU para calculos performance
-      debugtiming = esp_timer_get_time();
-
-      // computeEulerAngles can be used -- after updating the
-      // quaternion values -- to estimate roll, pitch, and yaw
-      imu.computeEulerAngles();
-      rc_Telemetria.NuevosValoresImu(); //Actualizar valores de telemetria
-      
-    }
-  
+  if(imu.getValues()){
+     rc_Telemetria.NuevosValoresImu(); //Actualizar valores de telemetria
   }
+
 
   if (barometro.actualizar()){
       rc_Telemetria.NuevosValoresBar();

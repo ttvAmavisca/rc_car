@@ -2,7 +2,14 @@
 #define _telemetria_h
 
 #include <Arduino.h>
+#if Usar_DMP
+//Libreria MPU9250, utilizando el DMP(mas lento pero valores filtrados)
 #include "../MPU9250_DMP/MPU9250-DMP.h"
+#else
+//Libreria MPU9250, utilizando el DMP(mas lento pero valores filtrados)
+#include "../MPU9250/MPU9250.h"
+#endif
+
 #include "../rc_car_obj/Rc_car.h"
 #include "../Configuracion/Configuracion.h"
 #include "../BMP280/BMP280.h"
@@ -88,11 +95,19 @@ class Telemetria
 		 * @param      port  - Reference to Serial port (pointer) 
 		 */
 	void setSerialPort(Stream *port);
+	#if Usar_DMP
 	void setImu(MPU9250_DMP *imu_obj);
+	void setObjects(Stream *port, MPU9250_DMP *imu_obj, Rc_car *p_rc_car, Configuracion *p_rc_Configuracion, BMP280 *p_bar);
+	#else
+	//Libreria MPU9250, utilizando el DMP(mas lento pero valores filtrados)
+	void setImu(IMU_MPU9250 *imu_obj);
+	void setObjects(Stream *port, IMU_MPU9250 *imu_obj, Rc_car *p_rc_car, Configuracion *p_rc_Configuracion, BMP280 *p_bar);
+	#endif
+	
 	void setCar(Rc_car *p_rc_car);
 	void setConfig(Configuracion *p_rc_Configuracion);
 	void setBar(BMP280 *p_rc_car);
-	void setObjects(Stream *port, MPU9250_DMP *imu_obj, Rc_car *p_rc_car, Configuracion *p_rc_Configuracion, BMP280 *p_bar);
+	
 
 	void enviarDatosCoche();
 	void enviarDatosEstado();
@@ -115,7 +130,12 @@ class Telemetria
 	void pong();
 	void procesaComando();
 
+	
+	#if Usar_DMP
 	MPU9250_DMP *imu;
+	#else
+	IMU_MPU9250 *imu;
+	#endif
 	Rc_car *rc_car;
 	Configuracion *rc_Configuracion;
 	BMP280 *barometro;

@@ -1,5 +1,8 @@
+#define Usar_DMP true
+
 #include "Telemetria.h"
 //#define OUTPUT_TEAPOT true
+
 
 Telemetria::Telemetria(void)
 {
@@ -14,10 +17,6 @@ void Telemetria::setSerialPort(Stream *port)
   serialPort = port;
 }
 
-void Telemetria::setImu(MPU9250_DMP *imu_obj)
-{
-  imu = imu_obj;
-}
 
 void Telemetria::setCar(Rc_car *p_rc_car)
 {
@@ -34,6 +33,12 @@ void Telemetria::setBar(BMP280 *p_bar)
   barometro = p_bar;
 }
 
+#if Usar_DMP
+void Telemetria::setImu(MPU9250_DMP *imu_obj)
+{
+  imu = imu_obj;
+}
+
 void Telemetria::setObjects(Stream *port, MPU9250_DMP *imu_obj, Rc_car *p_rc_car, Configuracion *p_rc_Configuracion, BMP280 *p_bar)
 {
   setSerialPort(port);
@@ -42,13 +47,29 @@ void Telemetria::setObjects(Stream *port, MPU9250_DMP *imu_obj, Rc_car *p_rc_car
   setConfig(p_rc_Configuracion);
   setBar(p_bar);
 }
+#else
+void Telemetria::setImu(IMU_MPU9250 *imu_obj)
+{
+  imu = imu_obj;
+}
+
+void Telemetria::setObjects(Stream *port, IMU_MPU9250 *imu_obj, Rc_car *p_rc_car, Configuracion *p_rc_Configuracion, BMP280 *p_bar)
+{
+  setSerialPort(port);
+  setImu(imu_obj);
+  setCar(p_rc_car);
+  setConfig(p_rc_Configuracion);
+  setBar(p_bar);
+}
+#endif
+
 
 void Telemetria::NuevosValoresImu()
 {
-  float q0 = imu->calcQuat(imu->qw);
-  float q1 = imu->calcQuat(imu->qx);
-  float q2 = imu->calcQuat(imu->qy);
-  float q3 = imu->calcQuat(imu->qz);
+  float q0 = imu->q0;
+  float q1 = imu->q1;
+  float q2 = imu->q2;
+  float q3 = imu->q3;
 
   rc_car->angulos[0] = q0;
   rc_car->angulos[1] = q1;
@@ -97,7 +118,7 @@ void Telemetria::NuevosValoresImu()
                         String(q1, 4) + ", " + String(q2, 4) +
                         ", " + String(q3, 4));
     serialPort->println("R/P/Y: " + String(imu->roll) + ", " + String(imu->pitch) + ", " + String(imu->yaw));
-    serialPort->println("Time: " + String(imu->time) + " ms");
+    //serialPort->println("Time: " + String(imu->debugtiming_count) + " ms");
     serialPort->println();
   }
 }
@@ -113,7 +134,7 @@ void Telemetria::NuevosValoresBar()
 
     serialPort->println("Presion: " + String(rc_car->bar_presion, 4));
     serialPort->println("Temp: " + String(rc_car->bar_temperatura, 4));
-    serialPort->println("Time: " + String(imu->time) + " ms");
+    //serialPort->println("Time: " + String(imu->time) + " ms");
     serialPort->println();
   }
 }

@@ -29,12 +29,23 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea7 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend7 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea8 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend8 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.tabControlPrincipal = new System.Windows.Forms.TabControl();
             this.tab0Graficas = new System.Windows.Forms.TabPage();
-            this.chartDatos = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.chartCoche = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.chartGyro = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.chartAccel = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.buttonResetZoomGraf = new System.Windows.Forms.Button();
             this.buttonLimpiarGraf = new System.Windows.Forms.Button();
             this.buttonContinarGrafica = new System.Windows.Forms.Button();
@@ -45,6 +56,8 @@
             this.textLogEventos = new System.Windows.Forms.RichTextBox();
             this.tab3Calibracion = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
             this.textconfig5 = new System.Windows.Forms.TextBox();
             this.textconfig6 = new System.Windows.Forms.TextBox();
             this.configL5 = new System.Windows.Forms.Label();
@@ -91,7 +104,7 @@
             this.configL9 = new System.Windows.Forms.Label();
             this.configL10 = new System.Windows.Forms.Label();
             this.buttonGuardarCalibracion = new System.Windows.Forms.Button();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tab4Manual = new System.Windows.Forms.TabPage();
             this.button1 = new System.Windows.Forms.Button();
             this.labelBARPresion = new System.Windows.Forms.Label();
             this.labelBARTemp = new System.Windows.Forms.Label();
@@ -145,22 +158,25 @@
             this.labelPotencia = new System.Windows.Forms.Label();
             this.labelDireccion = new System.Windows.Forms.Label();
             this.timerPing = new System.Windows.Forms.Timer(this.components);
-            this.label9 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
+            this.chartESC = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.labelLatencia = new System.Windows.Forms.Label();
             this.tabControlPrincipal.SuspendLayout();
             this.tab0Graficas.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.chartDatos)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chartCoche)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chartGyro)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chartAccel)).BeginInit();
             this.tab1Visual.SuspendLayout();
             this.tab2Log.SuspendLayout();
             this.tab3Calibracion.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBoxTipoRegula.SuspendLayout();
-            this.tabPage1.SuspendLayout();
+            this.tab4Manual.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarMotor)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarMarcha)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarRuedaIzq)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarRuedaDer)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chartESC)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControlPrincipal
@@ -169,17 +185,20 @@
             this.tabControlPrincipal.Controls.Add(this.tab1Visual);
             this.tabControlPrincipal.Controls.Add(this.tab2Log);
             this.tabControlPrincipal.Controls.Add(this.tab3Calibracion);
-            this.tabControlPrincipal.Controls.Add(this.tabPage1);
+            this.tabControlPrincipal.Controls.Add(this.tab4Manual);
             this.tabControlPrincipal.Location = new System.Drawing.Point(12, 42);
             this.tabControlPrincipal.Name = "tabControlPrincipal";
             this.tabControlPrincipal.SelectedIndex = 0;
-            this.tabControlPrincipal.Size = new System.Drawing.Size(1211, 539);
+            this.tabControlPrincipal.Size = new System.Drawing.Size(1270, 590);
             this.tabControlPrincipal.TabIndex = 20;
             this.tabControlPrincipal.SelectedIndexChanged += new System.EventHandler(this.TabControl1_SelectedIndexChanged);
             // 
             // tab0Graficas
             // 
-            this.tab0Graficas.Controls.Add(this.chartDatos);
+            this.tab0Graficas.Controls.Add(this.chartESC);
+            this.tab0Graficas.Controls.Add(this.chartCoche);
+            this.tab0Graficas.Controls.Add(this.chartGyro);
+            this.tab0Graficas.Controls.Add(this.chartAccel);
             this.tab0Graficas.Controls.Add(this.buttonResetZoomGraf);
             this.tab0Graficas.Controls.Add(this.buttonLimpiarGraf);
             this.tab0Graficas.Controls.Add(this.buttonContinarGrafica);
@@ -187,62 +206,101 @@
             this.tab0Graficas.Location = new System.Drawing.Point(4, 22);
             this.tab0Graficas.Name = "tab0Graficas";
             this.tab0Graficas.Padding = new System.Windows.Forms.Padding(3);
-            this.tab0Graficas.Size = new System.Drawing.Size(1203, 513);
+            this.tab0Graficas.Size = new System.Drawing.Size(1262, 564);
             this.tab0Graficas.TabIndex = 0;
             this.tab0Graficas.Text = "Graficas";
             this.tab0Graficas.UseVisualStyleBackColor = true;
             // 
-            // chartDatos
+            // chartCoche
             // 
-            chartArea1.Name = "ChartArea1";
-            this.chartDatos.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.chartDatos.Legends.Add(legend1);
-            this.chartDatos.Location = new System.Drawing.Point(4, 4);
-            this.chartDatos.Name = "chartDatos";
-            series1.ChartArea = "ChartArea1";
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            this.chartDatos.Series.Add(series1);
-            this.chartDatos.Size = new System.Drawing.Size(1196, 503);
-            this.chartDatos.TabIndex = 14;
-            this.chartDatos.Text = "grafica";
+            chartArea5.Name = "ChartArea1";
+            this.chartCoche.ChartAreas.Add(chartArea5);
+            legend5.Name = "Legend1";
+            this.chartCoche.Legends.Add(legend5);
+            this.chartCoche.Location = new System.Drawing.Point(4, 263);
+            this.chartCoche.Name = "chartCoche";
+            series5.ChartArea = "ChartArea1";
+            series5.Legend = "Legend1";
+            series5.Name = "Series1";
+            this.chartCoche.Series.Add(series5);
+            this.chartCoche.Size = new System.Drawing.Size(627, 253);
+            this.chartCoche.TabIndex = 16;
+            this.chartCoche.Text = "graficaGiro";
+            this.chartCoche.DoubleClick += new System.EventHandler(this.chartCoche_DoubleClick);
+            // 
+            // chartGyro
+            // 
+            chartArea6.Name = "ChartArea1";
+            this.chartGyro.ChartAreas.Add(chartArea6);
+            legend6.Name = "Legend1";
+            this.chartGyro.Legends.Add(legend6);
+            this.chartGyro.Location = new System.Drawing.Point(637, 6);
+            this.chartGyro.Name = "chartGyro";
+            series6.ChartArea = "ChartArea1";
+            series6.Legend = "Legend1";
+            series6.Name = "Series1";
+            this.chartGyro.Series.Add(series6);
+            this.chartGyro.Size = new System.Drawing.Size(627, 253);
+            this.chartGyro.TabIndex = 15;
+            this.chartGyro.Text = "grafica";
+            this.chartGyro.DoubleClick += new System.EventHandler(this.chartGyro_DoubleClick);
+            // 
+            // chartAccel
+            // 
+            chartArea7.Name = "ChartArea1";
+            this.chartAccel.ChartAreas.Add(chartArea7);
+            legend7.Name = "Legend1";
+            this.chartAccel.Legends.Add(legend7);
+            this.chartAccel.Location = new System.Drawing.Point(4, 4);
+            this.chartAccel.Name = "chartAccel";
+            series7.ChartArea = "ChartArea1";
+            series7.Legend = "Legend1";
+            series7.Name = "Series1";
+            this.chartAccel.Series.Add(series7);
+            this.chartAccel.Size = new System.Drawing.Size(627, 253);
+            this.chartAccel.TabIndex = 14;
+            this.chartAccel.Text = "graficaAccel";
+            this.chartAccel.DoubleClick += new System.EventHandler(this.chartAccel_DoubleClick);
             // 
             // buttonResetZoomGraf
             // 
-            this.buttonResetZoomGraf.Location = new System.Drawing.Point(219, 480);
+            this.buttonResetZoomGraf.Location = new System.Drawing.Point(226, 520);
             this.buttonResetZoomGraf.Name = "buttonResetZoomGraf";
             this.buttonResetZoomGraf.Size = new System.Drawing.Size(81, 27);
             this.buttonResetZoomGraf.TabIndex = 13;
             this.buttonResetZoomGraf.Text = "Reset zoom";
             this.buttonResetZoomGraf.UseVisualStyleBackColor = true;
+            this.buttonResetZoomGraf.Click += new System.EventHandler(this.buttonResetZoomGraf_Click);
             // 
             // buttonLimpiarGraf
             // 
-            this.buttonLimpiarGraf.Location = new System.Drawing.Point(958, 480);
+            this.buttonLimpiarGraf.Location = new System.Drawing.Point(965, 520);
             this.buttonLimpiarGraf.Name = "buttonLimpiarGraf";
             this.buttonLimpiarGraf.Size = new System.Drawing.Size(81, 27);
             this.buttonLimpiarGraf.TabIndex = 12;
             this.buttonLimpiarGraf.Text = "Limpiar";
             this.buttonLimpiarGraf.UseVisualStyleBackColor = true;
+            this.buttonLimpiarGraf.Click += new System.EventHandler(this.buttonLimpiarGraf_Click);
             // 
             // buttonContinarGrafica
             // 
-            this.buttonContinarGrafica.Location = new System.Drawing.Point(113, 480);
+            this.buttonContinarGrafica.Location = new System.Drawing.Point(120, 520);
             this.buttonContinarGrafica.Name = "buttonContinarGrafica";
             this.buttonContinarGrafica.Size = new System.Drawing.Size(81, 27);
             this.buttonContinarGrafica.TabIndex = 11;
             this.buttonContinarGrafica.Text = "Continuar";
             this.buttonContinarGrafica.UseVisualStyleBackColor = true;
+            this.buttonContinarGrafica.Click += new System.EventHandler(this.buttonContinarGrafica_Click);
             // 
             // buttonDetenerGrafica
             // 
-            this.buttonDetenerGrafica.Location = new System.Drawing.Point(16, 480);
+            this.buttonDetenerGrafica.Location = new System.Drawing.Point(23, 520);
             this.buttonDetenerGrafica.Name = "buttonDetenerGrafica";
             this.buttonDetenerGrafica.Size = new System.Drawing.Size(81, 27);
             this.buttonDetenerGrafica.TabIndex = 10;
             this.buttonDetenerGrafica.Text = "detener";
             this.buttonDetenerGrafica.UseVisualStyleBackColor = true;
+            this.buttonDetenerGrafica.Click += new System.EventHandler(this.buttonDetenerGrafica_Click);
             // 
             // tab1Visual
             // 
@@ -250,7 +308,7 @@
             this.tab1Visual.Location = new System.Drawing.Point(4, 22);
             this.tab1Visual.Name = "tab1Visual";
             this.tab1Visual.Padding = new System.Windows.Forms.Padding(3);
-            this.tab1Visual.Size = new System.Drawing.Size(1203, 513);
+            this.tab1Visual.Size = new System.Drawing.Size(1262, 564);
             this.tab1Visual.TabIndex = 1;
             this.tab1Visual.Text = "Visual";
             this.tab1Visual.UseVisualStyleBackColor = true;
@@ -268,7 +326,7 @@
             this.tab2Log.Location = new System.Drawing.Point(4, 22);
             this.tab2Log.Name = "tab2Log";
             this.tab2Log.Padding = new System.Windows.Forms.Padding(3);
-            this.tab2Log.Size = new System.Drawing.Size(1203, 513);
+            this.tab2Log.Size = new System.Drawing.Size(1262, 564);
             this.tab2Log.TabIndex = 2;
             this.tab2Log.Text = "Log";
             this.tab2Log.UseVisualStyleBackColor = true;
@@ -310,7 +368,7 @@
             this.tab3Calibracion.Location = new System.Drawing.Point(4, 22);
             this.tab3Calibracion.Name = "tab3Calibracion";
             this.tab3Calibracion.Padding = new System.Windows.Forms.Padding(3);
-            this.tab3Calibracion.Size = new System.Drawing.Size(1203, 513);
+            this.tab3Calibracion.Size = new System.Drawing.Size(1262, 564);
             this.tab3Calibracion.TabIndex = 3;
             this.tab3Calibracion.Text = "Calibrar";
             this.tab3Calibracion.UseVisualStyleBackColor = true;
@@ -329,6 +387,26 @@
             this.groupBox2.TabIndex = 56;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Refresco de datos";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(187, 89);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(20, 13);
+            this.label10.TabIndex = 57;
+            this.label10.Tag = "5";
+            this.label10.Text = "ms";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(187, 42);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(20, 13);
+            this.label9.TabIndex = 56;
+            this.label9.Tag = "5";
+            this.label9.Text = "ms";
             // 
             // textconfig5
             // 
@@ -796,58 +874,58 @@
             this.buttonGuardarCalibracion.UseVisualStyleBackColor = true;
             this.buttonGuardarCalibracion.Click += new System.EventHandler(this.ButtonGuardarCalibracion_Click);
             // 
-            // tabPage1
+            // tab4Manual
             // 
-            this.tabPage1.Controls.Add(this.button1);
-            this.tabPage1.Controls.Add(this.labelBARPresion);
-            this.tabPage1.Controls.Add(this.labelBARTemp);
-            this.tabPage1.Controls.Add(this.checkBoxXinput);
-            this.tabPage1.Controls.Add(this.labelIMUTemp);
-            this.tabPage1.Controls.Add(this.labelIMUAngulo4);
-            this.tabPage1.Controls.Add(this.labelIMUAngulo3);
-            this.tabPage1.Controls.Add(this.labelIMUAngulo2);
-            this.tabPage1.Controls.Add(this.labelIMUAngulo1);
-            this.tabPage1.Controls.Add(this.labelIMUAceleracion3);
-            this.tabPage1.Controls.Add(this.labelIMUAceleracion2);
-            this.tabPage1.Controls.Add(this.labelIMUAceleracion1);
-            this.tabPage1.Controls.Add(this.labelIMUVelocidad3);
-            this.tabPage1.Controls.Add(this.label8);
-            this.tabPage1.Controls.Add(this.labelIMUVelocidad2);
-            this.tabPage1.Controls.Add(this.label7);
-            this.tabPage1.Controls.Add(this.labelIMUVelocidad1);
-            this.tabPage1.Controls.Add(this.labelT_control);
-            this.tabPage1.Controls.Add(this.labelIMUYaw);
-            this.tabPage1.Controls.Add(this.labelCRuedaIzq);
-            this.tabPage1.Controls.Add(this.labelIMURoll);
-            this.tabPage1.Controls.Add(this.labelCRuedaDer);
-            this.tabPage1.Controls.Add(this.labelIMUPitch);
-            this.tabPage1.Controls.Add(this.labelCmotor);
-            this.tabPage1.Controls.Add(this.labelCmarcha);
-            this.tabPage1.Controls.Add(this.label5);
-            this.tabPage1.Controls.Add(this.label4);
-            this.tabPage1.Controls.Add(this.label3);
-            this.tabPage1.Controls.Add(this.label2);
-            this.tabPage1.Controls.Add(this.label1);
-            this.tabPage1.Controls.Add(this.labelMAH);
-            this.tabPage1.Controls.Add(this.labelTemperatura);
-            this.tabPage1.Controls.Add(this.labelRPM);
-            this.tabPage1.Controls.Add(this.labelCorriente);
-            this.tabPage1.Controls.Add(this.labelVoltage);
-            this.tabPage1.Controls.Add(this.trackBarMotor);
-            this.tabPage1.Controls.Add(this.trackBarMarcha);
-            this.tabPage1.Controls.Add(this.trackBarRuedaIzq);
-            this.tabPage1.Controls.Add(this.trackBarRuedaDer);
-            this.tabPage1.Controls.Add(this.buttonSemiControler);
-            this.tabPage1.Controls.Add(this.buttonSemiAuto);
-            this.tabPage1.Controls.Add(this.buttonAuto);
-            this.tabPage1.Controls.Add(this.buttonManual);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1203, 513);
-            this.tabPage1.TabIndex = 4;
-            this.tabPage1.Text = "tab4Manual";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.tab4Manual.Controls.Add(this.button1);
+            this.tab4Manual.Controls.Add(this.labelBARPresion);
+            this.tab4Manual.Controls.Add(this.labelBARTemp);
+            this.tab4Manual.Controls.Add(this.checkBoxXinput);
+            this.tab4Manual.Controls.Add(this.labelIMUTemp);
+            this.tab4Manual.Controls.Add(this.labelIMUAngulo4);
+            this.tab4Manual.Controls.Add(this.labelIMUAngulo3);
+            this.tab4Manual.Controls.Add(this.labelIMUAngulo2);
+            this.tab4Manual.Controls.Add(this.labelIMUAngulo1);
+            this.tab4Manual.Controls.Add(this.labelIMUAceleracion3);
+            this.tab4Manual.Controls.Add(this.labelIMUAceleracion2);
+            this.tab4Manual.Controls.Add(this.labelIMUAceleracion1);
+            this.tab4Manual.Controls.Add(this.labelIMUVelocidad3);
+            this.tab4Manual.Controls.Add(this.label8);
+            this.tab4Manual.Controls.Add(this.labelIMUVelocidad2);
+            this.tab4Manual.Controls.Add(this.label7);
+            this.tab4Manual.Controls.Add(this.labelIMUVelocidad1);
+            this.tab4Manual.Controls.Add(this.labelT_control);
+            this.tab4Manual.Controls.Add(this.labelIMUYaw);
+            this.tab4Manual.Controls.Add(this.labelCRuedaIzq);
+            this.tab4Manual.Controls.Add(this.labelIMURoll);
+            this.tab4Manual.Controls.Add(this.labelCRuedaDer);
+            this.tab4Manual.Controls.Add(this.labelIMUPitch);
+            this.tab4Manual.Controls.Add(this.labelCmotor);
+            this.tab4Manual.Controls.Add(this.labelCmarcha);
+            this.tab4Manual.Controls.Add(this.label5);
+            this.tab4Manual.Controls.Add(this.label4);
+            this.tab4Manual.Controls.Add(this.label3);
+            this.tab4Manual.Controls.Add(this.label2);
+            this.tab4Manual.Controls.Add(this.label1);
+            this.tab4Manual.Controls.Add(this.labelMAH);
+            this.tab4Manual.Controls.Add(this.labelTemperatura);
+            this.tab4Manual.Controls.Add(this.labelRPM);
+            this.tab4Manual.Controls.Add(this.labelCorriente);
+            this.tab4Manual.Controls.Add(this.labelVoltage);
+            this.tab4Manual.Controls.Add(this.trackBarMotor);
+            this.tab4Manual.Controls.Add(this.trackBarMarcha);
+            this.tab4Manual.Controls.Add(this.trackBarRuedaIzq);
+            this.tab4Manual.Controls.Add(this.trackBarRuedaDer);
+            this.tab4Manual.Controls.Add(this.buttonSemiControler);
+            this.tab4Manual.Controls.Add(this.buttonSemiAuto);
+            this.tab4Manual.Controls.Add(this.buttonAuto);
+            this.tab4Manual.Controls.Add(this.buttonManual);
+            this.tab4Manual.Location = new System.Drawing.Point(4, 22);
+            this.tab4Manual.Name = "tab4Manual";
+            this.tab4Manual.Padding = new System.Windows.Forms.Padding(3);
+            this.tab4Manual.Size = new System.Drawing.Size(1262, 564);
+            this.tab4Manual.TabIndex = 4;
+            this.tab4Manual.Text = "tab4Manual";
+            this.tab4Manual.UseVisualStyleBackColor = true;
             // 
             // button1
             // 
@@ -1339,33 +1417,42 @@
             // 
             // timerPing
             // 
+            this.timerPing.Interval = 800;
             this.timerPing.Tick += new System.EventHandler(this.timerPing_Tick);
             // 
-            // label9
+            // chartESC
             // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(187, 42);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(20, 13);
-            this.label9.TabIndex = 56;
-            this.label9.Tag = "5";
-            this.label9.Text = "ms";
+            chartArea8.Name = "ChartArea1";
+            this.chartESC.ChartAreas.Add(chartArea8);
+            legend8.Name = "Legend1";
+            this.chartESC.Legends.Add(legend8);
+            this.chartESC.Location = new System.Drawing.Point(637, 263);
+            this.chartESC.Name = "chartESC";
+            series8.ChartArea = "ChartArea1";
+            series8.Legend = "Legend1";
+            series8.Name = "Series1";
+            this.chartESC.Series.Add(series8);
+            this.chartESC.Size = new System.Drawing.Size(627, 253);
+            this.chartESC.TabIndex = 17;
+            this.chartESC.Text = "grafica";
+            this.chartESC.Click += new System.EventHandler(this.chartESC_Click);
             // 
-            // label10
+            // labelLatencia
             // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(187, 89);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(20, 13);
-            this.label10.TabIndex = 57;
-            this.label10.Tag = "5";
-            this.label10.Text = "ms";
+            this.labelLatencia.AutoSize = true;
+            this.labelLatencia.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelLatencia.Location = new System.Drawing.Point(217, 18);
+            this.labelLatencia.Name = "labelLatencia";
+            this.labelLatencia.Size = new System.Drawing.Size(0, 13);
+            this.labelLatencia.TabIndex = 58;
+            this.labelLatencia.Tag = "5";
             // 
             // FormPrincipal
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1230, 584);
+            this.ClientSize = new System.Drawing.Size(1283, 634);
+            this.Controls.Add(this.labelLatencia);
             this.Controls.Add(this.labelDireccion);
             this.Controls.Add(this.labelPotencia);
             this.Controls.Add(this.labelControl);
@@ -1380,7 +1467,9 @@
             this.Load += new System.EventHandler(this.FormPrincipal_Load);
             this.tabControlPrincipal.ResumeLayout(false);
             this.tab0Graficas.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.chartDatos)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chartCoche)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chartGyro)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chartAccel)).EndInit();
             this.tab1Visual.ResumeLayout(false);
             this.tab2Log.ResumeLayout(false);
             this.tab3Calibracion.ResumeLayout(false);
@@ -1391,12 +1480,13 @@
             this.groupBox1.PerformLayout();
             this.groupBoxTipoRegula.ResumeLayout(false);
             this.groupBoxTipoRegula.PerformLayout();
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage1.PerformLayout();
+            this.tab4Manual.ResumeLayout(false);
+            this.tab4Manual.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarMotor)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarMarcha)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarRuedaIzq)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarRuedaDer)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chartESC)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1431,7 +1521,7 @@
         private System.Windows.Forms.TextBox textconfig1;
         private System.Windows.Forms.ComboBox comboPuertoSerie;
         private System.Windows.Forms.Button buttonConectar;
-        private System.Windows.Forms.DataVisualization.Charting.Chart chartDatos;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chartAccel;
         private System.Windows.Forms.Timer timerActualizar;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Label configL18;
@@ -1465,7 +1555,7 @@
         private System.Windows.Forms.TextBox textconfig5;
         private System.Windows.Forms.Label configL5;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage tab4Manual;
         private System.Windows.Forms.Button buttonSemiControler;
         private System.Windows.Forms.Button buttonSemiAuto;
         private System.Windows.Forms.Button buttonAuto;
@@ -1519,6 +1609,10 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chartCoche;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chartGyro;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chartESC;
+        private System.Windows.Forms.Label labelLatencia;
     }
 }
 

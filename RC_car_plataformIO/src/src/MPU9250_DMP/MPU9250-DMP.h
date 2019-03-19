@@ -74,6 +74,7 @@ public:
 	int gx, gy, gz;
 	int mx, my, mz;
 	long qw, qx, qy, qz;
+	float q0,q1,q2,q3;
 	long temperature;
 	unsigned long time;
 	float pitch, roll, yaw;
@@ -234,7 +235,7 @@ public:
 	// or data read).
 	// Output: contents of the INT_STATUS register
 	short getIntStatus(void);
-	
+
 	// dmpBegin -- Initialize the DMP, enable one or more features, and set the FIFO's sample rate
 	// features can be any one of 
 	// DMP_FEATURE_TAP -- Tap detection
@@ -375,6 +376,70 @@ public:
 	//         Bit pos 2: mag
 	int selfTest(unsigned char debug = 0);
 	
+	
+/**
+ *  @brief      Enters LP accel motion interrupt mode.
+ *  The behaviour of this feature is very different between the MPU6050 and the
+ *  MPU6500. Each chip's version of this feature is explained below.
+ *
+ *  \n The hardware motion threshold can be between 32mg and 8160mg in 32mg
+ *  increments.
+ *
+ *  \n Low-power accel mode supports the following frequencies:
+ *  \n 1.25Hz, 5Hz, 20Hz, 40Hz
+ *
+ *  \n MPU6500:
+ *  \n Unlike the MPU6050 version, the hardware does not "lock in" a reference
+ *  sample. The hardware monitors the accel data and detects any large change
+ *  over a short period of time.
+ *
+ *  \n The hardware motion threshold can be between 4mg and 1020mg in 4mg
+ *  increments.
+ *
+ *  \n MPU6500 Low-power accel mode supports the following frequencies:
+ *  \n 1.25Hz, 2.5Hz, 5Hz, 10Hz, 20Hz, 40Hz, 80Hz, 160Hz, 320Hz, 640Hz
+ *
+ *  \n\n NOTES:
+ *  \n The driver will round down @e thresh to the nearest supported value if
+ *  an unsupported threshold is selected.
+ *  \n To select a fractional wake-up frequency, round down the value passed to
+ *  @e lpa_freq.
+ *  \n The MPU6500 does not support a delay parameter. If this function is used
+ *  for the MPU6500, the value passed to @e time will be ignored.
+ *  \n To disable this mode, set @e lpa_freq to zero. The driver will restore
+ *  the previous configuration.
+ *
+ *  @param[in]  thresh      Motion threshold in mg.
+ *  @param[in]  time        Duration in milliseconds that the accel data must
+ *                          exceed @e thresh before motion is reported.
+ *  @param[in]  lpa_freq    Minimum sampling rate, or zero to disable.
+ *  @return     0 if successful.
+ */
+	bool interrupt_Low_power_accel(unsigned short p_thresh, unsigned char p_time,unsigned short lpa_freq);
+	
+/**
+ *  @brief      consigue valores de desviacion por defecto
+ *
+ *  @param[out]  gyro      valores del gyro.
+ *  @param[out]  accel      valores del acelerometro
+ *  @param[in]  hw_test    testear.
+ *  @return     true if successful.
+ */
+	//bool get_biases(long *gyro, long *accel, unsigned char hw_test);
+
+/**
+ *  @brief      calibracion de los valores
+ *
+ *  @param[out]  gyro      valores del gyro.
+ *  @param[out]  accel      valores del acelerometro
+ *  @return     true if successful.
+ */
+	bool calibrar(float *gyro, float *accel);
+
+	int test_imu(long *gyro, long *accel);
+	bool getValues();
+
+	int64_t debugtiming,debugtiming_count;
 private:
 	unsigned short _aSense;
 	float _gSense, _mSense;
@@ -382,6 +447,7 @@ private:
 	// Convert a QN-format number to a float
 	float qToFloat(long number, unsigned char q);
 	unsigned short orientation_row_2_scale(const signed char *row);
+	
 };
 
 #endif // _SPARKFUN_MPU9250_DMP_H_
