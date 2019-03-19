@@ -13,12 +13,14 @@ namespace rc_car_config
     {
         public Controller[] controllers;
         public bool Habilitado { get; set; }
+        public bool loop { get; set; }
 
         public ControlConJoystick()
         {
              controllers = new[] { new Controller(UserIndex.One), new Controller(UserIndex.Two), new Controller(UserIndex.Three), new Controller(UserIndex.Four) };
+            loop = true;
 
-            
+
         }
         
         public Controller GetFirstjoystick()
@@ -39,8 +41,7 @@ namespace rc_car_config
 
         public bool StartCaptureFirstJostick()
         {
-            Controller controller = GetFirstjoystick();
-            if (controller == null) return false;
+           
             Thread thread2 = new Thread(new ThreadStart(LoopControlJoystick));
             thread2.Start();
             //LoopControlJoystick(controller);
@@ -49,17 +50,23 @@ namespace rc_car_config
 
         public void LoopControlJoystick()
         {
-            Controller controller = GetFirstjoystick();
-            if (controller == null) return;
-
-            var previousState = controller.GetState();
-            while (controller.IsConnected)
+            while (loop)
             {
-                var state = controller.GetState();
-                if (previousState.PacketNumber != state.PacketNumber)
-                    CambioEstadoJoystick(state);
-                Thread.Sleep(10);
-                previousState = state;
+                Controller controller = GetFirstjoystick();
+                // if (controller == null) return;
+                if (controller != null)
+                {
+                    var previousState = controller.GetState();
+                    while (controller.IsConnected & loop)
+                    {
+                        var state = controller.GetState();
+                        if (previousState.PacketNumber != state.PacketNumber)
+                            CambioEstadoJoystick(state);
+                        Thread.Sleep(10);
+                        previousState = state;
+                    }
+                }
+                Thread.Sleep(1000);
             }
         }
 

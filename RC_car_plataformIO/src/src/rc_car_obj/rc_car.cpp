@@ -59,6 +59,12 @@ Rc_car::Rc_car(void){
   arranque_tmax_fase_3 =1000000;
   arranque_Vmax_fase_3 =1;
 
+  ina_shuntvoltage=50;
+  ina_busvoltage=51;
+  ina_current_mA=52;
+  ina_loadvoltage=53;
+  ina_power_mW=54;
+
 }
 
 void Rc_car::calcular_consignas()

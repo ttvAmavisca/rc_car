@@ -19,14 +19,15 @@ namespace rc_car_config
        
 
         public float pitch, roll, yaw, imu_temp;
-        public float ConsignaMarcha, ConsignaRPMActual, AnguloRuedaDerecha, AnguloRuedaIzquierda, ESC_VoltajeEntrada, ESC_rpmActual, ESC_avgMotorCurrent, ESC_avgInputCurrent, ESC_Dutycycle;
+        public float ConsignaMarcha, ConsignaMotor, ConsignaRuedaDerecha, ConsignaRuedaIzquierda;
+        public float ESC_VoltajeEntrada, ESC_rpmActual, ESC_avgMotorCurrent, ESC_avgInputCurrent, ESC_Dutycycle;
+        float Ina_shuntvoltage, Ina_busvoltage, Ina_current_mA, Ina_loadvoltage, Ina_power_mW;
         public E_modo modo_motor_actual;
         public E_tipo_control tipo_control_actual;
         public E_regulacion_direccion tipo_regulacion_direccion;
         public E_regulacion_potencia tipo_regulacion_potencia;
 
         public float bar_temperatura, bar_presion;
-        public int tipo_control;
         public int[] gyro;
         public int[] aceleracion;
         public float[] angulos;
@@ -47,39 +48,51 @@ namespace rc_car_config
         int bytesRecibidos;
         bool conexionCorrecta;
 
-     
 
-       public enum ComandosBluetooth : int
+
+        public enum ComandosBluetooth : int
         {
-            ping=1,
-            auto_parametros,
-            auto_imu,
-            peticion_coche,
-            peticion_imu,
-            peticion_calibracion,
-            nueva_calibracion,
-            cambiar_modo,
-            control_remoto,
-            PedirEstado,
-            pedir_valoresmanual,
-            nuevos_valoresmanual
+            e_com_ping = 1,
+            e_com_auto_parametros,
+            e_com_auto_imu,
+            e_com_peticion_Datos,
+            e_com_peticion_calibracion,
+            e_com_nueva_calibracion,
+            e_com_cambiar_modo,
+            e_com_control_remoto,
+            e_com_control_potencia,
+            e_com_control_dirrecion,
+            e_com_PedirEstado,
+            e_com_pedir_valoresmanual,
+            e_com_nuevos_valoresmanual
         };
 
         public enum RespuestasBluetooth : int
         {
-            pong=1,
-            auto_parametros ,
-            auto_imu,
-            datos_coche,
-            datosn_imu,
-            valores_calibracion,
-            cambio_ok,
-            cambiar_modo,
-            control_remoto,
-            estado,
-            msg,
-            valores_manual
+            e_res_pong = 1,
+            e_res_auto_parametros,
+            e_res_auto_imu,
+            e_res_datos_coche,
+            e_res_datosn_imu,
+            e_res_datos_potencia,
+            e_res_datos_ESC,
+            e_res_valores_calibracion,
+            e_res_cambio_ok,
+            e_res_cambiar_modo,
+            e_res_control_remoto,
+            e_res_estado,
+            e_res_msg,
+            e_res_valores_manual
         };
+
+        public enum E_valores : int
+        {
+            e_val_Coche = 1,
+            e_val_IMU = 2,
+            e_val_Potencia=4,
+            e_val_ESC = 8
+        };
+
 
 
         public enum E_modo
@@ -230,13 +243,28 @@ namespace rc_car_config
                 return false;
             }
         }
+        public void Pedir_estado()
+        {
+            if (CheckSerialConection())
+            {
+                Enviar_comando_Bluetooth(ComandosBluetooth.e_com_PedirEstado, 0);
+            }
+        }
+
+        public void Pedir_Valores(int valores)
+        {
+            if (CheckSerialConection())
+            {
+                Enviar_comando_Bluetooth(ComandosBluetooth.e_com_peticion_Datos, valores);
+            }
+        }
 
         public void Change_autoTelemetry(bool coche, bool imu)
         {
             if (CheckSerialConection()) { 
-                Enviar_comando_Bluetooth(ComandosBluetooth.auto_parametros, coche ? 1 : 0);
-                Enviar_comando_Bluetooth(ComandosBluetooth.auto_imu, imu ? 1 : 0);
-                Enviar_comando_Bluetooth(ComandosBluetooth.PedirEstado,0);
+                Enviar_comando_Bluetooth(ComandosBluetooth.e_com_auto_parametros, coche ? 1 : 0);
+                Enviar_comando_Bluetooth(ComandosBluetooth.e_com_auto_imu, imu ? 1 : 0);
+                Enviar_comando_Bluetooth(ComandosBluetooth.e_com_PedirEstado,0);
             }
         }
 
@@ -245,7 +273,7 @@ namespace rc_car_config
             initPing = DateTime.Now;
             if (CheckSerialConection())
             {
-                Enviar_comando_Bluetooth(ComandosBluetooth.ping,0);
+                Enviar_comando_Bluetooth(ComandosBluetooth.e_com_ping,0);
             }
         }
 
@@ -285,9 +313,9 @@ namespace rc_car_config
         {
             DatosCocheEventArgs parametros = new DatosCocheEventArgs() {
                 ConsignaMarcha=p_ConsignaMarcha,
-                ConsignaRPMActual=p_ConsignaRPMActual,
-                AnguloRuedaDerecha=p_AnguloRuedaDerecha,
-                AnguloRuedaIzquierda=p_AnguloRuedaIzquierda,
+                ConsignaMotor=p_ConsignaRPMActual,
+                ConsignaRuedaDerecha=p_AnguloRuedaDerecha,
+                ConsignaRuedaIzquierda=p_AnguloRuedaIzquierda,
                 ESC_VoltajeEntrada=p_ESC_VoltajeEntrada,
                 ESC_avgInputCurrent=p_ESC_avgInputCurrent,
                 ESC_avgMotorCurrent=p_ESC_avgMotorCurrent,
@@ -310,9 +338,9 @@ namespace rc_car_config
             public DateTime Time { get; set; }
 
             public float ConsignaMarcha { get; set; }
-            public float ConsignaRPMActual { get; set; }
-            public float AnguloRuedaDerecha { get; set; }
-            public float AnguloRuedaIzquierda { get; set; }
+            public float ConsignaMotor { get; set; }
+            public float ConsignaRuedaDerecha { get; set; }
+            public float ConsignaRuedaIzquierda { get; set; }
             public float ESC_VoltajeEntrada { get; set; }
             public float ESC_rpmActual { get; set; }
             public float ESC_avgMotorCurrent { get; set; }
@@ -324,7 +352,7 @@ namespace rc_car_config
             public E_regulacion_potencia Tipo_regulacion_potencia { get; set; }
         }
         /******************************************************************/
-        private void OnRecividosDatosIMU(float p_pitch, float p_roll, float p_yaw, int[] p_gyro, int[] p_aceleracion, float[] p_angulos, int p_tipo_control, float p_imu_temp, float p_bar_temp, float p_bar_presion)
+        private void OnRecividosDatosIMU(float p_pitch, float p_roll, float p_yaw, int[] p_gyro, int[] p_aceleracion, float[] p_angulos, float p_imu_temp, float p_bar_temp, float p_bar_presion)
         {
             DatosIMUEventArgs parametros = new DatosIMUEventArgs()
             {
@@ -335,7 +363,7 @@ namespace rc_car_config
                 Gyro= p_gyro,
                 Aceleracion=p_aceleracion,
                 Angulos=p_angulos,
-                Tipo_control=p_tipo_control,
+               // Tipo_control=p_tipo_control,
                 Imu_temp=p_imu_temp,
                 bar_presion=p_bar_presion,
                 bar_temp=p_bar_temp
@@ -354,13 +382,69 @@ namespace rc_car_config
             public int[] Gyro { get; set; }
             public int[] Aceleracion { get; set; }
             public float[] Angulos { get; set; }
-            public int Tipo_control { get; set; }
+            //public int Tipo_control { get; set; }
             public float Imu_temp { get; set; }
             public float bar_temp { get; set; }
             public float bar_presion { get; set; }
             public DateTime Time { get; set; }
         }
         /******************************************************************/
+        /******************************************************************/
+        private void OnRecividosDatosPotencia(float p_ina_busvoltage, float p_ina_current_mA, float p_ina_loadvoltage, float p_ina_power_mW)
+        {
+            DatosPotenciaEventArgs parametros = new DatosPotenciaEventArgs()
+            {
+                ina_busvoltage =p_ina_busvoltage,
+                ina_current_mA =p_ina_current_mA,
+                ina_loadvoltage = p_ina_loadvoltage,
+                ina_power_mW = p_ina_power_mW,
+
+                Time = DateTime.UtcNow
+            };
+
+            RecividosDatosPotenciaEvent?.Invoke(this, parametros);
+        }
+
+        public event EventHandler<DatosPotenciaEventArgs> RecividosDatosPotenciaEvent;
+
+        public class DatosPotenciaEventArgs : EventArgs
+        {
+            public DateTime Time { get; set; }
+
+            public float ina_busvoltage { get; set; }
+            public float ina_current_mA { get; set; }
+            public float ina_loadvoltage { get; set; }
+            public float ina_power_mW { get; set; }
+        }
+        /******************************************************************/
+        private void OnRecividosDatoESC(float p_ESC_VoltajeEntrada, float p_ESC_rpmActual, float p_ESC_avgMotorCurrent, float p_ESC_avgInputCurrent, float p_ESC_Dutycycle)
+        {
+            DatosESCEventArgs parametros = new DatosESCEventArgs()
+            {
+                ESC_VoltajeEntrada = p_ESC_VoltajeEntrada,
+                ESC_avgInputCurrent = p_ESC_avgInputCurrent,
+                ESC_avgMotorCurrent = p_ESC_avgMotorCurrent,
+                ESC_Dutycycle = p_ESC_Dutycycle,
+                ESC_rpmActual = p_ESC_rpmActual,
+                Time = DateTime.UtcNow
+            };
+
+            RecividosDatosESCEvent?.Invoke(this, parametros);
+        }
+
+        public event EventHandler<DatosESCEventArgs> RecividosDatosESCEvent;
+
+        public class DatosESCEventArgs : EventArgs
+        {
+            public DateTime Time { get; set; }
+
+            public float ESC_VoltajeEntrada { get; set; }
+            public float ESC_rpmActual { get; set; }
+            public float ESC_avgMotorCurrent { get; set; }
+            public float ESC_avgInputCurrent { get; set; }
+            public float ESC_Dutycycle { get; set; }
+          
+        }
         private void OnRecividosDatosCalibracion(float[] p_parRecibido, int p_x, int p_verHight, int p_verLow)
         {
             DatosCalibracionEventArgs parametros = new DatosCalibracionEventArgs() {
@@ -480,7 +564,7 @@ namespace rc_car_config
 
                         cadenaEnvio[indice++] = (byte)'$';
                         cadenaEnvio[indice++] = 2;
-                        cadenaEnvio[indice++] = (byte)ComandosBluetooth.nueva_calibracion;
+                        cadenaEnvio[indice++] = (byte)ComandosBluetooth.e_com_nueva_calibracion;
 
                         for (int indiPar = 1; indiPar <= 14; indiPar++)
                         {
@@ -529,7 +613,7 @@ namespace rc_car_config
 
                         cadenaEnvio[indice++] = (byte)'$';
                         cadenaEnvio[indice++] = 2;
-                        cadenaEnvio[indice++] = (byte)ComandosBluetooth.nuevos_valoresmanual;
+                        cadenaEnvio[indice++] = (byte)ComandosBluetooth.e_com_nuevos_valoresmanual;
 
                         for (int indiPar = 0; indiPar < valores_manual.Length; indiPar++)
                         {
@@ -595,33 +679,43 @@ namespace rc_car_config
 
             //todos los comandos basicos tienen un solo byte de datos
             /*
-            if (comando == RespuestasBluetooth.msg || comando == RespuestasBluetooth.auto_imu || comando == RespuestasBluetooth.auto_parametros || comando == RespuestasBluetooth.cambiar_modo || comando == RespuestasBluetooth.cambio_ok || comando == RespuestasBluetooth.control_remoto) // recepcion estado
+            if (comando == RespuestasBluetooth.e_res_msg || comando == RespuestasBluetooth.e_res_auto_imu || comando == RespuestasBluetooth.e_res_auto_parametros || comando == RespuestasBluetooth.e_res_cambiar_modo || comando == RespuestasBluetooth.e_res_cambio_ok || comando == RespuestasBluetooth.e_res_control_remoto) // recepcion estado
             {
                 return 6;
             }
             */
-            if (comando == RespuestasBluetooth.datos_coche) //recepcion datos
+            if (comando == RespuestasBluetooth.e_res_datos_coche) //recepcion datos
             {
                 return 26;
             }
 
-            if (comando == RespuestasBluetooth.datosn_imu) //recepcion msg
+            if (comando == RespuestasBluetooth.e_res_datosn_imu) //recepcion msg
             {
                 return 65;
             }
 
-            if (comando == RespuestasBluetooth.valores_calibracion) //recepcion calibracion
+            if (comando == RespuestasBluetooth.e_res_datos_potencia) //recepcion msg
+            {
+                return 15;
+            }
+
+            if (comando == RespuestasBluetooth.e_res_datos_ESC) //recepcion msg
+            {
+                return 14;
+            }
+
+            if (comando == RespuestasBluetooth.e_res_valores_calibracion) //recepcion calibracion
             {
                 return 63;
             }
 
-            if (comando == RespuestasBluetooth.valores_manual) //recepcion msg
+            if (comando == RespuestasBluetooth.e_res_valores_manual) //recepcion msg
             {
                 return 13;
             }
 
 
-            if (comando == RespuestasBluetooth.estado) //recepcion msg
+            if (comando == RespuestasBluetooth.e_res_estado) //recepcion msg
             {
                 return 9;
             }
@@ -642,10 +736,10 @@ namespace rc_car_config
             RespuestasBluetooth comandoChar = (RespuestasBluetooth)bufferEntradaSerie[2];
             switch (comandoChar)
             {
-                case RespuestasBluetooth.pong:
+                case RespuestasBluetooth.e_res_pong:
                     tiempoRespuesta = (DateTime.Now - initPing).TotalMilliseconds;
                     break;
-                case RespuestasBluetooth.estado: //recepcion nuevo estado
+                case RespuestasBluetooth.e_res_estado: //recepcion nuevo estado
                     modo_motor_actual = (E_modo)bufferEntradaSerie[3];
                     tipo_control_actual = (E_tipo_control)bufferEntradaSerie[4];
                     tipo_regulacion_direccion = (E_regulacion_direccion)bufferEntradaSerie[5];
@@ -655,18 +749,17 @@ namespace rc_car_config
         LogearMSG(String.Format(string.Format("Recibido nuevo estado del sistema: motor: {0} control: {1}  direccion: {2} potencia {3}", modo_motor_actual, tipo_control_actual,tipo_regulacion_direccion,tipo_regulacion_potencia)));
                     break;
 
-                case RespuestasBluetooth.datos_coche: //recepcion medida
+                case RespuestasBluetooth.e_res_datos_coche: //recepcion medida
                     posBuffer = 3;
               
-
                     dato = (short)((bufferEntradaSerie[posBuffer++]) | ((bufferEntradaSerie[posBuffer++]) << 8));
-                    ConsignaRPMActual = (dato) / 10.0f;
+                    ConsignaMotor = (dato) / 100.0f;
                     dato = (short)((bufferEntradaSerie[posBuffer++]) | ((bufferEntradaSerie[posBuffer++]) << 8));
-                    ConsignaMarcha = dato / 10.0f;
+                    ConsignaRuedaDerecha = dato / 100.0f;
                     dato = (short)((bufferEntradaSerie[posBuffer++]) | ((bufferEntradaSerie[posBuffer++]) << 8));
-                    AnguloRuedaDerecha = dato / 10.0f;
+                    ConsignaRuedaIzquierda = dato / 100.0f;
                     dato = (short)((bufferEntradaSerie[posBuffer++]) | ((bufferEntradaSerie[posBuffer++]) << 8));
-                    AnguloRuedaIzquierda = dato / 10.0f;
+                    ConsignaMarcha = dato / 100.0f;
                     dato = (short)((bufferEntradaSerie[posBuffer++]) | ((bufferEntradaSerie[posBuffer++]) << 8));
                     ESC_VoltajeEntrada = dato / 10.0f;
                     dato = (bufferEntradaSerie[posBuffer++]) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
@@ -687,15 +780,46 @@ namespace rc_car_config
                     tipo_regulacion_potencia = (E_regulacion_potencia) dato;
 
 
-                    OnRecividosDatosCoche(ConsignaMarcha, ConsignaRPMActual, AnguloRuedaDerecha, AnguloRuedaIzquierda, ESC_VoltajeEntrada, ESC_rpmActual, ESC_avgInputCurrent, ESC_avgInputCurrent, ESC_Dutycycle, modo_motor_actual, tipo_control_actual, tipo_regulacion_direccion, tipo_regulacion_potencia);
+                    OnRecividosDatosCoche(ConsignaMarcha, ConsignaMotor, ConsignaRuedaDerecha, ConsignaRuedaIzquierda, ESC_VoltajeEntrada, ESC_rpmActual, ESC_avgInputCurrent, ESC_avgInputCurrent, ESC_Dutycycle, modo_motor_actual, tipo_control_actual, tipo_regulacion_direccion, tipo_regulacion_potencia);
                     // LogearMSG(String.Format(string.Format(@"RPM: {0} RuedaDer {1} RuedaIzq {2}  Marcha {3} ESC_Voltaje {4} ESC_rpm {5} ESC_avgMotorCurrent {6} ESC_avgInputCurrent {7} ESC_Dutycycle {8}",modo_motor_actual = dato;
-                   
-                    //     ConsignaRPMActual, ConsignaDireccionActual, AnguloRuedaDerecha, AnguloRuedaIzquierda, ESC_VoltajeEntrada, ESC_rpmActual, ESC_avgMotorCurrent, ESC_avgInputCurrent, ESC_Dutycycle)));
 
+                    //     ConsignaRPMActual, ConsignaDireccionActual, AnguloRuedaDerecha, AnguloRuedaIzquierda, ESC_VoltajeEntrada, ESC_rpmActual, ESC_avgMotorCurrent, ESC_avgInputCurrent, ESC_Dutycycle)));
+                    break;
+                case RespuestasBluetooth.e_res_datos_ESC: //recepcion medida
+                    posBuffer = 3;
+                    dato = (short)((bufferEntradaSerie[posBuffer++]) | ((bufferEntradaSerie[posBuffer++]) << 8));
+                    ESC_VoltajeEntrada = dato / 10.0f;
+                    dato = (bufferEntradaSerie[posBuffer++]) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
+                    ESC_rpmActual = dato * 10.0f;
+                    dato = (bufferEntradaSerie[posBuffer++]) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
+                    ESC_avgMotorCurrent = dato / 100.0f;
+                    dato = (bufferEntradaSerie[posBuffer++]) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
+                    ESC_avgInputCurrent = dato / 100.0f;
+                    dato = (bufferEntradaSerie[posBuffer++] & 0xff);
+                    ESC_Dutycycle = dato;
+
+                    OnRecividosDatoESC(ESC_VoltajeEntrada, ESC_rpmActual, ESC_avgInputCurrent, ESC_avgInputCurrent, ESC_Dutycycle);
 
                     break;
 
-                case RespuestasBluetooth.datosn_imu: //recepcion medida
+                case RespuestasBluetooth.e_res_datos_potencia: //recepcion medida
+                    posBuffer = 3;
+
+                    dato = (short)((bufferEntradaSerie[posBuffer++]) | ((bufferEntradaSerie[posBuffer++]) << 8));
+                    Ina_busvoltage = dato / 1000.0f;
+                    //dato = (bufferEntradaSerie[posBuffer++]) | ((bufferEntradaSerie[posBuffer++] & 0xff) << 8);
+                    //Ina_loadvoltage = dato / 1000.0f;
+                    dato = (bufferEntradaSerie[posBuffer++]) | ((bufferEntradaSerie[posBuffer++]) << 8) | ((bufferEntradaSerie[posBuffer++]) << 16) | ((bufferEntradaSerie[posBuffer++]) << 24);
+                    Ina_current_mA = dato / 10.0f;
+                   
+                    dato = (bufferEntradaSerie[posBuffer++]) | ((bufferEntradaSerie[posBuffer++]) << 8) | ((bufferEntradaSerie[posBuffer++]) << 16) | ((bufferEntradaSerie[posBuffer++]) << 24);
+                    Ina_power_mW = dato / 10.0f;
+            
+                    OnRecividosDatosPotencia(Ina_busvoltage, Ina_current_mA, Ina_loadvoltage, Ina_power_mW);
+
+                    break;
+
+                case RespuestasBluetooth.e_res_datosn_imu: //recepcion medida
                     posBuffer = 3;
                     dato = (bufferEntradaSerie[posBuffer++]) | ((bufferEntradaSerie[posBuffer++]) << 8) | ((bufferEntradaSerie[posBuffer++]) << 16) | ((bufferEntradaSerie[posBuffer++]) << 24);
                     pitch = (dato) / 1000.0f;
@@ -729,13 +853,13 @@ namespace rc_car_config
                     bar_presion = dato / 1000.0f;
                     
 
-                    OnRecividosDatosIMU(pitch, roll, yaw, gyro, aceleracion, angulos, tipo_control, imu_temp,bar_temperatura,bar_presion);
+                    OnRecividosDatosIMU(pitch, roll, yaw, gyro, aceleracion, angulos, imu_temp,bar_temperatura,bar_presion);
                     //LogearMSG(String.Format(string.Format("medida: {0} {1} {2} {3} {4}", pitch, roll, yaw, velocidad[0], tipo_control)));
 
 
 
                     break;
-                case RespuestasBluetooth.msg: // Mensajes
+                case RespuestasBluetooth.e_res_msg: // Mensajes
 
                     dato = bufferEntradaSerie[3];
                     if (dato == 1)
@@ -776,7 +900,7 @@ namespace rc_car_config
                     }
                     else if (dato == 10)
                     {
-                        LogearMSG(String.Format(string.Format("{0} {1}", "Nuevos valores manuales OK", comandoChar)));
+                       // LogearMSG(String.Format(string.Format("{0} {1}", "Nuevos valores manuales OK", comandoChar)));
                     }
                     else if (dato == 11)
                     {
@@ -788,7 +912,7 @@ namespace rc_car_config
                     }
 
                     break;
-                case RespuestasBluetooth.valores_calibracion: //Valores de calibracion recibidos
+                case RespuestasBluetooth.e_res_valores_calibracion: //Valores de calibracion recibidos
                     float[] parRecibido = new float[19];
 
                     posBuffer = 3;
@@ -806,7 +930,7 @@ namespace rc_car_config
                     OnRecividosDatosCalibracion(parRecibido, x, verHight, verLow);
                     break;
 
-                case RespuestasBluetooth.valores_manual: //Valores de manual recibidos
+                case RespuestasBluetooth.e_res_valores_manual: //Valores de manual recibidos
                     posBuffer = 3;
                     float[] valores = new float[4];
 
@@ -835,6 +959,7 @@ namespace rc_car_config
         private void SerialPortBluetooth_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             SerialPort sp = (SerialPort)sender;
+            try { 
             while (sp.BytesToRead > 0)
             {
                 byte inByte = (byte)sp.ReadByte();
@@ -872,6 +997,7 @@ namespace rc_car_config
                 }
                 catch (Exception ex) { LogearMSG(String.Format("{0} {1} ***********************\n {2}", inByte, bytesRecibidos, "||Exception:  ", ex)); }
             }
+            }  catch { }
         }
 
 
@@ -884,16 +1010,28 @@ namespace rc_car_config
             LogearMSG(String.Format("{0} Error Puerto Serie***********************\n {1}  {2}", e.EventType, "||Exception:  ", e.ToString()));
         }
         public void Peticion_calibracion() { 
-            Enviar_comando_Bluetooth(ComandosBluetooth.peticion_calibracion, 1);
+            Enviar_comando_Bluetooth(ComandosBluetooth.e_com_peticion_calibracion, 1);
         }
         public void Peticion_Valoresmanuales()
         {
-            Enviar_comando_Bluetooth(ComandosBluetooth.pedir_valoresmanual, 1);
+            Enviar_comando_Bluetooth(ComandosBluetooth.e_com_pedir_valoresmanual, 1);
         }
 
         public void CambiarModo(E_modo modo)
         {
-            Enviar_comando_Bluetooth(ComandosBluetooth.cambiar_modo, (int)modo);
+            Enviar_comando_Bluetooth(ComandosBluetooth.e_com_cambiar_modo, (int)modo);
+        }
+        public void CambiarControlPotencia(E_regulacion_potencia modo)
+        {
+            Enviar_comando_Bluetooth(ComandosBluetooth.e_com_control_potencia, (int)modo);
+        }
+        public void CambiarControlDireccion(E_regulacion_direccion modo)
+        {
+            Enviar_comando_Bluetooth(ComandosBluetooth.e_com_control_dirrecion, (int)modo);
+        }
+        public void CambiarControl(E_tipo_control tipo)
+        {
+            Enviar_comando_Bluetooth(ComandosBluetooth.e_com_control_remoto, (int)tipo);
         }
 
         public event EventHandler<CambioEstadoConexionArgs> CambioEstadoConexion;

@@ -91,6 +91,8 @@ class Rc_car
 	uint8_t tipo_control_actual;	   //procedencia de control
 	float ESC_Dutycycle, ESC_avgInputCurrent, ESC_avgMotorCurrent, ESC_rpmActual, ESC_VoltajeEntrada, ESC_mah, ESC_temp;
 	float bar_temperatura, bar_presion;
+	float ina_shuntvoltage,ina_busvoltage,ina_current_mA,ina_loadvoltage,ina_power_mW;
+
 
 	float arranque_aceleracion_fase_1, arranque_tmax_fase_1, arranque_Vmax_fase_1;
 	float arranque_aceleracion_fase_2, arranque_tmax_fase_2, arranque_Vmax_fase_2;

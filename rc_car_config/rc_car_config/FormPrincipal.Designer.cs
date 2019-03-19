@@ -29,20 +29,21 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea7 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend7 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea8 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend8 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea21 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend21 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series21 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea22 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend22 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series22 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea23 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend23 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series23 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea24 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend24 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series24 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.tabControlPrincipal = new System.Windows.Forms.TabControl();
             this.tab0Graficas = new System.Windows.Forms.TabPage();
+            this.chartESC = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.chartCoche = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.chartGyro = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.chartAccel = new System.Windows.Forms.DataVisualization.Charting.Chart();
@@ -158,10 +159,15 @@
             this.labelPotencia = new System.Windows.Forms.Label();
             this.labelDireccion = new System.Windows.Forms.Label();
             this.timerPing = new System.Windows.Forms.Timer(this.components);
-            this.chartESC = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.labelLatencia = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.labelInaPotencia = new System.Windows.Forms.Label();
+            this.labelInaVoltageLoad = new System.Windows.Forms.Label();
+            this.labelInaCorriente = new System.Windows.Forms.Label();
+            this.labelInaVoltage = new System.Windows.Forms.Label();
             this.tabControlPrincipal.SuspendLayout();
             this.tab0Graficas.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chartESC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartCoche)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartGyro)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartAccel)).BeginInit();
@@ -176,7 +182,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.trackBarMarcha)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarRuedaIzq)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarRuedaDer)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.chartESC)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControlPrincipal
@@ -211,18 +216,35 @@
             this.tab0Graficas.Text = "Graficas";
             this.tab0Graficas.UseVisualStyleBackColor = true;
             // 
+            // chartESC
+            // 
+            chartArea21.Name = "ChartArea1";
+            this.chartESC.ChartAreas.Add(chartArea21);
+            legend21.Name = "Legend1";
+            this.chartESC.Legends.Add(legend21);
+            this.chartESC.Location = new System.Drawing.Point(637, 263);
+            this.chartESC.Name = "chartESC";
+            series21.ChartArea = "ChartArea1";
+            series21.Legend = "Legend1";
+            series21.Name = "Series1";
+            this.chartESC.Series.Add(series21);
+            this.chartESC.Size = new System.Drawing.Size(627, 253);
+            this.chartESC.TabIndex = 17;
+            this.chartESC.Text = "grafica";
+            this.chartESC.Click += new System.EventHandler(this.chartESC_Click);
+            // 
             // chartCoche
             // 
-            chartArea5.Name = "ChartArea1";
-            this.chartCoche.ChartAreas.Add(chartArea5);
-            legend5.Name = "Legend1";
-            this.chartCoche.Legends.Add(legend5);
+            chartArea22.Name = "ChartArea1";
+            this.chartCoche.ChartAreas.Add(chartArea22);
+            legend22.Name = "Legend1";
+            this.chartCoche.Legends.Add(legend22);
             this.chartCoche.Location = new System.Drawing.Point(4, 263);
             this.chartCoche.Name = "chartCoche";
-            series5.ChartArea = "ChartArea1";
-            series5.Legend = "Legend1";
-            series5.Name = "Series1";
-            this.chartCoche.Series.Add(series5);
+            series22.ChartArea = "ChartArea1";
+            series22.Legend = "Legend1";
+            series22.Name = "Series1";
+            this.chartCoche.Series.Add(series22);
             this.chartCoche.Size = new System.Drawing.Size(627, 253);
             this.chartCoche.TabIndex = 16;
             this.chartCoche.Text = "graficaGiro";
@@ -230,16 +252,16 @@
             // 
             // chartGyro
             // 
-            chartArea6.Name = "ChartArea1";
-            this.chartGyro.ChartAreas.Add(chartArea6);
-            legend6.Name = "Legend1";
-            this.chartGyro.Legends.Add(legend6);
+            chartArea23.Name = "ChartArea1";
+            this.chartGyro.ChartAreas.Add(chartArea23);
+            legend23.Name = "Legend1";
+            this.chartGyro.Legends.Add(legend23);
             this.chartGyro.Location = new System.Drawing.Point(637, 6);
             this.chartGyro.Name = "chartGyro";
-            series6.ChartArea = "ChartArea1";
-            series6.Legend = "Legend1";
-            series6.Name = "Series1";
-            this.chartGyro.Series.Add(series6);
+            series23.ChartArea = "ChartArea1";
+            series23.Legend = "Legend1";
+            series23.Name = "Series1";
+            this.chartGyro.Series.Add(series23);
             this.chartGyro.Size = new System.Drawing.Size(627, 253);
             this.chartGyro.TabIndex = 15;
             this.chartGyro.Text = "grafica";
@@ -247,16 +269,16 @@
             // 
             // chartAccel
             // 
-            chartArea7.Name = "ChartArea1";
-            this.chartAccel.ChartAreas.Add(chartArea7);
-            legend7.Name = "Legend1";
-            this.chartAccel.Legends.Add(legend7);
+            chartArea24.Name = "ChartArea1";
+            this.chartAccel.ChartAreas.Add(chartArea24);
+            legend24.Name = "Legend1";
+            this.chartAccel.Legends.Add(legend24);
             this.chartAccel.Location = new System.Drawing.Point(4, 4);
             this.chartAccel.Name = "chartAccel";
-            series7.ChartArea = "ChartArea1";
-            series7.Legend = "Legend1";
-            series7.Name = "Series1";
-            this.chartAccel.Series.Add(series7);
+            series24.ChartArea = "ChartArea1";
+            series24.Legend = "Legend1";
+            series24.Name = "Series1";
+            this.chartAccel.Series.Add(series24);
             this.chartAccel.Size = new System.Drawing.Size(627, 253);
             this.chartAccel.TabIndex = 14;
             this.chartAccel.Text = "graficaAccel";
@@ -876,6 +898,11 @@
             // 
             // tab4Manual
             // 
+            this.tab4Manual.Controls.Add(this.labelInaPotencia);
+            this.tab4Manual.Controls.Add(this.labelInaVoltageLoad);
+            this.tab4Manual.Controls.Add(this.labelInaCorriente);
+            this.tab4Manual.Controls.Add(this.labelInaVoltage);
+            this.tab4Manual.Controls.Add(this.label12);
             this.tab4Manual.Controls.Add(this.button1);
             this.tab4Manual.Controls.Add(this.labelBARPresion);
             this.tab4Manual.Controls.Add(this.labelBARTemp);
@@ -1068,7 +1095,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(109, 250);
+            this.label7.Location = new System.Drawing.Point(64, 260);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(38, 13);
             this.label7.TabIndex = 23;
@@ -1086,7 +1113,7 @@
             // labelT_control
             // 
             this.labelT_control.AutoSize = true;
-            this.labelT_control.Location = new System.Drawing.Point(96, 440);
+            this.labelT_control.Location = new System.Drawing.Point(51, 450);
             this.labelT_control.Name = "labelT_control";
             this.labelT_control.Size = new System.Drawing.Size(35, 13);
             this.labelT_control.TabIndex = 22;
@@ -1104,7 +1131,7 @@
             // labelCRuedaIzq
             // 
             this.labelCRuedaIzq.AutoSize = true;
-            this.labelCRuedaIzq.Location = new System.Drawing.Point(96, 403);
+            this.labelCRuedaIzq.Location = new System.Drawing.Point(51, 345);
             this.labelCRuedaIzq.Name = "labelCRuedaIzq";
             this.labelCRuedaIzq.Size = new System.Drawing.Size(35, 13);
             this.labelCRuedaIzq.TabIndex = 21;
@@ -1122,7 +1149,7 @@
             // labelCRuedaDer
             // 
             this.labelCRuedaDer.AutoSize = true;
-            this.labelCRuedaDer.Location = new System.Drawing.Point(96, 360);
+            this.labelCRuedaDer.Location = new System.Drawing.Point(51, 302);
             this.labelCRuedaDer.Name = "labelCRuedaDer";
             this.labelCRuedaDer.Size = new System.Drawing.Size(41, 13);
             this.labelCRuedaDer.TabIndex = 20;
@@ -1140,7 +1167,7 @@
             // labelCmotor
             // 
             this.labelCmotor.AutoSize = true;
-            this.labelCmotor.Location = new System.Drawing.Point(96, 320);
+            this.labelCmotor.Location = new System.Drawing.Point(51, 422);
             this.labelCmotor.Name = "labelCmotor";
             this.labelCmotor.Size = new System.Drawing.Size(41, 13);
             this.labelCmotor.TabIndex = 19;
@@ -1149,7 +1176,7 @@
             // labelCmarcha
             // 
             this.labelCmarcha.AutoSize = true;
-            this.labelCmarcha.Location = new System.Drawing.Point(96, 282);
+            this.labelCmarcha.Location = new System.Drawing.Point(51, 384);
             this.labelCmarcha.Name = "labelCmarcha";
             this.labelCmarcha.Size = new System.Drawing.Size(41, 13);
             this.labelCmarcha.TabIndex = 18;
@@ -1158,7 +1185,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(316, 269);
+            this.label5.Location = new System.Drawing.Point(225, 250);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(28, 13);
             this.label5.TabIndex = 17;
@@ -1185,7 +1212,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(316, 148);
+            this.label2.Location = new System.Drawing.Point(87, 148);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(79, 13);
             this.label2.TabIndex = 14;
@@ -1194,7 +1221,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(96, 148);
+            this.label1.Location = new System.Drawing.Point(290, 148);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(84, 13);
             this.label1.TabIndex = 13;
@@ -1203,7 +1230,7 @@
             // labelMAH
             // 
             this.labelMAH.AutoSize = true;
-            this.labelMAH.Location = new System.Drawing.Point(303, 459);
+            this.labelMAH.Location = new System.Drawing.Point(212, 440);
             this.labelMAH.Name = "labelMAH";
             this.labelMAH.Size = new System.Drawing.Size(53, 13);
             this.labelMAH.TabIndex = 12;
@@ -1212,7 +1239,7 @@
             // labelTemperatura
             // 
             this.labelTemperatura.AutoSize = true;
-            this.labelTemperatura.Location = new System.Drawing.Point(303, 422);
+            this.labelTemperatura.Location = new System.Drawing.Point(212, 403);
             this.labelTemperatura.Name = "labelTemperatura";
             this.labelTemperatura.Size = new System.Drawing.Size(89, 13);
             this.labelTemperatura.TabIndex = 11;
@@ -1221,7 +1248,7 @@
             // labelRPM
             // 
             this.labelRPM.AutoSize = true;
-            this.labelRPM.Location = new System.Drawing.Point(303, 379);
+            this.labelRPM.Location = new System.Drawing.Point(212, 360);
             this.labelRPM.Name = "labelRPM";
             this.labelRPM.Size = new System.Drawing.Size(53, 13);
             this.labelRPM.TabIndex = 10;
@@ -1230,7 +1257,7 @@
             // labelCorriente
             // 
             this.labelCorriente.AutoSize = true;
-            this.labelCorriente.Location = new System.Drawing.Point(303, 339);
+            this.labelCorriente.Location = new System.Drawing.Point(212, 320);
             this.labelCorriente.Name = "labelCorriente";
             this.labelCorriente.Size = new System.Drawing.Size(71, 13);
             this.labelCorriente.TabIndex = 9;
@@ -1239,7 +1266,7 @@
             // labelVoltage
             // 
             this.labelVoltage.AutoSize = true;
-            this.labelVoltage.Location = new System.Drawing.Point(303, 301);
+            this.labelVoltage.Location = new System.Drawing.Point(212, 282);
             this.labelVoltage.Name = "labelVoltage";
             this.labelVoltage.Size = new System.Drawing.Size(65, 13);
             this.labelVoltage.TabIndex = 8;
@@ -1392,6 +1419,7 @@
             this.labelControl.TabIndex = 55;
             this.labelControl.Tag = "5";
             this.labelControl.Text = "Control";
+            this.labelControl.Click += new System.EventHandler(this.labelControl_Click);
             // 
             // labelPotencia
             // 
@@ -1403,6 +1431,7 @@
             this.labelPotencia.TabIndex = 56;
             this.labelPotencia.Tag = "5";
             this.labelPotencia.Text = "potencia";
+            this.labelPotencia.Click += new System.EventHandler(this.labelPotencia_Click);
             // 
             // labelDireccion
             // 
@@ -1414,28 +1443,12 @@
             this.labelDireccion.TabIndex = 57;
             this.labelDireccion.Tag = "5";
             this.labelDireccion.Text = "Direccion";
+            this.labelDireccion.Click += new System.EventHandler(this.labelDireccion_Click);
             // 
             // timerPing
             // 
             this.timerPing.Interval = 800;
             this.timerPing.Tick += new System.EventHandler(this.timerPing_Tick);
-            // 
-            // chartESC
-            // 
-            chartArea8.Name = "ChartArea1";
-            this.chartESC.ChartAreas.Add(chartArea8);
-            legend8.Name = "Legend1";
-            this.chartESC.Legends.Add(legend8);
-            this.chartESC.Location = new System.Drawing.Point(637, 263);
-            this.chartESC.Name = "chartESC";
-            series8.ChartArea = "ChartArea1";
-            series8.Legend = "Legend1";
-            series8.Name = "Series1";
-            this.chartESC.Series.Add(series8);
-            this.chartESC.Size = new System.Drawing.Size(627, 253);
-            this.chartESC.TabIndex = 17;
-            this.chartESC.Text = "grafica";
-            this.chartESC.Click += new System.EventHandler(this.chartESC_Click);
             // 
             // labelLatencia
             // 
@@ -1446,6 +1459,51 @@
             this.labelLatencia.Size = new System.Drawing.Size(0, 13);
             this.labelLatencia.TabIndex = 58;
             this.labelLatencia.Tag = "5";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(407, 250);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(22, 13);
+            this.label12.TabIndex = 40;
+            this.label12.Text = "Ina";
+            // 
+            // labelInaPotencia
+            // 
+            this.labelInaPotencia.AutoSize = true;
+            this.labelInaPotencia.Location = new System.Drawing.Point(407, 413);
+            this.labelInaPotencia.Name = "labelInaPotencia";
+            this.labelInaPotencia.Size = new System.Drawing.Size(86, 13);
+            this.labelInaPotencia.TabIndex = 44;
+            this.labelInaPotencia.Text = "labelInaPotencia";
+            // 
+            // labelInaVoltageLoad
+            // 
+            this.labelInaVoltageLoad.AutoSize = true;
+            this.labelInaVoltageLoad.Location = new System.Drawing.Point(407, 370);
+            this.labelInaVoltageLoad.Name = "labelInaVoltageLoad";
+            this.labelInaVoltageLoad.Size = new System.Drawing.Size(104, 13);
+            this.labelInaVoltageLoad.TabIndex = 43;
+            this.labelInaVoltageLoad.Text = "labelInaVoltageLoad";
+            // 
+            // labelInaCorriente
+            // 
+            this.labelInaCorriente.AutoSize = true;
+            this.labelInaCorriente.Location = new System.Drawing.Point(407, 330);
+            this.labelInaCorriente.Name = "labelInaCorriente";
+            this.labelInaCorriente.Size = new System.Drawing.Size(86, 13);
+            this.labelInaCorriente.TabIndex = 42;
+            this.labelInaCorriente.Text = "labelInaCorriente";
+            // 
+            // labelInaVoltage
+            // 
+            this.labelInaVoltage.AutoSize = true;
+            this.labelInaVoltage.Location = new System.Drawing.Point(407, 292);
+            this.labelInaVoltage.Name = "labelInaVoltage";
+            this.labelInaVoltage.Size = new System.Drawing.Size(80, 13);
+            this.labelInaVoltage.TabIndex = 41;
+            this.labelInaVoltage.Text = "labelInaVoltage";
             // 
             // FormPrincipal
             // 
@@ -1464,9 +1522,11 @@
             this.Controls.Add(this.buttonConectar);
             this.Name = "FormPrincipal";
             this.Text = "Configurador de Despacito";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormPrincipal_FormClosed);
             this.Load += new System.EventHandler(this.FormPrincipal_Load);
             this.tabControlPrincipal.ResumeLayout(false);
             this.tab0Graficas.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.chartESC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartCoche)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartGyro)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartAccel)).EndInit();
@@ -1486,7 +1546,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.trackBarMarcha)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarRuedaIzq)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarRuedaDer)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.chartESC)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1613,6 +1672,11 @@
         private System.Windows.Forms.DataVisualization.Charting.Chart chartGyro;
         private System.Windows.Forms.DataVisualization.Charting.Chart chartESC;
         private System.Windows.Forms.Label labelLatencia;
+        private System.Windows.Forms.Label labelInaPotencia;
+        private System.Windows.Forms.Label labelInaVoltageLoad;
+        private System.Windows.Forms.Label labelInaCorriente;
+        private System.Windows.Forms.Label labelInaVoltage;
+        private System.Windows.Forms.Label label12;
     }
 }
 

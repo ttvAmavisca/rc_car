@@ -160,19 +160,19 @@ void Telemetria::enviarDatosCoche()
 
   int16_t tmpshort = 0;
 
-  tmpshort = round(rc_car->consigna[Rc_car::e_servo_motor] * 10.0); //16bit (64bit en C# PC). /10 en saltos de 10rpms es resolucion suficiente ya que el error de calculo es mayor
+  tmpshort = round(rc_car->consigna[Rc_car::e_servo_motor] * 100.0); //16bit (64bit en C# PC). /10 en saltos de 10rpms es resolucion suficiente ya que el error de calculo es mayor
   datosEnvioSerial[posicion++] = (tmpshort & 0xff);
   datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
 
-  tmpshort = round(rc_car->consigna[Rc_car::e_servo_rueda_derecha] * 10.0); //16bit (64bit en C# PC). X100 para enviar 2 decimales
+  tmpshort = round(rc_car->consigna[Rc_car::e_servo_rueda_derecha] * 100.0); //16bit (64bit en C# PC). X100 para enviar 2 decimales
   datosEnvioSerial[posicion++] = (tmpshort & 0xff);
   datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
 
-  tmpshort = round(rc_car->consigna[Rc_car::e_servo_rueda_izquierda] * 10.0); //16bit (64bit en C# PC). X100 para enviar 2 decimales
+  tmpshort = round(rc_car->consigna[Rc_car::e_servo_rueda_izquierda] * 100.0); //16bit (64bit en C# PC). X100 para enviar 2 decimales
   datosEnvioSerial[posicion++] = (tmpshort & 0xff);
   datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
 
-  tmpshort = round(rc_car->consigna[Rc_car::e_servo_marcha] * 10.0); //16bit (64bit en C# PC). X100 para enviar 2 decimales
+  tmpshort = round(rc_car->consigna[Rc_car::e_servo_marcha] * 100.0); //16bit (64bit en C# PC). X100 para enviar 2 decimales
   datosEnvioSerial[posicion++] = (tmpshort & 0xff);
   datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
 
@@ -257,6 +257,86 @@ void Telemetria::enviarDatosManual()
   datosEnvioSerial[posicion++] = '\n';
 
   serialPort->write(datosEnvioSerial, LENGH_RESPUESTAS_BLUETOOTH_VALORESMANUAL);
+}
+
+
+
+void Telemetria::enviarDatosPotencia()
+{
+  uint8_t datosEnvioSerial[LENGH_RESPUESTAS_BLUETOOTH_VALORESPOTENCIA];
+
+  int posicion = 0;
+  datosEnvioSerial[posicion++] = '$';
+  datosEnvioSerial[posicion++] = 0x02;
+  datosEnvioSerial[posicion++] = RespuestasBluetooth::e_res_datos_potencia;
+
+  int16_t tmpshort = 0;
+
+  tmpshort = rc_car->ina_busvoltage * 1000;
+  datosEnvioSerial[posicion++] = (tmpshort & 0xff);
+  datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
+/*
+  tmpshort = rc_car->ina_loadvoltage * 1000; 
+  datosEnvioSerial[posicion++] = (tmpshort & 0xff);
+  datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
+*/
+  int32_t tmpLong  = rc_car->ina_current_mA * 10; 
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff);
+  datosEnvioSerial[posicion++] = ((tmpLong & 0xff00) >> 8);
+  datosEnvioSerial[posicion++] = ((tmpLong & 0xff0000) >> 16);
+  datosEnvioSerial[posicion++] = ((tmpLong & 0xff000000) >> 24);
+
+
+  tmpLong = rc_car->ina_power_mW * 10; 
+  datosEnvioSerial[posicion++] = (tmpLong & 0xff);
+  datosEnvioSerial[posicion++] = ((tmpLong & 0xff00) >> 8);
+  datosEnvioSerial[posicion++] = ((tmpLong & 0xff0000) >> 16);
+  datosEnvioSerial[posicion++] = ((tmpLong & 0xff000000) >> 24);
+
+  datosEnvioSerial[posicion++] = '\r';
+  datosEnvioSerial[posicion++] = '\n';
+
+  serialPort->write(datosEnvioSerial, LENGH_RESPUESTAS_BLUETOOTH_VALORESPOTENCIA);
+}
+
+
+
+//Envia el valores de la ESC por bluetooth
+void Telemetria::enviarDatosESC()
+{
+  uint8_t datosEnvioSerial[LENGH_RESPUESTAS_BLUETOOTH_DATOS_ESC];
+
+  int posicion = 0;
+  datosEnvioSerial[posicion++] = '$';
+  datosEnvioSerial[posicion++] = 0x02;
+  datosEnvioSerial[posicion++] = RespuestasBluetooth::e_res_datos_ESC;
+
+  int16_t tmpshort = 0;
+
+  tmpshort = round(rc_car->ESC_VoltajeEntrada * 10); //16bit (64bit en C# PC). X10 para enviar 1 decimales
+  datosEnvioSerial[posicion++] = (tmpshort & 0xff);
+  datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
+
+  tmpshort = round(rc_car->ESC_rpmActual / 10); //16bit (64bit en C# PC). /10 en saltos de 10rpms es resolucion suficiente ya que el error de calculo es mayor
+  datosEnvioSerial[posicion++] = (tmpshort & 0xff);
+  datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
+
+  tmpshort = round(rc_car->ESC_avgMotorCurrent * 100); //16bit (64bit en C# PC). X100 para enviar 2 decimales
+  datosEnvioSerial[posicion++] = (tmpshort & 0xff);
+  datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
+
+  tmpshort = round(rc_car->ESC_avgInputCurrent * 100); //16bit (64bit en C# PC). X100 para enviar 2 decimales
+  datosEnvioSerial[posicion++] = (tmpshort & 0xff);
+  datosEnvioSerial[posicion++] = ((tmpshort & 0xff00) >> 8);
+
+  tmpshort = round(rc_car->ESC_Dutycycle * 100);
+  datosEnvioSerial[posicion++] = rc_car->ESC_Dutycycle;
+
+
+  datosEnvioSerial[posicion++] = '\r';
+  datosEnvioSerial[posicion++] = '\n';
+
+  serialPort->write(datosEnvioSerial, LENGH_RESPUESTAS_BLUETOOTH_DATOS_ESC);
 }
 
 void Telemetria::enviarDatosImu()
@@ -643,21 +723,17 @@ void Telemetria::procesaComando()
     procesado = true;
   }
 
-  //Envio de datos del coche
-  if (accion == ComandosBluetooth::e_com_peticion_coche)
+  //Envio de datos del coche, IMU y/o Potencia
+  if (accion == ComandosBluetooth::e_com_peticion_Datos)
   {
-    enviarDatosCoche();
+    if(datosRecibidosSerial[3] & 0x1) enviarDatosCoche();
+    if(datosRecibidosSerial[3] & 0x2) enviarDatosImu();
+    if(datosRecibidosSerial[3] & 0x4) enviarDatosPotencia();
+    if(datosRecibidosSerial[3] & 0x8) enviarDatosESC();
     procesado = true;
   }
 
-  //envio datos de la IMU
-  if (accion == ComandosBluetooth::e_com_peticion_imu)
-  {
-    enviarDatosImu();
-    procesado = true;
-  }
-
-  //Request calibration
+   //Request calibration
   if (accion == ComandosBluetooth::e_com_peticion_calibracion)
   {
     enviarConfiguracionActual();
@@ -806,6 +882,19 @@ void Telemetria::procesaComando()
     {
       rc_car->tipo_control_actual = 0;
     }
+    procesado = true;
+  }
+  //Cambiar tipo de control de potencia
+  if (accion == ComandosBluetooth::e_com_control_potencia)
+  {
+    rc_car->tipo_regulacion_potencia = datosRecibidosSerial[3];
+    procesado = true;
+  }
+
+  //Cambiar tipo de control de direccion
+  if (accion == ComandosBluetooth::e_com_control_dirrecion)
+  {
+    rc_car->tipo_regulacion_direccion = datosRecibidosSerial[3];
     procesado = true;
   }
 

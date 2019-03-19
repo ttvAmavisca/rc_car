@@ -40,6 +40,8 @@ namespace rc_car_config
         delegate void nuevosValoresCocheDelegado(object sender, Telemetria.DatosCocheEventArgs e);
         delegate void nuevosValoresImuDelegado(object sender, Telemetria.DatosIMUEventArgs e);
         delegate void nuevosValoresEstadoDelegado(object sender, Telemetria.DatosEstadoEventArgs e);
+        delegate void nuevosValoresESCDelegado(object sender, Telemetria.DatosESCEventArgs e);
+        delegate void nuevosValoresPotenciaDelegado(object sender, Telemetria.DatosPotenciaEventArgs e);
         delegate void conexionSerieDelegado(object sender, Telemetria.CambioEstadoConexionArgs e);
 
         delegate void ValoresJoystickDelegado(object sender, ControlConJoystick.CambioEstadoJoystickArgs e);
@@ -58,6 +60,8 @@ namespace rc_car_config
             telemetria.RecividosDatosCocheEvent += new EventHandler<Telemetria.DatosCocheEventArgs>(RellenarValoresCoche);
             telemetria.RecividosDatosIMUEvent += new EventHandler<Telemetria.DatosIMUEventArgs>(RellenarValoresIMU);
             telemetria.RecividosDatosManual += new EventHandler<Telemetria.DatosManualEventArgs>(RellenarValoresManual);
+            telemetria.RecividosDatosESCEvent += new EventHandler<Telemetria.DatosESCEventArgs>(RellenarValoresESC);
+            telemetria.RecividosDatosPotenciaEvent += new EventHandler<Telemetria.DatosPotenciaEventArgs>(RellenarValoresPotencia);
             telemetria.RecividosEstado += new EventHandler<Telemetria.DatosEstadoEventArgs>(RellenarValoresEstado);
             telemetria.CambioEstadoConexion += new EventHandler<Telemetria.CambioEstadoConexionArgs>(CambioEstadoConexion);
 
@@ -146,7 +150,7 @@ namespace rc_car_config
             Iniciar_grafica_con(ref chartAccel, new string[] { "AccelX","AccelY","AccelZ" });
             Iniciar_grafica_con(ref chartGyro, new string[] { "GiroX","GiroY","GiroZ" });
             Iniciar_grafica_con(ref chartCoche, new string[] { "RuedaDer","RuedaIz","Motor", "Marcha" });
-            Iniciar_grafica_con(ref chartESC, new string[] { "Voltage","Corriente","rmp" });
+            Iniciar_grafica_con(ref chartESC, new string[] { "Voltage","Corriente","rmp","voltage_ina","corriente_ina","potencia_ina" });
 
         }
 
@@ -226,6 +230,18 @@ namespace rc_car_config
                     {
                         chartESC.Series[3].Points.AddXY(x, y);
                     }
+                    else if (dato == 15)
+                    {
+                        chartESC.Series[4].Points.AddXY(x, y);
+                    }
+                    else if (dato == 16)
+                    {
+                        chartESC.Series[5].Points.AddXY(x, y);
+                    }
+                    else if (dato == 17)
+                    {
+                        chartESC.Series[6].Points.AddXY(x, y);
+                    }
                 }
             }
             catch { }
@@ -246,6 +262,8 @@ namespace rc_car_config
                 }
                 telemetria.PuertoSerie = PuertoSerie;
                 telemetria.Abrir_puerto_serie();
+                telemetria.Pedir_estado();
+                telemetria.Pedir_Valores(0xFF);
                 timerActualizar.Enabled = true;
                
             } else
@@ -473,9 +491,9 @@ namespace rc_car_config
             {
 
                 labelCmarcha.Text = e.ConsignaMarcha.ToString();
-                labelCmotor.Text = e.ConsignaRPMActual.ToString();
-                labelCRuedaDer .Text = e.AnguloRuedaDerecha.ToString();
-                labelCRuedaIzq.Text = e.AnguloRuedaIzquierda.ToString();
+                labelCmotor.Text = e.ConsignaMotor.ToString();
+                labelCRuedaDer .Text = e.ConsignaRuedaDerecha.ToString();
+                labelCRuedaIzq.Text = e.ConsignaRuedaIzquierda.ToString();
                 labelT_control.Text = e.Modo_motor_actual.ToString();
 
                 labelT_control.Text = e.Tipo_control_actual.ToString();
@@ -500,9 +518,9 @@ namespace rc_car_config
                 RellenarValoresEstado(sender, par);
 
                 //graficas
-                AnadirPunto(-1, e.AnguloRuedaDerecha, 7);
-                AnadirPunto(-1, e.AnguloRuedaIzquierda, 8);
-                AnadirPunto(-1, e.ConsignaRPMActual, 9);
+                AnadirPunto(-1, e.ConsignaRuedaDerecha, 7);
+                AnadirPunto(-1, e.ConsignaRuedaIzquierda, 8);
+                AnadirPunto(-1, e.ConsignaMotor, 9);
                 AnadirPunto(-1, e.ConsignaMarcha, 10);
 
                 AnadirPunto(-1, e.ESC_VoltajeEntrada, 11);
@@ -562,6 +580,61 @@ namespace rc_car_config
                 AnadirPunto(-1, e.Gyro[0], 4);
                 AnadirPunto(-1, e.Gyro[1], 5);
                 AnadirPunto(-1, e.Gyro[2], 6);
+
+            }
+
+        }
+
+
+
+        private void RellenarValoresESC(object sender, Telemetria.DatosESCEventArgs e) //float ConsignaMarcha, float ConsignaRPMActual, float AnguloRuedaDerecha, float AnguloRuedaIzquierda, float ESC_VoltajeEntrada, float ESC_rpmActual, float ESC_avgMotorCurrent, float ESC_avgInputCurrent, float ESC_Dutycycle, float modo_actual)
+        {
+            if (trackBarRuedaDer.InvokeRequired)
+            {
+                nuevosValoresESCDelegado delegado = new nuevosValoresESCDelegado(RellenarValoresESC);
+                //ya que el delegado invocará a CambiarProgreso debemos indicarle los parámetros 
+                object[] parametros = new object[] { sender, e };
+                //invocamos el método a través del mismo contexto del formulario (this) y enviamos los parámetros 
+                this.BeginInvoke(delegado, parametros);
+            }
+            else
+            {
+
+                labelVoltage.Text = "V: " + e.ESC_VoltajeEntrada.ToString();
+                labelCorriente.Text = "A: " + e.ESC_avgMotorCurrent.ToString();
+                labelRPM.Text = "RPM: " + e.ESC_rpmActual.ToString();
+                labelTemperatura.Text = "temp: " + e.ESC_Dutycycle.ToString();
+                labelMAH.Text = "MaH: " + e.ESC_avgInputCurrent.ToString();
+
+                AnadirPunto(-1, e.ESC_VoltajeEntrada, 11);
+                AnadirPunto(-1, e.ESC_avgInputCurrent, 12);
+                AnadirPunto(-1, e.ESC_rpmActual, 13);
+                AnadirPunto(-1, e.ESC_Dutycycle, 14);
+
+            }
+
+        }
+        private void RellenarValoresPotencia(object sender, Telemetria.DatosPotenciaEventArgs e)//(float pitch, float roll, float yaw, float[] velocidad, float[] aceleracion, float[] angulos, int tipo_control, float imu_temp)
+        {
+            if (trackBarRuedaDer.InvokeRequired)
+            {
+                nuevosValoresPotenciaDelegado delegado = new nuevosValoresPotenciaDelegado(RellenarValoresPotencia);
+                //ya que el delegado invocará a CambiarProgreso debemos indicarle los parámetros 
+                object[] parametros = new object[] { sender, e };
+                //invocamos el método a través del mismo contexto del formulario (this) y enviamos los parámetros 
+                this.BeginInvoke(delegado, parametros);
+            }
+            else
+            {
+                labelInaVoltage.Text = "Volt(V): " + e.ina_busvoltage.ToString();
+                labelInaCorriente.Text = "Cor(mA): " + e.ina_current_mA.ToString();
+                labelInaVoltageLoad.Text = "Load(V): " + e.ina_loadvoltage.ToString();
+                labelInaPotencia.Text = "Power(mW): " + e.ina_power_mW.ToString();
+          
+
+                AnadirPunto(-1, e.ina_busvoltage, 15);
+                AnadirPunto(-1, e.ina_current_mA, 16);
+                AnadirPunto(-1, e.ina_power_mW, 17);
 
             }
 
@@ -765,9 +838,12 @@ namespace rc_car_config
 
         private void timerPing_Tick(object sender, EventArgs e)
         {
-            telemetria.ping();
+            //En modo de control remoto hacer ping para detectar perdida de conexion
+            if (telemetria.modo_motor_actual == Telemetria.E_modo.e_modo_manual || telemetria.tipo_control_actual == Telemetria.E_tipo_control.e_control_BT) { 
+                telemetria.ping();
 
-            labelLatencia.Text = Math.Round( telemetria.tiempoRespuesta).ToString();
+                labelLatencia.Text = Math.Round( telemetria.tiempoRespuesta).ToString();
+            }
         }
 
 
@@ -781,6 +857,7 @@ namespace rc_car_config
             {
                 string seriesName = series.Name;
                 int pointCount = series.Points.Count;
+                if (pointCount <= 0) return;
                 string seriesType = series.GetType().ToString();
                 if (csvLine == null) csvLine = new string[pointCount];
                 if (String.IsNullOrEmpty(csvLine[0])) csvLine[0] = "Tiempo;";
@@ -891,6 +968,61 @@ namespace rc_car_config
             Iniciar_grafica();
             tInicio = DateTime.Now;
         }
+
+        private void labelControl_Click(object sender, EventArgs e)
+        {
+            if (telemetria.Conectado())
+            {
+                if (telemetria.tipo_control_actual == Telemetria.E_tipo_control.e_control_BT)
+                {
+                    telemetria.CambiarControl(Telemetria.E_tipo_control.e_control_RC);
+                } else
+                {
+                    telemetria.CambiarControl(Telemetria.E_tipo_control.e_control_BT);
+                }
+            }
+        }
+
+        private void FormPrincipal_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            joystick.loop = false;
+        }
+
+        private void labelPotencia_Click(object sender, EventArgs e)
+        {
+            if (telemetria.tipo_regulacion_potencia == Telemetria.E_regulacion_potencia.e_reg_pot_directa)
+            {
+                telemetria.CambiarControlPotencia(Telemetria.E_regulacion_potencia.e_reg_pot_conservadora);
+
+            } else if (telemetria.tipo_regulacion_potencia == Telemetria.E_regulacion_potencia.e_reg_pot_conservadora)
+            {
+                telemetria.CambiarControlPotencia(Telemetria.E_regulacion_potencia.e_reg_pot_incremental);
+            }
+            else if (telemetria.tipo_regulacion_potencia == Telemetria.E_regulacion_potencia.e_reg_pot_incremental)
+            {
+                telemetria.CambiarControlPotencia(Telemetria.E_regulacion_potencia.e_reg_pot_agresiva);
+            }
+            else if (telemetria.tipo_regulacion_potencia == Telemetria.E_regulacion_potencia.e_reg_pot_agresiva)
+            {
+                telemetria.CambiarControlPotencia(Telemetria.E_regulacion_potencia.e_reg_pot_max);
+            }
+            else
+            {
+                telemetria.CambiarControlPotencia(Telemetria.E_regulacion_potencia.e_reg_pot_directa);
+            }
+        }
+
+        private void labelDireccion_Click(object sender, EventArgs e)
+        {
+            if (telemetria.tipo_regulacion_direccion == Telemetria.E_regulacion_direccion.e_reg_dir_Ackermann)
+            {
+                telemetria.CambiarControlDireccion(Telemetria.E_regulacion_direccion.e_reg_dir_directa);
+            } else
+            {
+                telemetria.CambiarControlDireccion(Telemetria.E_regulacion_direccion.e_reg_dir_Ackermann);
+            }
+        }
+
 
         private void RellenarCalibracion(object sender, Telemetria.DatosCalibracionEventArgs e)//float[] parRecibido, int x, int verHight, int verLow)
         {

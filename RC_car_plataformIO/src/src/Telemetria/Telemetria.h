@@ -46,6 +46,8 @@
 #define LENGH_RESPUESTAS_BLUETOOTH_VALORES_CALIBRA 63
 #define LENGH_RESPUESTAS_BLUETOOTH_VALORESMANUAL 13
 #define LENGH_RESPUESTAS_BLUETOOTH_ESTADO 9
+#define LENGH_RESPUESTAS_BLUETOOTH_VALORESPOTENCIA 15
+#define LENGH_RESPUESTAS_BLUETOOTH_DATOS_ESC 14
 
 #define LONGITUD_BUFFER_BLUETOOTH 80
 
@@ -63,12 +65,13 @@ class Telemetria
 		e_com_ping = 1,
 		e_com_auto_parametros,
 		e_com_auto_imu,
-		e_com_peticion_coche,
-		e_com_peticion_imu,
+		e_com_peticion_Datos,
 		e_com_peticion_calibracion,
 		e_com_nueva_calibracion,
 		e_com_cambiar_modo,
 		e_com_control_remoto,
+		e_com_control_potencia,
+		e_com_control_dirrecion,
 		e_com_PedirEstado,
 		e_com_pedir_valoresmanual,
 		e_com_nuevos_valoresmanual
@@ -81,6 +84,8 @@ class Telemetria
 		e_res_auto_imu,
 		e_res_datos_coche,
 		e_res_datosn_imu,
+		e_res_datos_potencia,
+		e_res_datos_ESC,
 		e_res_valores_calibracion,
 		e_res_cambio_ok,
 		e_res_cambiar_modo,
@@ -115,6 +120,8 @@ class Telemetria
 
 	void enviarConfiguracionActual();
 	void enviarDatosManual();
+	void enviarDatosPotencia();
+	void enviarDatosESC();
 	void serialEvent2();
 	void NuevosValoresImu();
 	void NuevosValoresBar();

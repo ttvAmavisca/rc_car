@@ -18,10 +18,20 @@
 #define OUTPUT_TEAPOT false         // paquete teapot para ejemplo de fabricante IMU (intelsense)
 #define CON_BLUETOOTH false         // habilitar envio por bluetooth, nota las librerias ocupan mas de la mitad de memoria de programa normal
 #define Usar_DMP true           // Set to true to get Serial output for debugging
+#define Usar_INA219 true           // usar INA en vez de valores de ESC
+
 
 #define CON_VESC false         // Utilizar VESC como ESC
 #define CON_BLHELI true         //Utilizar ESC BLHELI
 
+
+#if Usar_INA219
+//TODO: Libreria INA incluye un delay, intentar eliminarlo?
+#include "src/INA219/INA219.h"
+  TwoWire WireIna219(1);
+  const int pin_sda_ina =2;
+  const int pin_scl_ina =15;
+#endif
 
 #if Usar_DMP
 //Libreria MPU9250, utilizando el DMP(mas lento pero valores filtrados)
@@ -80,6 +90,11 @@ uint64_t debugtiming_count = 0;
 bool rc_mpu_init = false;
 #define SerialPort Serial
 
+
+#if Usar_INA219
+INA219 ina219;
+#endif
+
 #if Usar_DMP
 MPU9250_DMP imu;
 #else
@@ -96,7 +111,7 @@ LeerTelemetriaBlHeli BLHeli;
 #endif
 
 //Servos
-Servo servos[4];
+Servo servos[5];
 
 
 //Lectura de canales de entrada. Pines 30+ algunos definidos como solo entrada
@@ -114,6 +129,25 @@ void setupBluetooth()
 
 
 HardwareSerial pSerial2(2);
+
+#if Usar_INA219
+void ina219getValues(){
+  
+  rc_car.ina_shuntvoltage = ina219.getShuntVoltage_mV();
+  rc_car.ina_busvoltage = ina219.getBusVoltage_V();
+  rc_car.ina_current_mA = ina219.getCurrent_mA();
+  rc_car.ina_power_mW = ina219.getPower_mW();
+  rc_car.ina_loadvoltage = rc_car.ina_busvoltage + (rc_car.ina_shuntvoltage / 1000);
+/*
+  Serial.print("Bus Voltage:   "); Serial.print(rc_car.ina_busvoltage); Serial.println(" V");
+  Serial.print("Shunt Voltage: "); Serial.print(rc_car.ina_shuntvoltage ); Serial.println(" mV");
+  Serial.print("Load Voltage:  "); Serial.print(rc_car.ina_loadvoltage); Serial.println(" V");
+  Serial.print("Current:       "); Serial.print(rc_car.ina_current_mA); Serial.println(" mA");
+  Serial.print("Power:         "); Serial.print(rc_car.ina_power_mW); Serial.println(" mW");
+  Serial.println("");
+*/
+}
+#endif
 
 #if CON_BLHELI
 void setupBLHeli(){
@@ -184,7 +218,7 @@ void setupMPU9250()
     Serial.println("Unable to communicate with MPU-9250");
     Serial.println("Check connections, and try again.");
     Serial.println();
-    delay(5000);
+    delay(3000);
   }
   
 
@@ -200,7 +234,7 @@ void setupMPU9250()
  #endif
  if (!barometro.begin(BMP280_ADDRESS_ALT)) {
     Serial.println(F("imposible conectar con barometro!"));
-     delay(5000);
+     delay(3000);
   }
 
   /* Default settings from datasheet. */
@@ -230,18 +264,18 @@ void imuGetValues()
 void setup_pwmIN()
 {
   //Inicia los 6 canales de lectura PWM
-  leerCanales.initCanales();
+  leerCanales.initCanales_Interupt();
 }
 
 void leer_pwmIN()
 {
   //Lee el ultimo valor leido desde memoria
-  rc_car.consigna_rc[Rc_car::e_ch_rc_canal_1]=(leerCanales.valor(1) / 8);
-  rc_car.consigna_rc[Rc_car::e_ch_rc_canal_2]=(leerCanales.valor(2) / 8);
-  rc_car.consigna_rc[Rc_car::e_ch_rc_canal_3]=(leerCanales.valor(3) / 8);
-  rc_car.consigna_rc[Rc_car::e_ch_rc_canal_4]=(leerCanales.valor(4) / 8);
-  rc_car.consigna_rc[Rc_car::e_ch_rc_canal_5]=(leerCanales.valor(5) / 8);
-  rc_car.consigna_rc[Rc_car::e_ch_rc_canal_6]=(leerCanales.valor(6) / 8);
+  rc_car.consigna_rc[Rc_car::e_ch_rc_canal_1]=(leerCanales.valor(1));
+  rc_car.consigna_rc[Rc_car::e_ch_rc_canal_2]=(leerCanales.valor(2));
+  rc_car.consigna_rc[Rc_car::e_ch_rc_canal_3]=(leerCanales.valor(3));
+  rc_car.consigna_rc[Rc_car::e_ch_rc_canal_4]=(leerCanales.valor(4));
+  rc_car.consigna_rc[Rc_car::e_ch_rc_canal_5]=(leerCanales.valor(5));
+  rc_car.consigna_rc[Rc_car::e_ch_rc_canal_6]=(leerCanales.valor(6));
 
 }
 
@@ -252,6 +286,9 @@ void setup_pwmOut()
   servos[Rc_car::e_servo_rueda_izquierda].attach(26,5000,-1,0,180,1000,2000);
   servos[Rc_car::e_servo_marcha].attach(27,-1,-1,0,180,1000,2000);
   servos[Rc_car::e_servo_motor].attach(14,-1,-1,0,180,1000,2000);
+
+//TODO: borrar
+  servos[4].attach(12,-1,-1,0,180,1000,2000);
 }
 
 void calcular_pwmOut()
@@ -261,6 +298,9 @@ void calcular_pwmOut()
   servos[Rc_car::e_servo_rueda_izquierda].writePerCent(rc_car.consigna[Rc_car::e_servo_rueda_izquierda]);
   servos[Rc_car::e_servo_marcha].writePerCent(rc_car.consigna[Rc_car::e_servo_marcha]);
   servos[Rc_car::e_servo_motor].writePerCent(rc_car.consigna[Rc_car::e_servo_motor]);
+  
+    //TODO: borrar
+  servos[4].writePerCent(rc_car.consigna_manual[Rc_car::e_servo_marcha]);
 }
 
 void setup()
@@ -306,20 +346,31 @@ void setup()
 
   setup_pwmOut(); //configurar salidas PWM de control
 
+#if Usar_INA219
+  WireIna219.begin(pin_sda_ina, pin_scl_ina);
+  ina219.begin(&WireIna219);
+  //ina219.begin();
+#endif
+
   //Leer configuracion de EEPROM
   rc_Configuracion.getFromEEPROM();
 
-  
+  Serial.println(F("Fin config"));
   //rc_car.consigna[Rc_car::e_servo_motor] = 100;        // consigna inicial del motor para pruebas
 }
 
 void loop()
 {
+  
 #if CON_VESC
   vescControl();
 #endif
 #if CON_BLHELI
   BLHeliControl();
+#endif
+
+#if Usar_INA219
+  ina219getValues();
 #endif
   
   leer_pwmIN();
