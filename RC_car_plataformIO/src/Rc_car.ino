@@ -18,7 +18,7 @@
 #define OUTPUT_TEAPOT false         // paquete teapot para ejemplo de fabricante IMU (intelsense)
 #define CON_BLUETOOTH false         // habilitar envio por bluetooth, nota las librerias ocupan mas de la mitad de memoria de programa normal
 #define Usar_DMP true           // Set to true to get Serial output for debugging
-#define Usar_INA219 true           // usar INA en vez de valores de ESC
+#define Usar_INA219 false           // usar INA en vez de valores de ESC
 
 
 #define CON_VESC false         // Utilizar VESC como ESC
@@ -356,6 +356,10 @@ void setup()
   rc_Configuracion.getFromEEPROM();
 
   Serial.println(F("Fin config"));
+  Serial.printf("Internal Total heap %d, internal Free Heap %d\n",ESP.getHeapSize(),ESP.getFreeHeap());
+  Serial.printf("SPIRam Total heap %d, SPIRam Free Heap %d\n",ESP.getPsramSize(),ESP.getFreePsram());
+  Serial.printf("ChipRevision %d, Cpu Freq %d, SDK Version %s\n",ESP.getChipRevision(), ESP.getCpuFreqMHz(), ESP.getSdkVersion());
+  Serial.printf(" Flash Size %d, Flash Speed %d\n",ESP.getFlashChipSize(), ESP.getFlashChipSpeed());
   //rc_car.consigna[Rc_car::e_servo_motor] = 100;        // consigna inicial del motor para pruebas
 }
 

@@ -727,8 +727,7 @@ namespace rc_car_config
       
         private void ProcesarComandoSerie()
         {
-            int dato, nuevoEstado;
-            short dato16;
+            int dato;
 
 
             int posBuffer = 3;

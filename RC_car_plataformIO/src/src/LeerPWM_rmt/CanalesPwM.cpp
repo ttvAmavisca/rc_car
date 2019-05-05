@@ -301,8 +301,6 @@ void IRAM_ATTR CanalesPwM::rmt_isr_handler(void* arg){
                         break;
                         //ERR
                     case 2:
-                        ESP_EARLY_LOGE(RMT_TAG, "RMT[%d] ERR", channel);
-                        ESP_EARLY_LOGE(RMT_TAG, "status: 0x%08x", RMT.status_ch[channel]);
                         RMT.int_ena.val &= (~(BIT(i)));
                         break;
                     default:
