@@ -196,8 +196,16 @@ void vescControl()
   UART.nunchuck.valueY = 1;
   // Call the function setNunchuckValues to send the current nunchuck values to the VESC
   UART.setNunchuckValues();
-  if (UART.getVescValues() > 0)
+  if (UART.getVescValues())
   {
+ 
+    rc_car.ESC_avgInputCurrent = UART.data.avgInputCurrent;
+    rc_car.ESC_avgMotorCurrent = UART.data.avgMotorCurrent;
+    rc_car.ESC_mah = UART.data.ampHours;
+    rc_car.ESC_rpmActual = UART.data.rpm;
+    rc_car.ESC_VoltajeEntrada = UART.data.inpVoltage;
+    //rc_car.ESC_temp = UART.data.ampHours;
+
     if (SerialDebug)
     {
       Serial.print("input V = ");

@@ -34,7 +34,7 @@ void LeerTelemetriaBlHeli::processData() {
 			  mAh = ((int16_t)messageReceived[5]<<8)|messageReceived[6]; // used mA/h   
 			  eRpM = (((int16_t)messageReceived[7]<<8)|messageReceived[8]); // eRpM /100
 					
-			//Serial.print("blheli ");Serial.print(Voltage); Serial.print("V ");Serial.print(Current); Serial.print("A ");Serial.print(eRpM);Serial.print("RPM ");
+			//Serial.print("blheli ");Serial.print(messageReceived[1]);  Serial.print(messageReceived[1]); Serial.print("V ");Serial.print(Current); Serial.print("A ");Serial.print(eRpM);Serial.print("RPM ");
 			 if(crc8 != messageReceived[9]) message_error=true;
 				new_messageRead = true;
 				b_counter=0;
